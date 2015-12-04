@@ -1,0 +1,124 @@
+<div class="container-fluid">
+  <div class="row">
+
+    <!-- Graph view -->
+    <div class="col-sm-9 col-md-10 main">
+      <div id="graph" node-link-graph margin="10" height="950" on-click="onClick(item)">
+      </div>
+    </div>
+
+    <!-- Sidebar for details -->
+    <div class="col-sm-3 col-md-2">
+      <uib-accordion close-others="false">
+        <uib-accordion-group heading="Selection" is-open="showSelection">
+          <p ng-hide="vm.data.selected !== undefined">
+            Select a class or property to see more details.
+          </p>
+          <!-- for selected classes -->
+          <div ng-show="vm.data.selected !== undefined && selected.type === 'class'">
+            <p ng-hide="selected.name === ''">
+              <strong>Label:</strong> {{selected.name}}
+            </p>
+
+            <p>
+              <strong>Type:</strong> {{selected.type}}
+            </p>
+
+            <p>
+              <strong>URI:</strong> <a href="{{selected.uri}}" target="_blank">{{ selected.uri }}</a>
+            </p>
+
+            <p>
+              <strong># Instances:</strong>
+              {{selected.value | number}}
+            </p>
+
+            <p>
+              <strong>Child Classes:</strong> None
+            </p>
+
+            <p>
+              <strong>Equivalent Classes:</strong> None
+            </p>
+
+            <p>
+              <strong>Super Classes:</strong> None
+            </p>
+
+            <p ng-hide="selected.comment === undefined">
+              <strong>Comment:</strong>
+              <span>{{ selected.comment }}</span>
+            </p>
+          </div>
+
+          <!-- for selected properties -->
+          <div ng-show="vm.data.selected !== undefined && selected.type === 'property'">
+            <p>
+              <strong>Type:</strong> {{selected.type}}
+            </p>
+
+            <p>
+              <strong>Properties ({{selected.props.length}}):</strong>
+            </p>
+            <ul class="properties">
+              <li ng-repeat="p in selected.props">
+                <a href="{{p.uri}}" target="_blank">{{p.uri}} <span class="glyphicon glyphicon-new-window"></span></a>
+              </li>
+            </ul>
+
+            <p ng-hide="selected.comment === undefined">
+              <strong>Comment:</strong>
+              <span>{{ selected.comment }}</span>
+            </p>
+          </div>
+
+        </uib-accordion-group>
+
+        <uib-accordion-group heading="Filters" is-open="false">
+          <form class="form-horizontal">
+            <div class="checkbox">
+              <label for="showLiterals">
+                <input id="showLiterals" type="checkbox" ng-model="vm.extractTypes" ng-change="vm.loadTypes()">
+                Show Literals
+              </label>
+            </div>
+            <div class="checkbox">
+              <label for="includeLoops">
+                <input id="includeLoops" type="checkbox" ng-model="vm.includeLoops" ng-change="vm.loadLoops()">
+                Include loops
+              </label>
+            </div>
+          </form>
+
+        </uib-accordion-group>
+
+        <uib-accordion-group heading="Endpoint" is-open="true">
+          <p>
+            <strong>URL:</strong>
+            <a href="{{vm.endpointURL}}" target="_blank">{{vm.endpointURL}}</a>
+          </p>
+
+          <p>
+            <strong>Pending Requests:</strong>
+            <span ng-hide="pendingRequests === 0">{{pendingRequests | number}}
+              <span class="glyphicon glyphicon-refresh glyphicon-spin"></span>
+            </span>
+            <span ng-show="pendingRequests === 0">None</span>
+          </p>
+
+          <p>
+            <strong>Successful Requests:</strong>
+            <span ng-hide="successfulRequests === 0">{{successfulRequests | number}}</span>
+            <span ng-show="successfulRequests === 0">None</span>
+          </p>
+
+          <p>
+            <strong>Failed Requests:</strong>
+            <span ng-hide="failedRequests === 0">{{failedRequests | number}}</span>
+            <span ng-show="failedRequests === 0">None</span>
+          </p>
+        </uib-accordion-group>
+      </uib-accordion>
+    </div><!--end of sidebar -->
+  </div><!-- end of .row -->
+</div><!-- end of .container-fluid -->

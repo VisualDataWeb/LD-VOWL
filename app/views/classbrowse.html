@@ -1,0 +1,143 @@
+<div class="container">
+  <h2>Class Browser</h2>
+
+  <form class="form-horizontal well">
+    <div class="form-group" ng-hide="vm.mode === 'all'">
+      <label class="col-sm-2 control-label" for="baseClass">Base Class</label>
+
+      <div class="col-sm-10">
+        <input type="text" class="form-control" name="baseClass" ng-model="vm.baseClass"
+          ng-disabled="vm.mode !== 'subclass'"
+          uib-typeahead="uri for uri in vm.classURIs | filter:$viewValue | limitTo:8"
+          ng-keyup="$event.keyCode === 13 ? vm.requestClasses() : null"  />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-sm-2 control-label" for="mode">Mode</label>
+
+      <div class="btn-group col-sm-6">
+        <label class="btn btn-default" ng-model=vm.mode uib-btn-radio="'all'"
+          ng-click="vm.toAllClassMode()">
+          All Classes
+        </label>
+
+        <label class="btn btn-default" ng-model="vm.mode" uib-btn-radio="'subclass'"
+          ng-click="vm.toSubClassMode()">
+          Sub Classes Only
+        </label>
+      </div>
+
+      <div class="col-sm-4">
+        <div class="pull-right">
+          <button class="btn btn-primary " type="button" ng-click="vm.requestClasses()">
+            Send Request
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <h2 ng-show="vm.loading">Waiting for Response...</h2>
+  <h2 ng-hide="vm.loading">Response <small>({{vm.requestTime | responseTime}})</small></h2>
+  <div ng-show="vm.results.length > 0">
+    <uib-tabset>
+      <uib-tab heading="Table">
+        <!-- Table for all-classes-query -->
+        <table ng-hide="vm.mode === 'subclass'"
+          class="table table-bordered table-striped table-condensed">
+          <tr>
+            <th>Class</th>
+            <th colspan="2">Sub Classes</th>
+            <th>Super Class</th>
+            <th colspan="2">Properties</th>
+            <th># Instances</th>
+          </tr>
+          <tr ng-repeat="r in vm.results">
+            <td>
+              <a href="{{r.class.value}}" target="_blank" ng-hide="r.label.value.length > 0">
+                {{r.class.value | uriLabel}}
+              </a>
+              <a href="{{r.class.value}}" target="_blank">{{r.label.value}}</a>
+            </td>
+            <td>{{r.count.value | number}}
+            </td>
+            <td>
+              <a class="btn btn-default" ng-hide="r.count.value < 1"
+                href="/#/classBrowse?baseClass={{'<' + r.class.value + '>'}}">
+                Show
+              </a>
+            </td>
+            <td>
+              <a href="{{r.superClass.value}}" target="_blank">{{r.superClassLabel.value}}</a>
+            </td>
+            <td>
+                {{r.propertyCount.value | number}}
+            </td>
+            <td>
+              <a class="btn btn-default" ng-hide="r.propertyCount.value < 1"
+                href="/#/propertyBrowser?domainClass={{'<' + r.class.value + '>'}}">
+                Browse
+              </a>
+            </td>
+            <td>{{r.instanceCount.value | number}}</td>
+          </tr>
+        </table>
+
+        <!-- Table for sub-class-query -->
+        <table ng-show="vm.mode === 'subclass'" class="table table-bordered table-striped table-condensed">
+          <tr>
+            <th>Sub Class of {{vm.requestedBaseClass}}</th>
+            <th colspan="2">Sub Classes</th>
+            <th colspan="2">Properties</th>
+            <th># Instances</th>
+          </tr>
+          <tr ng-repeat="r in vm.results">
+            <td>
+              <a href="{{r.class.value}}" target="_blank" ng-hide="r.label.value.length > 0">
+                {{r.class.value | uriLabel}}
+              </a>
+              <a href="{{r.class.value}}" target="_blank">{{r.label.value}}</a>
+            </td>
+            <td>{{r.count.value | number}}
+            </td>
+            <td>
+              <a class="btn btn-default" ng-hide="r.count.value < 1"
+                href="/#/classBrowse?baseClass={{'<' + r.class.value + '>'}}">
+                Show
+              </a>
+            </td>
+            <td>
+                {{r.propertyCount.value | number}}
+            </td>
+            <td>
+              <a class="btn btn-default" ng-hide="r.propertyCount.value < 1"
+                href="/#/propertyBrowser?domainClass={{'<' + r.class.value + '>'}}">
+                Browse
+              </a>
+            </td>
+            <td>{{r.instanceCount.value | number}}</td>
+          </tr>
+        </table>
+      </uib-tab>
+
+      <uib-tab heading="Raw JSON">
+        <pre>{{vm.results | json}}</pre>
+      </uib-tab>
+
+    </uib-tabset>
+
+    <!-- TODO mov e into a directive -->
+    <div class="center-block" style="max-width: 100px;">
+      <button type="button" class="btn btn-default btn-block" ng-class="{'disabled': vm.loading}"
+        ng-click="vm.requestClasses()">
+        {{ (vm.loading) ? 'Loading...' : 'Show more'}}
+      </button>
+    </div>
+
+  </div>
+  <div ng-cloak class="alert alert-warning" role="alert"
+    ng-show="!vm.loading && vm.results.length === 0">
+    No sub classes {{(vm.requestedBaseClass.length > 0) ? 'of "' +  vm.requestedBaseClass + '"' : ''}} found!
+  </div>
+</div>

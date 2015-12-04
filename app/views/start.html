@@ -1,0 +1,21 @@
+<div class="container">
+  <div class="jumbotron">
+    <h1>Linked Data VOWL</h1>
+    <p>Extracts Ontologies out of arbitrary SPARQL Endpoints and visualizes them by using VOWL.</p>
+  </div>
+
+  <div class="well">
+    <form class="form-horizontal">
+      <div class="form-group">
+        <label class="control-label col-sm-2" for="endpoint">Endpoint</label>
+        <div class="col-sm-7">
+          <input id="endpoint" ng-model="start.endpoint" type="text" class="form-control" title="endpoint"
+                 uib-typeahead="url for url in start.endpoints | filter:$viewValue | limitTo:8" required/>
+        </div>
+        <div class="col-sm-3">
+          <button type="button" class="btn btn-primary" ng-click="start.showGraph()">Show Graph &raquo;</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

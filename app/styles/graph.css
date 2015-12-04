@@ -1,0 +1,57 @@
+#graph {
+  background-color: #F8F8F8;
+}
+
+#property {
+  fill: #000;
+}
+
+#hover {
+  fill: #f00;
+}
+
+circle {
+  fill:none;
+  stroke: #000;
+  stroke-width: 1.5px;
+}
+
+.node circle.ring, .node rect.ring {
+  fill: #fff;
+  stroke: #f00;
+  stroke-width: 3px;
+}
+
+.node circle, .property rect {
+  fill: #acf;
+  cursor: pointer;
+}
+
+.node circle:hover, .property rect:hover {
+  fill: #f00;
+}
+
+.type rect {
+  stroke: #000;
+  stroke-width: 1.5px;
+}
+
+.node text, .type text, .link text {
+  font: 12px sans-serif;
+  pointer-events: none;
+  stroke: none;
+}
+
+.link {
+  stroke: #000;
+  fill: none;
+}
+
+.link:hover {
+  stroke: #f00;
+  stroke-opacity: 1.0;
+}
+
+.link:hover text.text {
+  fill: #f00;
+}
