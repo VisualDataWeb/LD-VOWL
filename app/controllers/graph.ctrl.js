@@ -1,10 +1,13 @@
 'use strict';
 
-module.exports = function ($scope, $log, ClassExtractor, RelationExtractor, TypeExtractor,
-  DetailExtractor, RequestConfig, Requests) {
+module.exports = function ($scope, $log, ClassExtractor, RelationExtractor, TypeExtractor, DetailExtractor,
+                           RequestConfig, Requests) {
 
   var vm = this;
 
+  vm.numberOfProps = 5;
+
+  // TODO this information should be saved
   vm.extractTypes = false;
   vm.includeLoops = false;
 
@@ -47,6 +50,10 @@ module.exports = function ($scope, $log, ClassExtractor, RelationExtractor, Type
     $scope.failedRequests = Requests.getFailedRequests();
   });
 
+  vm.incNumberOfProps = function () {
+    vm.numberOfProps += 5;
+  };
+
   vm.loadTypes = function () {
     if (vm.extractTypes) {
       $log.info("[Graph] Send requests for types...");
@@ -78,9 +85,9 @@ module.exports = function ($scope, $log, ClassExtractor, RelationExtractor, Type
       for (var end = 0; end < classes.length; end++) {
         for (var start = 0; start < classes.length; start++) {
           if (vm.includeLoops || start !== end) {
-            var origin = classes[start].class.value;
-            var target = classes[end].class.value;
-            RelationExtractor.requestClassClassRelation(origin, target);
+            var origin = classes[start];
+            var target = classes[end];
+            RelationExtractor.requestClassClassRelation(origin, target, 10, 0);
           }
         }
       }

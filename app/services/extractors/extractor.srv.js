@@ -16,19 +16,9 @@ class Extractor {
   }
 
   inBlacklist(uriToCheck) {
-    var found = false;
-
-    for (var i = 0; i < this.blacklist.length; i++) {
-      var currentBlacklistItem = this.blacklist[i];
-
-      if (uriToCheck === currentBlacklistItem) {
-        found = true;
-        break;
-      }
-    }
-
-    return found;
+    return (this.blacklist.indexOf(uriToCheck) !== -1);
   }
+
 }
 
 module.exports = Extractor;

@@ -33,5 +33,7 @@ module.exports = {
   output: {
     path: APP,
     filename: 'bundle.js'
-  }
+  },
+  devtool: "source-map"
+
 };

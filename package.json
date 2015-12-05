@@ -37,7 +37,7 @@
     "webpack-dev-server": "^1.14.0"
   },
   "scripts": {
-    "start": "webpack-dev-server --content-base app --hot",
+    "start": "webpack-dev-server --content-base app --inline --hot",
     "test": "test"
   },
   "author": "Marc Weise",

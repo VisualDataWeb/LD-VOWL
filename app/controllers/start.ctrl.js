@@ -1,11 +1,17 @@
 'use strict';
-
+/**
+ * @Name StartCtrl
+ * @param $location
+ * @param Nodes
+ * @param Properties
+ * @param Requests
+ * @param RequestConfig
+ */
 module.exports = function ($location, Nodes, Properties, Requests, RequestConfig) {
-
-    console.log("test");
 
     var start = this;
 
+    // TODO move this data into a constant
     start.endpoints = ["http://dbpedia.org/sparql",
       "http://lod.springer.com/sparql",
       "http://linkedlifedata.com/sparql",
@@ -23,7 +29,7 @@ module.exports = function ($location, Nodes, Properties, Requests, RequestConfig
       console.log("[Start] Show Graph!");
       var lastEndpoint = RequestConfig.getEndpointURL();
 
-      // clear loaded data if endpoint changed
+      // clear loaded data if endpoint has changed
       if (lastEndpoint !== start.endpoint && start.endpoint.length > 0) {
         Nodes.clearAll();
         Properties.clearAll();

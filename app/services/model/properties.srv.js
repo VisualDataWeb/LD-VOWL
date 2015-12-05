@@ -9,13 +9,13 @@ module.exports = function () {
       var currentProp = this.properties[i];
 
       if (currentProp.source === source && currentProp.target === target) {
-        return true;
+        return currentProp.uri;
       }
     }
     return false;
   };
 
-  this.addProperty = function (source, target, uri) {
+  this.addProperty = function (source, intermediate, target, uri) {
     if (typeof source === 'number' && typeof target === 'number') {
 
       // only add it, if it doesn't already exist
@@ -23,11 +23,13 @@ module.exports = function () {
         var newProperty = {};
 
         newProperty.source = source;
+        newProperty.intermediate = intermediate;
         newProperty.target = target;
         newProperty.value = 1;
         newProperty.props = [];
         newProperty.props.push({'uri': uri});
         newProperty.uri = uri;
+        newProperty.type = "property";
 
         this.properties.push(newProperty);
       } else {
@@ -38,6 +40,43 @@ module.exports = function () {
 
   this.getProperties = function () {
     return this.properties;
+  };
+
+  /**
+   * Returns the property with the given URI or null, if no property with the given URI exists.
+   *
+   * @param uriToSearchFor - the URI of the property to be caught
+   * @returns {*}
+   */
+  this.getByURI = function (uriToSearchFor) {
+    var prop = null;
+    for (var i=0; i<this.properties.length; i++) {
+      var currentProp = this.properties[i];
+      if (currentProp.uri === uriToSearchFor) {
+        prop = currentProp;
+        break;
+      }
+    }
+    return prop;
+  };
+
+  /**
+   * Returns the index of the node between the given nodes.
+   *
+   * @param source - the index of the source node
+   * @param target - the index of the target node
+   * @returns {number}
+   */
+  this.getIntermediateIndex = function (source, target) {
+    var intermediateIndex = -1;
+    for (var i=0; i<this.properties.length; i++) {
+      var currentProp = this.properties[i];
+      if (currentProp.source === source && currentProp.target === target) {
+        intermediateIndex = currentProp.intermediate;
+        break;
+      }
+    }
+    return intermediateIndex;
   };
 
   this.clearAll = function () {

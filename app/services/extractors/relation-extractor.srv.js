@@ -39,9 +39,10 @@ class RelationExtractor extends Extractor {
    * @param originClassURI - the uri of the class to start from
    * @param targetClassURI - the uri of the class to go to
    */
-  requestClassClassRelation(originClassURI, targetClassURI) {
-    var limit = 10;
-    var query = QFACTORY.getClassClassRelationQuery(originClassURI, targetClassURI, limit);
+  requestClassClassRelation(originClassURI, targetClassURI, limit, offset) {
+    var offset = offset || 0;
+    var limit = limit || 10;
+    var query = QFACTORY.getClassClassRelationQuery(originClassURI, targetClassURI, limit, offset);
     var endpointURL = RCONFIG.getEndpointURL();
 
     var self = this;
@@ -55,13 +56,22 @@ class RelationExtractor extends Extractor {
 
           if (bindings !== undefined && bindings.length > 0) {
 
-            console.log("[Relations] " + bindings.length + " between '" + originClassURI +
-              "' and '" + targetClassURI + "'.");
+            console.log("[Relations] " + bindings.length + " between '" + originClassURI + "' and '" +
+              targetClassURI + "'.");
 
             if (bindings[0].prop !== undefined) {
               if (bindings[0].prop.value !== undefined && bindings[0].prop.value !== '') {
                 var originIndex = NODES.getIndexOf(originClassURI);
+
+                if (originIndex === -1) {
+                  console.error("[Relations] Origin " + originClassURI + " was not found!");
+                }
+
                 var targetIndex = NODES.getIndexOf(targetClassURI);
+
+                if (targetIndex === -1) {
+                  console.error("[Relations] Target " + targetClassURI + " was not found!");
+                }
 
                 var first = true;
                 var index = 0;
@@ -72,9 +82,28 @@ class RelationExtractor extends Extractor {
 
                   // only add prop if not black listed
                   if (!self.inBlacklist(currentURI)) {
-                    console.log("[Relations] Add property '" + currentURI + "' from " +
-                      originIndex + " to " + targetIndex + ".");
-                    PROPS.addProperty(originIndex, targetIndex, currentURI);
+                    console.log("[Relations] Add property '" + currentURI + "' from " + originIndex + " to " +
+                      targetIndex + ".");
+
+                    var intermediateIndex = -1;
+                    var uriBetween = PROPS.existsBetween(originIndex, targetIndex);
+                    if (uriBetween === false) {
+                      var propNode = {};
+                      propNode.uri = currentURI;
+                      propNode.type = 'property';
+                      propNode.value = 1;
+                      intermediateIndex = NODES.addNode(propNode);
+                    } else {
+                      intermediateIndex = PROPS.getIntermediateIndex(originIndex, targetIndex);
+                      NODES.incValueOfIndex(intermediateIndex);
+                    }
+
+                    if (intermediateIndex === -1) {
+                      console.error("[Relations] Intermediate " + uriBetween + " was not found!");
+                    }
+
+                    PROPS.addProperty(originIndex, intermediateIndex, targetIndex, currentURI);
+
                     if (first) {
                       index = i;
                       first = false;
@@ -84,6 +113,11 @@ class RelationExtractor extends Extractor {
 
                 // now search for a label
                 self.requestPropertyLabel(bindings[index].prop.value);
+
+                if (bindings.length === limit) {
+                  // there is more, schedule next request
+                  self.requestClassClassRelation(originClassURI, targetClassURI, limit * 2, offset + bindings.length);
+                }
               }
             }
           } else {

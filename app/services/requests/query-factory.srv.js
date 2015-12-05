@@ -239,7 +239,7 @@ module.exports = function () {
 
       // RELATION queries
 
-      getClassClassRelationQuery: function (originClass, targetClass, limit) {
+      getClassClassRelationQuery: function (originClass, targetClass, limit, offset) {
         var query  = prefixes() +
           "SELECT distinct ?prop " +
           "WHERE { " +
@@ -247,7 +247,8 @@ module.exports = function () {
             "?targetInstance a <" + targetClass + "> . " +
             "?originInstance ?prop ?targetInstance . " +
           "}" +
-          "LIMIT " + limit;
+          "LIMIT " + limit + " " +
+          "OFFSET " + offset;
         return query;
       },
 

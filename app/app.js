@@ -91,7 +91,7 @@ app.filter('uriLabel', function () {
     if (uri !== undefined && uri !== '') {
       var lastSlash = uri.lastIndexOf('/');
       var lastHash = uri.lastIndexOf('#');
-      uriLabel = uri.substr(Math.max(lastSlash, lastHash) + 1).replace(/\d+/, '').replace(/\_/g, ' ');
+      uriLabel = uri.substr(Math.max(lastSlash, lastHash) + 1).replace(/\_/g, ' ');
     }
     return uriLabel;
   };
@@ -99,15 +99,15 @@ app.filter('uriLabel', function () {
 
 app.filter('responseTime', function () {
   return function (time) {
-    var timestr = '';
+    var timeStr = '';
     if (typeof time === 'number') {
       if (time > 1000) {
-        timestr = (time/1000) + ' s';
+        timeStr = (time / 1000) + ' s';
       } else {
-        timestr = time + ' ms';
+        timeStr = time + ' ms';
       }
     }
-    return timestr;
+    return timeStr;
   };
 });
 

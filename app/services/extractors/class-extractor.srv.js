@@ -29,7 +29,12 @@ class ClassExtractor extends Extractor {
   }
 
   requestClasses() {
+
     var deferred = q.defer();
+
+    if (!NODES.isEmpty()) {
+      deferred.resolve([]);
+    }
 
     var limit = RCONFIG.getLimit() || 10;
     var offset = 0;
@@ -51,11 +56,15 @@ class ClassExtractor extends Extractor {
             // endpoint may ignore limit
             bindings = bindings.slice(0, Math.min(bindings.length, limit*2));
 
+            var classes = [];
+
             for (var i = 0; i < bindings.length; i++) {
 
               var currentClassURI = bindings[i].class.value;
 
               if (!self.inBlacklist(currentClassURI)) {
+                classes.push(currentClassURI);
+
                 var node = {};
                 node.uri = currentClassURI;
                 node.name = (bindings[i].label !== undefined) ? bindings[i].label.value : '';
@@ -75,7 +84,7 @@ class ClassExtractor extends Extractor {
               }
             }
 
-            deferred.resolve(bindings);
+            deferred.resolve(classes);
           } else {
             console.log('[Classes] No further classes found!');
             deferred.resolve([]);
@@ -128,7 +137,6 @@ class ClassExtractor extends Extractor {
 
         if (bindings.length > 0) {
           for (var i = 0; i < bindings.length; i++) {
-
             if (bindings[i].class !== undefined) {
               var node = {};
               node.uri = bindings[i].class.value;
@@ -144,6 +152,6 @@ class ClassExtractor extends Extractor {
       });
   }
 
-}
+} // end of class 'ClassExtractor'
 
 module.exports = ClassExtractor;

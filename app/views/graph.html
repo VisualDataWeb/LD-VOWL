@@ -10,7 +10,13 @@
     <!-- Sidebar for details -->
     <div class="col-sm-3 col-md-2">
       <uib-accordion close-others="false">
-        <uib-accordion-group heading="Selection" is-open="showSelection">
+
+        <uib-accordion-group is-open="showSelection">
+
+          <uib-accordion-heading>
+            <span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span> Selection
+          </uib-accordion-heading>
+
           <p ng-hide="vm.data.selected !== undefined">
             Select a class or property to see more details.
           </p>
@@ -58,13 +64,27 @@
             </p>
 
             <p>
-              <strong>Properties ({{selected.props.length}}):</strong>
+              <strong>Properties (<span ng-show="selected.props.length > vm.numberOfProps">{{vm.numberOfProps}} of</span>
+                {{selected.props.length}}):
+              </strong>
             </p>
+
             <ul class="properties">
-              <li ng-repeat="p in selected.props">
-                <a href="{{p.uri}}" target="_blank">{{p.uri}} <span class="glyphicon glyphicon-new-window"></span></a>
+              <li ng-repeat="p in selected.props | limitTo: vm.numberOfProps">
+                <a href="{{p.uri}}" target="_blank">
+                  {{p.uri | uriLabel}}
+                  <span class="glyphicon glyphicon-new-window"></span>
+                </a>
               </li>
             </ul>
+            <button ng-hide="selected.props.length < vm.numberOfProps" type="button" class="btn btn-link"
+                    ng-click="vm.incNumberOfProps()">
+              more ...
+            </button>
+
+            <!--<div class="pull-right">-->
+              <!--<button type="button" class="btn btn-default">Show More</button>-->
+            <!--</div>-->
 
             <p ng-hide="selected.comment === undefined">
               <strong>Comment:</strong>
@@ -74,7 +94,12 @@
 
         </uib-accordion-group>
 
-        <uib-accordion-group heading="Filters" is-open="false">
+        <uib-accordion-group is-open="false">
+
+          <uib-accordion-heading>
+            <span class="glyphicon glyphicon-filter" aria-hidden="true"></span> Filters
+          </uib-accordion-heading>
+
           <form class="form-horizontal">
             <div class="checkbox">
               <label for="showLiterals">
@@ -117,8 +142,17 @@
             <span ng-hide="failedRequests === 0">{{failedRequests | number}}</span>
             <span ng-show="failedRequests === 0">None</span>
           </p>
-        </uib-accordion-group>
+
+          <div class="pull-right">
+            <button ng-show="pendingRequests === 0" type="button" class="btn btn-default">Load More Classes</button>
+          </div>
+
+        </uib-accordion-group><!-- end of endpoint group -->
+
       </uib-accordion>
+
+      <p class="footer">&copy; 2015 by Marc Weise</p>
+
     </div><!--end of sidebar -->
   </div><!-- end of .row -->
 </div><!-- end of .container-fluid -->

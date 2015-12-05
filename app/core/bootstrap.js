@@ -6,7 +6,7 @@ require('./vendor.js')(); // run an empty function
 require('../styles/main.css');
 require('../styles/graph.css');
 
-var appModule = require('../index');
+var appModule = require('../app');
 
 angular.element(document).ready(function () {
  angular.bootstrap(document, [appModule.name], {

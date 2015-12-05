@@ -1,7 +1,7 @@
 'use strict';
 
-module.exports = function (PREFIX, PROPERTY_BLACKLIST, CLASS_BLACKLIST, RequestConfig, Nodes,
-  Properties, Requests, ClassExtractor, RelationExtractor) {
+module.exports = function (PREFIX, PROPERTY_BLACKLIST, CLASS_BLACKLIST, RequestConfig, Nodes, Properties, Requests,
+                           ClassExtractor, RelationExtractor) {
 
   var vm = this;
 
