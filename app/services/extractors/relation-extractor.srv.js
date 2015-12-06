@@ -73,18 +73,12 @@ class RelationExtractor extends Extractor {
                   console.error("[Relations] Target " + targetClassURI + " was not found!");
                 }
 
-                var first = true;
-                var index = 0;
-
                 // add uris if they are not blacklisted
                 for (var i = 0; i < bindings.length; i++) {
                   var currentURI = bindings[i].prop.value;
 
                   // only add prop if not black listed
                   if (!self.inBlacklist(currentURI)) {
-                    console.log("[Relations] Add property '" + currentURI + "' from " + originIndex + " to " +
-                      targetIndex + ".");
-
                     var intermediateIndex = -1;
                     var uriBetween = PROPS.existsBetween(originIndex, targetIndex);
                     if (uriBetween === false) {
@@ -103,16 +97,13 @@ class RelationExtractor extends Extractor {
                     }
 
                     PROPS.addProperty(originIndex, intermediateIndex, targetIndex, currentURI);
-
-                    if (first) {
-                      index = i;
-                      first = false;
-                    }
                   }
                 }
 
-                // now search for a label
-                self.requestPropertyLabel(bindings[index].prop.value);
+                if (offset === 0 && bindings.length > 0) {
+                  // now search for a label
+                  self.requestPropertyLabel(bindings[0].prop.value);
+                }
 
                 if (bindings.length === limit) {
                   // there is more, schedule next request

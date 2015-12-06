@@ -93,7 +93,7 @@ module.exports = function ($window, Properties, Nodes, Utils) {
 
         if (d.type === 'property') {
           console.log("[Graph] Selected property '" + d.uri + "'.");
-          message.item = Properties.getByURI(d.uri);
+          message.item = Properties.getByNodeIndex(d.index);
           console.log(message);
         } else {
           console.log("[Graph] Selected class '" + d.uri + "'.");
@@ -105,7 +105,7 @@ module.exports = function ($window, Properties, Nodes, Utils) {
 
       scope.render = function (data) {
 
-        console.log(data);
+        //console.log(data);
 
         if (scope.force.stop !== undefined) {
           scope.force.stop();
@@ -138,6 +138,8 @@ module.exports = function ($window, Properties, Nodes, Utils) {
           if (s !== undefined && i !== undefined && t !== undefined) {
             // get direct class links
             if (s.type === 'class' && t.type === 'class') {
+
+              i.value = link.value;
 
               // create two links
               links.push({source: s, target: i });

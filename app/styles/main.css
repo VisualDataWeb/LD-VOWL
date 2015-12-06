@@ -31,6 +31,11 @@ ul.properties {
   padding-left: 15px;
 }
 
+div.prop-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
 .browsehappy {
   margin: 0.2em 0;
   background: #ccc;

@@ -1,23 +1,25 @@
 'use strict';
 
-var HTTP = {};
-var q = {};
-var RCONFIG = {};
-var QFACTORY = {};
-var NODES = {};
-
 var Extractor = require('./extractor.srv');
 
+/**
+ * @Name ClassExtractor
+ */
 class ClassExtractor extends Extractor {
 
   constructor ($http, $q, PREFIX, CLASS_BLACKLIST, RequestConfig, QueryFactory, Nodes) {
     super();
-    HTTP = $http;
-    q = $q;
-    RCONFIG = RequestConfig;
-    QFACTORY = QueryFactory;
-    NODES = Nodes;
+    
+    // set up attributes
+    this.$http = $http;
+    this.$q = $q;
+    this.reqConfig = RequestConfig;
+    this.queryFactory = QueryFactory;
+    this.nodes = Nodes;
+    
+    this.extractSubClasses = false;
 
+    // set up blacklists
     for (var type in CLASS_BLACKLIST) {
       if (CLASS_BLACKLIST.hasOwnProperty(type)) {
         for (var i = 0; i < CLASS_BLACKLIST[type].length; i++) {
@@ -25,28 +27,27 @@ class ClassExtractor extends Extractor {
         }
       }
     }
-    this.extractSubClasses = false;
   }
 
   requestClasses() {
+    var deferred = this.$q.defer();
 
-    var deferred = q.defer();
-
-    if (!NODES.isEmpty()) {
+    // do not request further classes
+    if (!this.nodes.isEmpty()) {
       deferred.resolve([]);
     }
 
-    var limit = RCONFIG.getLimit() || 10;
+    var limit = this.reqConfig.getLimit() || 10;
     var offset = 0;
 
-    var query = QFACTORY.getClassQuery(limit, offset);
-    var endpointURL = RCONFIG.getEndpointURL();
+    var query = this.queryFactory.getClassQuery(limit, offset);
+    var endpointURL = this.reqConfig.getEndpointURL();
 
     var self = this;
 
     console.log('[Classes] Send Request...');
 
-    HTTP.get(endpointURL, RCONFIG.forQuery(query))
+    this.$http.get(endpointURL, this.reqConfig.forQuery(query))
       .then(function (response) {
         if (response.data.results !== undefined) {
           var bindings = response.data.results.bindings;
@@ -71,12 +72,12 @@ class ClassExtractor extends Extractor {
                 node.value = parseInt(bindings[i].instanceCount.value);
                 node.type = 'class';
                 node.active = false;
-                NODES.addNode(node);
+                self.nodes.addNode(node);
 
                 if (bindings[i].class !== undefined && bindings[i].class.value !== undefined) {
                   self.requestClassLabel(currentClassURI);
 
-                  // sub classes
+                  // optionally get sub classes
                   if (self.extractSubClasses) {
                     self.requestSubClassesOf(currentClassURI);
                   }
@@ -101,19 +102,21 @@ class ClassExtractor extends Extractor {
   }
 
   requestClassLabel (classURI) {
-    var labelLang = RCONFIG.getLabelLanguage();
-    var labelQuery = QFACTORY.getLabelQuery(classURI, labelLang);
-    var endpointURL = RCONFIG.getEndpointURL();
+    var labelLang = this.reqConfig.getLabelLanguage();
+    var labelQuery = this.queryFactory.getLabelQuery(classURI, labelLang);
+    var endpointURL = this.reqConfig.getEndpointURL();
 
     console.log("[Class Label] Send request for '" + classURI + "'...");
 
-    HTTP.get(endpointURL, RCONFIG.forQuery(labelQuery))
+    var self = this;
+
+    this.$http.get(endpointURL, this.reqConfig.forQuery(labelQuery))
       .then(function (response) {
         var bindings = response.data.results.bindings;
 
         if (bindings !== undefined && bindings[0].label !== undefined && bindings[0].label.value !== '') {
           var label = bindings[0].label.value;
-          NODES.insertValue(classURI, 'name', label);
+          self.nodes.insertValue(classURI, 'name', label);
           console.log("[Class Label] Found '" + label + "' for '" + classURI + "'.");
         } else {
           console.log("[Class Label] Found None for '" + classURI + "'.");
@@ -124,14 +127,16 @@ class ClassExtractor extends Extractor {
   }
 
   requestSubClassesOf(classURI) {
-    var lang = RCONFIG.getLabelLanguage();
+    var lang = this.reqConfig.getLabelLanguage();
     var limit = 5;
     var offset = 0;
 
-    var query = QFACTORY.getSubClassQuery(classURI, lang, limit, offset);
-    var endpointURL = RCONFIG.getEndpointURL();
+    var query = this.queryFactory.getSubClassQuery(classURI, lang, limit, offset);
+    var endpointURL = this.reqConfig.getEndpointURL();
 
-    HTTP.get(endpointURL, RCONFIG.forQuery(query))
+    var self = this;
+
+    this.$http.get(endpointURL, this.reqConfig.forQuery(query))
       .then(function (response) {
         var bindings = response.data.results.bindings;
 
@@ -141,7 +146,7 @@ class ClassExtractor extends Extractor {
               var node = {};
               node.uri = bindings[i].class.value;
               node.name = bindings[i].label.value;
-              NODES.addNode(node);
+              self.nodes.addNode(node);
             }
           }
         } else {

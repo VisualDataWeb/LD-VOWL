@@ -1,12 +1,76 @@
 'use strict';
 
-module.exports = function () {
+module.exports = function ($interval) {
 
-  this.properties = [];
+  var self = this;
 
-  this.existsBetween = function (source, target) {
-    for (var i = 0; i < this.properties.length; i++) {
-      var currentProp = this.properties[i];
+  self.properties = [];
+  self.needsUpdate = false;
+  self.updateInterval = 10000;
+  self.sessionStorageUpdate = undefined;
+  self.unusedRounds = 0;
+
+  /**
+   * Initializes properties with the ones saved in the SessionStorage.
+   */
+  self.initProperties = function () {
+    if (sessionStorage !== undefined) {
+      var sessionProperties = sessionStorage.getItem("properties");
+
+      if (sessionProperties !== undefined && sessionProperties !== null) {
+        console.log("[Properties] Use props from session storage!");
+        self.properties = JSON.parse(sessionProperties);
+        console.log(self.properties);
+      }
+      self.startSessionStorageUpdate();
+    } else {
+      console.error("[Properties] SessionStorage is not available! Properties will not be saved across page reloads!");
+    }
+  };
+
+  /**
+   * Start to update the HTML5 SessionStore at a regular basis.
+   */
+  self.startSessionStorageUpdate = function () {
+    if (self.sessionStorageUpdate !== undefined) {
+      return;
+    }
+
+    self.sessionStorageUpdate = $interval(function(){
+      if (self.needsUpdate) {
+        self.updateSessionStorage();
+        self.needsUpdate = false;
+      } else {
+        self.unusedRounds += 1;
+        if (self.unusedRounds === 2) {
+          self.endSessionStorageUpdate();
+        }
+      }
+    }, self.updateInterval);
+  };
+
+  /**
+   * Stops session storage update from being re-executed.
+   */
+  self.endSessionStorageUpdate = function () {
+    if (self.sessionStorageUpdate !== undefined) {
+      $interval.cancel(self.sessionStorageUpdate);
+      self.sessionStorageUpdate = undefined;
+      self.unusedRounds = 0;
+    }
+  };
+
+  /**
+   * Function which is triggered to update properties in HTML5 SessionStore.
+   */
+  self.updateSessionStorage = function () {
+    console.log(self.properties);
+    sessionStorage.setItem("properties", JSON.stringify(self.properties));
+  };
+
+  self.existsBetween = function (source, target) {
+    for (var i = 0; i < self.properties.length; i++) {
+      var currentProp = self.properties[i];
 
       if (currentProp.source === source && currentProp.target === target) {
         return currentProp.uri;
@@ -15,11 +79,11 @@ module.exports = function () {
     return false;
   };
 
-  this.addProperty = function (source, intermediate, target, uri) {
-    if (typeof source === 'number' && typeof target === 'number') {
+  self.addProperty = function (source, intermediate, target, uri) {
+    if (typeof source === 'number' && typeof intermediate === 'number' && typeof target === 'number') {
 
       // only add it, if it doesn't already exist
-      if (!this.existsBetween(source, target)) {
+      if (!self.existsBetween(source, target)) {
         var newProperty = {};
 
         newProperty.source = source;
@@ -31,15 +95,16 @@ module.exports = function () {
         newProperty.uri = uri;
         newProperty.type = "property";
 
-        this.properties.push(newProperty);
+        self.properties.push(newProperty);
       } else {
-        this.addURI(source, target, uri);
+        self.addURI(source, target, uri);
       }
+      self.needsUpdate = true;
     }
   };
 
-  this.getProperties = function () {
-    return this.properties;
+  self.getProperties = function () {
+    return self.properties;
   };
 
   /**
@@ -48,16 +113,28 @@ module.exports = function () {
    * @param uriToSearchFor - the URI of the property to be caught
    * @returns {*}
    */
-  this.getByURI = function (uriToSearchFor) {
+  self.getByURI = function (uriToSearchFor) {
     var prop = null;
-    for (var i=0; i<this.properties.length; i++) {
-      var currentProp = this.properties[i];
+    for (var i=0; i<self.properties.length; i++) {
+      var currentProp = self.properties[i];
       if (currentProp.uri === uriToSearchFor) {
         prop = currentProp;
         break;
       }
     }
     return prop;
+  };
+
+  self.getByNodeIndex = function (intermediateNodeIndex) {
+    var p = null;
+    for (var i=0; i < self.properties.length; i++) {
+      var currentProp = self.properties[i];
+      if (currentProp.intermediate === intermediateNodeIndex) {
+        p = currentProp;
+        break;
+      }
+    }
+    return p;
   };
 
   /**
@@ -67,10 +144,10 @@ module.exports = function () {
    * @param target - the index of the target node
    * @returns {number}
    */
-  this.getIntermediateIndex = function (source, target) {
+  self.getIntermediateIndex = function (source, target) {
     var intermediateIndex = -1;
-    for (var i=0; i<this.properties.length; i++) {
-      var currentProp = this.properties[i];
+    for (var i=0; i<self.properties.length; i++) {
+      var currentProp = self.properties[i];
       if (currentProp.source === source && currentProp.target === target) {
         intermediateIndex = currentProp.intermediate;
         break;
@@ -79,14 +156,15 @@ module.exports = function () {
     return intermediateIndex;
   };
 
-  this.clearAll = function () {
-    this.properties = [];
+  self.clearAll = function () {
+    self.properties = [];
+    self.updateSessionStorage();
   };
 
-  this.addURI = function (sourceIndex, targetIndex, uriToAdd) {
+  self.addURI = function (sourceIndex, targetIndex, uriToAdd) {
     var index = -1;
-    for (var i = 0; i < this.properties.length; i++) {
-      var currentProperty = this.properties[i];
+    for (var i = 0; i < self.properties.length; i++) {
+      var currentProperty = self.properties[i];
       if (currentProperty.source === sourceIndex && currentProperty.target === targetIndex) {
         index = i;
         break;
@@ -94,7 +172,7 @@ module.exports = function () {
     }
 
     if (index > -1) {
-      var currentProp = this.properties[index];
+      var currentProp = self.properties[index];
 
       // search for new uri is already in there
       var exists = false;
@@ -108,26 +186,30 @@ module.exports = function () {
       // uri to add doesn't exist, so it can be added
       if (!exists) {
         var p = {uri: uriToAdd};
-        this.properties[index].props.push(p);
-        this.properties[index].value++;
+        self.properties[index].props.push(p);
+        self.properties[index].value++;
       }
     }
-
   };
 
-  this.insertValue = function (uri, key, value) {
+  self.insertValue = function (uri, key, value) {
     var index = -1;
-    for (var i = 0; i < this.properties.length; i++) {
-      if (this.properties[i].uri === uri) {
+    for (var i = 0; i < self.properties.length; i++) {
+      if (self.properties[i].uri === uri) {
         index = i;
         break;
       }
     }
 
-    if (index > -1 && index < this.properties.length) {
-      this.properties[index][key] = value;
+    if (index > -1 && index < self.properties.length) {
+      self.properties[index][key] = value;
+      self.needsUpdate = true;
     } else {
+      console.error("[Properties] " + uri + " was not found!");
       console.error("[Properties] There is no property at index " + index + "!");
     }
   };
+
+  self.initProperties();
+
 };

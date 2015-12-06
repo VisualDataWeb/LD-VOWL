@@ -64,27 +64,28 @@
             </p>
 
             <p>
-              <strong>Properties (<span ng-show="selected.props.length > vm.numberOfProps">{{vm.numberOfProps}} of</span>
-                {{selected.props.length}}):
+              <strong ng-if="selected.props.length <= vm.numberOfProps">
+                Properties ({{selected.props.length}}):
+              </strong>
+              <strong ng-if="selected.props.length > vm.numberOfProps">
+                Properties ({{vm.numberOfProps}} of {{selected.props.length}}):
               </strong>
             </p>
 
-            <ul class="properties">
-              <li ng-repeat="p in selected.props | limitTo: vm.numberOfProps">
-                <a href="{{p.uri}}" target="_blank">
-                  {{p.uri | uriLabel}}
-                  <span class="glyphicon glyphicon-new-window"></span>
-                </a>
-              </li>
-            </ul>
-            <button ng-hide="selected.props.length < vm.numberOfProps" type="button" class="btn btn-link"
-                    ng-click="vm.incNumberOfProps()">
-              more ...
-            </button>
-
-            <!--<div class="pull-right">-->
-              <!--<button type="button" class="btn btn-default">Show More</button>-->
-            <!--</div>-->
+            <div class="prop-list">
+              <ul class="properties">
+                <li ng-repeat="p in selected.props | limitTo: vm.numberOfProps">
+                  <a href="{{p.uri}}" target="_blank">
+                    {{p.uri | uriLabel}}
+                    <span class="glyphicon glyphicon-new-window"></span>
+                  </a>
+                </li>
+              </ul>
+              <button ng-hide="selected.props.length < vm.numberOfProps" type="button" class="btn btn-link"
+                      ng-click="vm.incNumberOfProps()">
+                more ...
+              </button>
+            </div>
 
             <p ng-hide="selected.comment === undefined">
               <strong>Comment:</strong>

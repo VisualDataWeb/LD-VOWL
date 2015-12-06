@@ -118,7 +118,7 @@ app.factory('QueryFactory', QueryFactory);
 app.factory('RequestCounter', ['$q', 'Requests', RequestCounter]);
 
 app.service('Nodes', Nodes);
-app.service('Properties', Properties);
+app.service('Properties', ['$interval', Properties]);
 app.service('Types', Types);
 app.service('Requests', ['$rootScope', Requests]);
 app.factory('Utils', Utils);

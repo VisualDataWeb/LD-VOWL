@@ -2,7 +2,7 @@
   "name": "linked-data-vowl",
   "version": "0.0.1",
   "description": "Extract ontologies from arbitrary SPARQL endpoints and visualize them using VOWL.",
-  "main": "app/index.js",
+  "main": "app/app.js",
   "dependencies": {
     "angular": "^1.4.8",
     "angular-animate": "^1.4.8",
@@ -40,6 +40,7 @@
     "start": "webpack-dev-server --content-base app --inline --hot",
     "test": "test"
   },
-  "author": "Marc Weise",
+  "keywords": ["VOWL"],
+  "author": "Marc Weise <weisemc@studi.informatik.uni-stuttgart.de>",
   "license": "MIT"
 }

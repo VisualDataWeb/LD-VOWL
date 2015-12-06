@@ -7,6 +7,18 @@ module.exports = function () {
    * @type {Array}
    */
   var nodes = [];
+  if (sessionStorage !== undefined) {
+    var sessionNodes = sessionStorage.getItem("nodes");
+
+    if (sessionNodes !== undefined && sessionNodes !== null) {
+      console.log("[Nodes] Use nodes from session storage!");
+      nodes = JSON.parse(sessionNodes);
+    }
+  }
+
+  this.updateSessionStorage = function () {
+    sessionStorage.setItem("nodes", JSON.stringify(nodes));
+  };
 
   /**
    * Add a new node to the graph.
@@ -20,9 +32,13 @@ module.exports = function () {
 
       // does not already exist
       if (newNode.type === 'property' || this.getIndexOf(newNode.uri) === -1) {
+        newNode.index = nodes.length;
         index = nodes.push(newNode) - 1;
       }
     }
+
+    this.updateSessionStorage();
+
     return index;
   };
 

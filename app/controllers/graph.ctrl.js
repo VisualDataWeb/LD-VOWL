@@ -17,6 +17,7 @@ module.exports = function ($scope, $log, ClassExtractor, RelationExtractor, Type
 
   vm.classes = [];
 
+  // TODO avoid $scope, use controllerAs syntax instead
   $scope.selected = {
     uri: 'none',
     name: '',
