@@ -18,9 +18,12 @@ module.exports = function ($interval) {
       var sessionProperties = sessionStorage.getItem("properties");
 
       if (sessionProperties !== undefined && sessionProperties !== null) {
-        console.log("[Properties] Use props from session storage!");
-        self.properties = JSON.parse(sessionProperties);
-        console.log(self.properties);
+        var savedItems = JSON.parse(sessionProperties);
+
+        if (savedItems !== undefined && savedItems.length > 0) {
+          console.log("[Properties] Re-use " + savedItems.length + " properties from session storage!");
+          self.properties = savedItems;
+        }
       }
       self.startSessionStorageUpdate();
     } else {
@@ -32,17 +35,20 @@ module.exports = function ($interval) {
    * Start to update the HTML5 SessionStore at a regular basis.
    */
   self.startSessionStorageUpdate = function () {
+
+    console.log("[Properties] Start Session Store upgrade!");
     if (self.sessionStorageUpdate !== undefined) {
       return;
     }
 
-    self.sessionStorageUpdate = $interval(function(){
+    self.sessionStorageUpdate = $interval(function() {
       if (self.needsUpdate) {
         self.updateSessionStorage();
         self.needsUpdate = false;
       } else {
-        self.unusedRounds += 1;
-        if (self.unusedRounds === 2) {
+        console.log("[Properties] No SessionStorage update needed!");
+        self.unusedRounds++;
+        if (self.unusedRounds >= 2) {
           self.endSessionStorageUpdate();
         }
       }
@@ -54,6 +60,7 @@ module.exports = function ($interval) {
    */
   self.endSessionStorageUpdate = function () {
     if (self.sessionStorageUpdate !== undefined) {
+      console.log("[Properties] End SessionStorage update.");
       $interval.cancel(self.sessionStorageUpdate);
       self.sessionStorageUpdate = undefined;
       self.unusedRounds = 0;
@@ -64,7 +71,7 @@ module.exports = function ($interval) {
    * Function which is triggered to update properties in HTML5 SessionStore.
    */
   self.updateSessionStorage = function () {
-    console.log(self.properties);
+    console.log("[Properties] Update SessionStorage!");
     sessionStorage.setItem("properties", JSON.stringify(self.properties));
   };
 

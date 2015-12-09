@@ -1,15 +1,14 @@
 'use strict';
 
-module.exports = function ($scope, $log, ClassExtractor, RelationExtractor, TypeExtractor, DetailExtractor,
+module.exports = function ($scope, $log, Filters, ClassExtractor, RelationExtractor, TypeExtractor, DetailExtractor,
                            RequestConfig, Requests) {
 
   var vm = this;
 
   vm.numberOfProps = 5;
 
-  // TODO this information should be saved
-  vm.extractTypes = false;
-  vm.includeLoops = false;
+  vm.extractTypes = Filters.getIncludeLiterals();
+  vm.includeLoops = Filters.getIncludeLoops();
 
   vm.endpointURL = RequestConfig.getEndpointURL();
   vm.data = {};
@@ -55,21 +54,31 @@ module.exports = function ($scope, $log, ClassExtractor, RelationExtractor, Type
     vm.numberOfProps += 5;
   };
 
-  vm.loadTypes = function () {
+  vm.toggleLiterals = function () {
+    vm.extractTypes = Filters.toggleLiterals();
     if (vm.extractTypes) {
-      $log.info("[Graph] Send requests for types...");
-      for (var i = 0; i < vm.classes.length; i++) {
-        TypeExtractor.requestReferringTypes(vm.classes[i].class.value);
-      }
+      vm.loadTypes();
+    }
+  };
+
+  vm.loadTypes = function () {
+    $log.info("[Graph] Send requests for types...");
+    for (var i = 0; i < vm.classes.length; i++) {
+      TypeExtractor.requestReferringTypes(vm.classes[i].class.value);
+    }
+  };
+
+  vm.toggleLoops = function () {
+    vm.includeLoopse = Filters.toggleLoops();
+    if (vm.includeLoops) {
+      vm.loadLoops();
     }
   };
 
   vm.loadLoops = function () {
-    if (vm.includeLoops) {
-      for (var i = 0; i < vm.classes.length; i++) {
-        var currentClass = vm.classes[i].class.value;
-        RelationExtractor.requestClassClassRelation(currentClass, currentClass);
-      }
+    for (var i = 0; i < vm.classes.length; i++) {
+      var currentClass = vm.classes[i].class.value;
+      RelationExtractor.requestClassClassRelation(currentClass, currentClass);
     }
   };
 

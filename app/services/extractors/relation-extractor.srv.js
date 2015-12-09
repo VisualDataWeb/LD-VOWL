@@ -47,7 +47,7 @@ class RelationExtractor extends Extractor {
 
     var self = this;
 
-    console.log("[Relations] Search between " + originClassURI + " and " + targetClassURI + "...");
+    //console.log("[Relations] Search between '" + originClassURI + "' and '" + targetClassURI + "'...");
 
     HTTP.get(endpointURL, RCONFIG.forQuery(query))
       .then(function (response) {

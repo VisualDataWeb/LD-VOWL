@@ -50,6 +50,22 @@ module.exports = function () {
   };
 
   /**
+   * Returns the node with the given index or null if this node doesn't exist.
+   *
+   * @param index - the index of the node to be fetched
+   * @returns {*}
+   */
+  this.getByIndex = function (index) {
+    var nodeToReturn = null;
+    if (index !== undefined && typeof index === 'number') {
+      if (nodes[index] !== undefined) {
+        nodeToReturn = nodes[index];
+      }
+    }
+    return nodeToReturn;
+  };
+
+  /**
    * Returns true if there is a node with the given uri, false otherwise.
    *
    * @param uri - the uri of the node to check

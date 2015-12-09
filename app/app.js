@@ -2,7 +2,7 @@
 // var d3Service = require('./services/graph/d3.srv');
 // var d3 = d3Module.factory('d3Service', ['$document', '$q', '$rootScope', '$window', d3Service]);
 
-var app = angular.module('ldVOWLApp', ['ngRoute', 'ngAnimate', 'ui.bootstrap']);
+var app = angular.module('ldVOWLApp', ['ngRoute', 'ngAnimate', 'ui.bootstrap', 'ngCookies']);
 //var app = angular.module('ldVOWLApp', ['ngRoute', 'ngAnimate', 'ui.bootstrap', 'd3Module']);
 
 var nodeLinkGraph = require('./directives/nodelink-graph.drv');
@@ -28,6 +28,7 @@ var Requests = require('./services/model/requests.srv');
 var Types = require('./services/model/types.srv');
 var Properties = require('./services/model/properties.srv');
 var Utils = require('./services/utils.srv');
+var Filters = require('./services/model/extraction-filters.srv');
 
 // TODO move constants somewhere else
 app.constant('PREFIX', {
@@ -113,7 +114,7 @@ app.filter('responseTime', function () {
 
 app.directive('nodeLinkGraph', ['$window', 'Properties', 'Nodes', 'Utils', nodeLinkGraph]);
 
-app.service('RequestConfig', RequestConfig);
+app.service('RequestConfig', ['$cookies', RequestConfig]);
 app.factory('QueryFactory', QueryFactory);
 app.factory('RequestCounter', ['$q', 'Requests', RequestCounter]);
 
@@ -122,6 +123,7 @@ app.service('Properties', ['$interval', Properties]);
 app.service('Types', Types);
 app.service('Requests', ['$rootScope', Requests]);
 app.factory('Utils', Utils);
+app.service('Filters', ['$cookies', Filters]);
 
 app.service('ClassExtractor', ['$http', '$q', 'PREFIX', 'CLASS_BLACKLIST', 'RequestConfig',
   'QueryFactory', 'Nodes', ClassExtractor]);
@@ -130,7 +132,7 @@ app.service('RelationExtractor', ['$http', 'PREFIX', 'PROPERTY_BLACKLIST', 'Quer
 app.service('TypeExtractor', ['$http', 'RequestConfig', 'QueryFactory', 'Nodes', 'RelationExtractor', TypeExtractor]);
 app.service('DetailExtractor', ['$http', 'QueryFactory', 'RequestConfig', 'Nodes', DetailExtractor]);
 
-app.controller('GraphCtrl', ['$scope', '$log',  'ClassExtractor', 'RelationExtractor',
+app.controller('GraphCtrl', ['$scope', '$log', 'Filters',  'ClassExtractor', 'RelationExtractor',
   'TypeExtractor', 'DetailExtractor', 'RequestConfig', 'Requests', GraphCtrl]);
 app.controller('HeaderCtrl', ['$scope', '$location', HeaderCtrl]);
 app.controller('StartCtrl', ['$location', 'Nodes', 'Properties', 'Requests', 'RequestConfig', StartCtrl]);

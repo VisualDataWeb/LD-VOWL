@@ -64,6 +64,22 @@
             </p>
 
             <p>
+              <strong>From instances of:</strong>
+              <a href="{{selected.sourceNode.uri}}">
+                {{selected.sourceNode.name}}
+                <span ng-hide="selected.sourceNode.name.length > 0">{{selected.sourceNode.uri | uriLabel }}</span>
+              </a>
+            </p>
+
+            <p>
+              <strong>To instances of:</strong>
+              <a href="{{selected.targetNode.uri}}">
+                {{selected.targetNode.name}}
+                <span ng-hide="selected.targetNode.name.length > 0">{{selected.targetNode.uri | uriLabel }}</span>
+              </a>
+            </p>
+
+            <p>
               <strong ng-if="selected.props.length <= vm.numberOfProps">
                 Properties ({{selected.props.length}}):
               </strong>
@@ -104,13 +120,13 @@
           <form class="form-horizontal">
             <div class="checkbox">
               <label for="showLiterals">
-                <input id="showLiterals" type="checkbox" ng-model="vm.extractTypes" ng-change="vm.loadTypes()">
+                <input id="showLiterals" type="checkbox" ng-model="vm.extractTypes" ng-change="vm.toggleLiterals()">
                 Show Literals
               </label>
             </div>
             <div class="checkbox">
               <label for="includeLoops">
-                <input id="includeLoops" type="checkbox" ng-model="vm.includeLoops" ng-change="vm.loadLoops()">
+                <input id="includeLoops" type="checkbox" ng-model="vm.includeLoops" ng-change="vm.toggleLoops()">
                 Include loops
               </label>
             </div>

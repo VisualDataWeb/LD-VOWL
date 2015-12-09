@@ -94,6 +94,11 @@ module.exports = function ($window, Properties, Nodes, Utils) {
         if (d.type === 'property') {
           console.log("[Graph] Selected property '" + d.uri + "'.");
           message.item = Properties.getByNodeIndex(d.index);
+
+          // add source and target node information
+          message.item.sourceNode = Nodes.getByIndex(message.item.source);
+          message.item.targetNode = Nodes.getByIndex(message.item.target);
+
           console.log(message);
         } else {
           console.log("[Graph] Selected class '" + d.uri + "'.");

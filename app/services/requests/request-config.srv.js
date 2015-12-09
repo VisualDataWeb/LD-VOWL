@@ -1,56 +1,65 @@
 'use strict';
 
-module.exports = function () {
+module.exports = function ($cookies) {
 
-  var endpointURL = 'http://dbpedia.org/sparql';
+  var cookiePrefix = "ldvowl_";
+  var endpointURL = $cookies.get(cookiePrefix + 'endpoint') || 'http://dbpedia.org/sparql';
   var limit = 10;
   var sparqlTimeout = 30000;
   var debug = 'on';
   var labelLanguage = 'en';
   var format = 'json';
 
-  this.getEndpointURL = function () {
+  var self = this;
+
+  self.init = function () {
+    $cookies.put(cookiePrefix + 'endpoint', endpointURL);
+  };
+
+  self.getEndpointURL = function () {
+    endpointURL = $cookies.get(cookiePrefix + 'endpoint');
     return endpointURL;
   };
 
-  this.setEndpointURL = function (newEndpoint) {
+  self.setEndpointURL = function (newEndpoint) {
     endpointURL = newEndpoint;
+    $cookies.put(cookiePrefix + 'endpoint', newEndpoint);
   };
 
-  this.getLimit = function () {
+  self.getLimit = function () {
     return limit;
   };
 
-  this.setLimit = function (newLimit) {
+  self.setLimit = function (newLimit) {
     limit = (typeof newLimit === 'number') ? newLimit : limit;
   };
 
-  this.getTimout = function () {
+  self.getTimout = function () {
     return sparqlTimeout;
   };
 
-  this.setTimout = function (newTimeout) {
+  self.setTimout = function (newTimeout) {
     if (typeof newTimeout === 'number' && newTimeout > 0) {
       sparqlTimeout = newTimeout;
     }
   };
 
-  this.getDebug = function () {
+  self.getDebug = function () {
     return debug;
   };
 
-  this.getLabelLanguage = function () {
+  self.getLabelLanguage = function () {
     return labelLanguage;
   };
 
-  this.setLabelLanguage = function (newLang) {
+  self.setLabelLanguage = function (newLang) {
     labelLanguage = newLang;
   };
 
   /**
    * Returns a configuration object for the given SPARQL query
    */
-  this.forQuery = function (query, short) {
+  self.forQuery = function (query, short) {
     var config = {};
     if (short) {
       config.params = {
@@ -73,5 +82,7 @@ module.exports = function () {
 
     return config;
   };
+
+  self.init();
 
 };
