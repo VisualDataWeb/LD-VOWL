@@ -39,18 +39,6 @@
               {{selected.value | number}}
             </p>
 
-            <p>
-              <strong>Child Classes:</strong> None
-            </p>
-
-            <p>
-              <strong>Equivalent Classes:</strong> None
-            </p>
-
-            <p>
-              <strong>Super Classes:</strong> None
-            </p>
-
             <p ng-hide="selected.comment === undefined">
               <strong>Comment:</strong>
               <span>{{ selected.comment }}</span>
@@ -159,10 +147,6 @@
             <span ng-hide="failedRequests === 0">{{failedRequests | number}}</span>
             <span ng-show="failedRequests === 0">None</span>
           </p>
-
-          <div class="pull-right">
-            <button ng-show="pendingRequests === 0" type="button" class="btn btn-default">Load More Classes</button>
-          </div>
 
         </uib-accordion-group><!-- end of endpoint group -->
 
