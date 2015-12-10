@@ -64,7 +64,9 @@ module.exports = function ($scope, $log, Filters, ClassExtractor, RelationExtrac
   vm.loadTypes = function () {
     $log.info("[Graph] Send requests for types...");
     for (var i = 0; i < vm.classes.length; i++) {
-      TypeExtractor.requestReferringTypes(vm.classes[i].class.value);
+      if (vm.classes[i].class !== undefined) {
+        TypeExtractor.requestReferringTypes(vm.classes[i].class.value);
+      }
     }
   };
 
@@ -77,8 +79,10 @@ module.exports = function ($scope, $log, Filters, ClassExtractor, RelationExtrac
 
   vm.loadLoops = function () {
     for (var i = 0; i < vm.classes.length; i++) {
-      var currentClass = vm.classes[i].class.value;
-      RelationExtractor.requestClassClassRelation(currentClass, currentClass);
+      var currentClass = vm.classes[i];
+      if (currentClass.class !== undefined && currentClass.class.hasOwnProperty("value")) {
+        RelationExtractor.requestClassClassRelation(currentClass.class.value, currentClass);
+      }
     }
   };
 

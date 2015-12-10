@@ -3,13 +3,13 @@
   <form class="form-horizontal well">
 
     <div class="form-group">
-      <label class="control-label col-sm-3" for="lang">Languages</label>
+      <label class="control-label col-sm-2" for="lang">Languages</label>
       <div class="col-sm-4">
         <input type="text" class="form-control" id="lang" ng-model="vm.langPreferences">
       </div>
 
       <label for="limit" class="col-sm-2 control-label">Limit</label>
-      <div class="col-sm-3">
+      <div class="col-sm-4">
         <input class="form-control" id="limit" type="number" ng-model="vm.currentLimit" />
       </div>
     </div>
@@ -19,7 +19,7 @@
     <form class="form-horizontal well">
 
     <div class="form-group">
-      <label class="control-label col-sm-2">Classes</label>
+      <label for="classBlacklist" class="control-label col-sm-2">Classes</label>
       <div class="col-sm-10">
         <textarea class="form-control" id="classBlacklist" rows="10" ng-model="vm.classBlacklistInput">
         </textarea>
