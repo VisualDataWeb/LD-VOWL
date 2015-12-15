@@ -6,6 +6,7 @@ module.exports = function () {
   require('angular-animate');
   require('angular-cookies');
   require('jquery');
+  require('jquery-ui');
   require('bootstrap-webpack');
   require('angular-ui-bootstrap');
   require('d3');

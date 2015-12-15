@@ -16,6 +16,8 @@ module.exports = function ($scope, $log, Filters, ClassExtractor, RelationExtrac
 
   vm.classes = [];
 
+  $scope.edgeLength = 60;
+
   // TODO avoid $scope, use controllerAs syntax instead
   $scope.selected = {
     uri: 'none',

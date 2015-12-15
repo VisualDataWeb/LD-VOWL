@@ -122,6 +122,13 @@
 
         </uib-accordion-group>
 
+        <uib-accordion-group heading="Graph">
+          <p>
+            <label for="edgeLength">Edge Length: {{edgeLength}}</label>
+            <div id="edgeLength"slider class="cdbl-slider" model="edgeLength" min="10" max="100"></div>
+          </p>
+        </uib-accordion-group>
+
         <uib-accordion-group heading="Endpoint" is-open="true">
           <p>
             <strong>URL:</strong>

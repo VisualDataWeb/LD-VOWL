@@ -2,11 +2,11 @@
   background-color: #F8F8F8;
 }
 
-#property {
+marker.arrow {
   fill: #000;
 }
 
-#hover {
+marker.hovered {
   fill: #f00;
 }
 
@@ -18,6 +18,23 @@ circle {
 
 .node circle.ring, .node rect.ring {
   fill: #fff;
+  stroke: #f00;
+  stroke-width: 3px;
+}
+
+.node.active circle, .node.active rect {
+  stroke-width: 3px;
+}
+
+.node.active circle {
+  stroke: #f00;
+}
+
+.node.active rect {
+  stroke: #f90;
+}
+
+.node.activeIndex rect {
   stroke: #f00;
   stroke-width: 3px;
 }

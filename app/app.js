@@ -6,6 +6,7 @@ var app = angular.module('ldVOWLApp', ['ngRoute', 'ngAnimate', 'ui.bootstrap', '
 //var app = angular.module('ldVOWLApp', ['ngRoute', 'ngAnimate', 'ui.bootstrap', 'd3Module']);
 
 var nodeLinkGraph = require('./directives/nodelink-graph.drv');
+var Slider = require('./directives/slider.drv');
 
 // Controllers
 var GraphCtrl = require('./controllers/graph.ctrl');
@@ -113,6 +114,7 @@ app.filter('responseTime', function () {
 });
 
 app.directive('nodeLinkGraph', ['$window', 'Properties', 'Nodes', 'Utils', nodeLinkGraph]);
+app.directive('slider', Slider);
 
 app.service('RequestConfig', ['$cookies', RequestConfig]);
 app.factory('QueryFactory', QueryFactory);

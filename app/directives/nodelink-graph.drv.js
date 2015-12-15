@@ -12,7 +12,7 @@ module.exports = function ($window, Properties, Nodes, Utils) {
     link: function (scope, element, attrs) {
       var margin = parseInt(attrs.margin) || 20;
       var height = parseInt(attrs.height) || 300;
-      var linkDistance = parseInt(attrs.linkDistance) || 90;
+      var linkDistance = parseInt(attrs.linkDistance) || 60;
       var defaultRadius = 20;
 
       var defaultPropHeight = 20;
@@ -59,6 +59,23 @@ module.exports = function ($window, Properties, Nodes, Utils) {
         return name;
       };
 
+      scope.getArrowHeads = function () {
+        var arrowHeads = [];
+
+        for (var lwidth = 1; lwidth <= 5; lwidth++) {
+          arrowHeads.push({id: 'arrow' + lwidth, class: 'arrow', size: 9-lwidth});
+          arrowHeads.push({id: 'hoveredArrow' + lwidth, class: 'hovered', size: 9-lwidth});
+        }
+
+        return arrowHeads;
+      };
+
+      scope.getMarkerEnd = function (hovered, value) {
+        var type = (hovered) ? "hoveredArrow" : "arrow";
+        var size = parseInt(Math.min(Math.log2(value + 2), 5));
+        return "url(#" + type + size + ")"
+      };
+
       scope.calcRadius = function (element) {
         var scale = d3.scale.sqrt();
         scale.domain([0, scope.maxValue]);
@@ -87,6 +104,11 @@ module.exports = function ($window, Properties, Nodes, Utils) {
           return;
         }
 
+        if (d.type === 'property') {
+          // uri may occur multiple times
+          scope.data.selectedIndex = d.index;
+        }
+
         scope.data.selected = d.uri;
 
         var message = {};
@@ -108,6 +130,10 @@ module.exports = function ($window, Properties, Nodes, Utils) {
         return scope.onClick(message);
       };
 
+      scope.redraw = function () {
+        svg.attr('transform', 'translate(' + d3.event.translate + ')' + 'scale(' + d3.event.scale + ')');
+      };
+
       scope.render = function (data) {
 
         //console.log(data);
@@ -122,6 +148,13 @@ module.exports = function ($window, Properties, Nodes, Utils) {
         if (!data) {
           return;
         }
+
+        var zoom = d3.behavior.zoom()
+                    .duration(150)
+                    .scaleExtent([0.1,2.0])
+                    .on("zoom", scope.redraw)
+        svg.call(zoom)
+            .on("mousedown.zoom", null); // deactivate panning
 
         scope.maxValue = 0;
 
@@ -177,18 +210,20 @@ module.exports = function ($window, Properties, Nodes, Utils) {
         var linkContainer = svg.append('g')
                               .attr('class', 'linkContainer');
 
+        // create the arrow heads
         linkContainer.append("defs").selectAll("marker")
-            .data(["property", "hover"])
+            .data(scope.getArrowHeads())
           .enter().append("marker")
-            .attr("id", function(d) { return d; })
-            .attr("viewBox", "0 -5 10 10")
-            .attr("refX", 10)
+            .attr("id", function(d) { return d.id; })
+            .attr("class", function (d) { return d.class; })
+            .attr("viewBox", function (d) {return "0 " + (d.size * (-1)) + " " + (d.size * 2) + " " + (d.size * 2); })
+            .attr("refX", function(d) { return d.size * 2; })
             .attr("refY", 0)
-            .attr("markerWidth", 5)
-            .attr("markerHeight", 5)
+            .attr("markerWidth", function (d) { return d.size; })
+            .attr("markerHeight", function (d) { return d.size; })
             .attr("orient", "auto")
           .append("path")
-            .attr("d", "M0,-5L10,0L0,5");
+            .attr("d", function (d) { return "M0," + (d.size * -1) + "L" + (d.size * 2) + ",0L0," + d.size; });
 
         var link = linkContainer.selectAll(".link")
             .data(bilinks)
@@ -197,15 +232,15 @@ module.exports = function ($window, Properties, Nodes, Utils) {
             .attr("class", "link")
             .append("path")
             .attr("class", "link-line")
-            .attr("marker-end", function() { return "url(#property)"; })
+            .attr("marker-end", function(d) { return scope.getMarkerEnd(false, d.value); })
             .style("stroke-width", function (d) {
                 return Math.min(Math.log2(d.value + 2), 5);
             })
             .on('mouseover', function () {
-              d3.select(this).attr("marker-end", function () { return "url(#hover)"; });
+              d3.select(this).attr("marker-end", function (d) { return scope.getMarkerEnd(true, d.value); });
             })
             .on("mouseout", function () {
-              d3.select(this).attr("marker-end", function () { return "url(#property)"; });
+              d3.select(this).attr("marker-end", function (d) { return scope.getMarkerEnd(false, d.value); });
             });
 
         var typesContainer = svg.append('g')
@@ -228,13 +263,13 @@ module.exports = function ($window, Properties, Nodes, Utils) {
                     .classed('class', function (d) {return d.type === 'class';})
                     .classed('property', function (d) {return d.type === 'property';})
                     .classed('active', function(d) {return d.uri === data.selected;})
+                    .classed('activeIndex', function (d) {return d.index === data.selectedIndex; })
                     .call(scope.force.drag);
 
-        // for the classes
-        nodeContainer.selectAll('.active.class')
-          .append('circle')
-            .classed('ring', true)
-            .attr('r', function (d) { return d.radius + ringWidth + "px"; });
+        var cardinalSpline = d3.svg.line()
+                              .x(function (d) { return d.x; })
+                              .y(function(d) { return d.y; })
+                              .interpolate("cardinal");
 
         nodeContainer.selectAll('.class')
           .append('circle')
@@ -243,22 +278,16 @@ module.exports = function ($window, Properties, Nodes, Utils) {
           .append('title')
             .text(function(d) {return d.uri;});
 
-        // for the properties
-        nodeContainer.selectAll('.active.property')
-          .append('rect')
-            .attr('x', scope.calcPropHighlightOffset)
-            .attr('y', (-1 * (defaultPropHeight / 2)) - 5)
-            .attr('width', scope.calcPropHighlightBoxWidth)
-            .attr('height', (defaultPropHeight + 10))
-            .classed('ring', true);
-
         nodeContainer.selectAll('.property')
           .append('rect')
             .attr('x', scope.calcPropBoxOffset)
             .attr('y', (-1 * (defaultPropHeight / 2)))
             .attr('width', scope.calcPropBoxWidth)
             .attr('height', defaultPropHeight)
-            .on('click', scope.updateActive);
+            .on('click', scope.updateActive)
+            .on('mouseover', function (d) {
+              //console.log(d);
+            });
 
         // for classes and properties
         node.append('text')
@@ -293,28 +322,21 @@ module.exports = function ($window, Properties, Nodes, Utils) {
             var totalLength = Math.sqrt((deltaX * deltaX) + (deltaY * deltaY));
 
             var radius = d.target.radius;
-            if (data.selected === d.target.uri) {
-              radius += ringWidth;
-            }
 
             var offsetX = (deltaX * (radius)) / totalLength;
             var offsetY = (deltaY * (radius)) / totalLength;
 
-            return "M" + d.source.x + "," + d.source.y +
-                  "L" + d.intermediate.x + "," + d.intermediate.y +
-                  "L" + (d.target.x - offsetX) + "," + (d.target.y - offsetY);
+            var lineData = [];
+            lineData.push({x: d.source.x, y: d.source.y});
+            lineData.push({x: d.intermediate.x, y: d.intermediate.y});
+            lineData.push({x: (d.target.x - offsetX), y: (d.target.y - offsetY)});
+
+            return cardinalSpline(lineData);
           });
 
           node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
 
           type.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
-
-          // propertyNode.attr("x", function(d) {
-          //     return ((d.source.x + d.target.x)/2);
-          // })
-          // .attr("y", function(d) {
-          //     return ((d.source.y + d.target.y)/2);
-          // });
         });
       };
     }
