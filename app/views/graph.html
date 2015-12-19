@@ -2,12 +2,14 @@
   <div class="row">
 
     <!-- Graph view -->
+
     <div class="col-sm-9 col-md-10 main">
-      <div id="graph" node-link-graph margin="10" height="950" on-click="onClick(item)">
+      <div id="graph" node-link-graph margin="10" height="840" on-click="onClick(item)">
       </div>
     </div>
 
     <!-- Sidebar for details -->
+
     <div class="col-sm-3 col-md-2">
       <uib-accordion close-others="false">
 
@@ -108,8 +110,8 @@
           <form class="form-horizontal">
             <div class="checkbox">
               <label for="showLiterals">
-                <input id="showLiterals" type="checkbox" ng-model="vm.extractTypes" ng-change="vm.toggleLiterals()">
-                Show Literals
+                <input id="showLiterals" type="checkbox" ng-model="vm.extractTypes" ng-change="vm.toggleTypes()">
+                Show Types
               </label>
             </div>
             <div class="checkbox">

@@ -31,7 +31,7 @@ module.exports = function () {
       index = this.getIndexOf(newNode.uri);
 
       // does not already exist
-      if (newNode.type === 'property' || this.getIndexOf(newNode.uri) === -1) {
+      if (newNode.type === 'property' || newNode.type === 'datatypeProperty' || newNode.type === 'type' || this.getIndexOf(newNode.uri) === -1) {
         newNode.index = nodes.length;
         index = nodes.push(newNode) - 1;
       }
@@ -94,6 +94,40 @@ module.exports = function () {
   };
 
   /**
+   * Returns the number of instances of the node with the given index.
+   *
+   * @param index
+   * @returns {number}
+   */
+  this.getInstanceCountByIndex = function (index) {
+    var instanceCount = 0;
+
+    if (nodes[index] !== undefined && nodes[index].hasOwnProperty('value')) {
+      instanceCount = nodes[index].value;
+    }
+
+    return instanceCount;
+  };
+
+  /**
+   * Returns an array with all class URIs.
+   *
+   * @returns {Array}
+   */
+  this.getClassURIs = function () {
+    var classNames = [];
+
+    for (var i = 0; i < nodes.length; i++) {
+      var currentNode = nodes[i];
+      if (currentNode.type === 'class') {
+        classNames.push(currentNode.uri);
+      }
+    }
+
+    return classNames;
+  };
+
+  /**
    * Insert a new attribute to an existing node.
    *
    * @param uri - the uri of the node to augment
@@ -106,6 +140,24 @@ module.exports = function () {
         nodes[i][key] = value;
       }
     }
+  };
+
+  this.setTypesLoaded = function (classURI) {
+    for (var i=0; i < nodes.length; i++) {
+      if (nodes[i].type === 'class' && nodes[i].uri === classURI) {
+        nodes[i].typesLoaded = true;
+      }
+    }
+  };
+
+  this.getTypesLoaded = function (classURI) {
+    for (var i=0; i <nodes.length; i++) {
+      if (nodes[i].uri === classURI && nodes[i].typesLoaded === true) {
+        return true;
+      }
+    }
+
+    return false;
   };
 
   /**

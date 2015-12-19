@@ -32,7 +32,7 @@ class ClassExtractor extends Extractor {
   requestClasses() {
     var deferred = this.$q.defer();
 
-    // do not request further classes
+    //do not request further classes
     if (!this.nodes.isEmpty()) {
       deferred.resolve([]);
     }

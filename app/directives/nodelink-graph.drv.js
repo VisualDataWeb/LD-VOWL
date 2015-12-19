@@ -21,6 +21,10 @@ module.exports = function ($window, Properties, Nodes, Utils) {
                   .append('svg')
                   .style('width', '100%');
 
+      var lastUpdate = null;
+
+      var minUpdateInterval = 1500;
+
       // Browser onresize event
       $window.onresize = function () {
         scope.$apply();
@@ -39,9 +43,23 @@ module.exports = function ($window, Properties, Nodes, Utils) {
         scope.render(scope.data);
       });
 
+      /**
+       * Watch for data changes, and consider time difference since last update, otherwise there may be too much
+       * refreshes if responses are cached.
+       */
       scope.$watch('data', function(newVals) {
-        console.log('[Graph] Data changed, re-render graph!');
-        return scope.render(newVals);
+        if (lastUpdate === null) {
+          // first update, store current time and render
+          lastUpdate = new Date();
+          return scope.render(newVals);
+        } else {
+          // another update, check how much time has passed since last update
+          var currentTime = new Date();
+          if ((currentTime - lastUpdate) > minUpdateInterval) {
+            lastUpdate = currentTime;
+            return scope.render(newVals);
+          }
+        }
       }, true);
 
       scope.getName = function (obj, values) {
@@ -73,7 +91,7 @@ module.exports = function ($window, Properties, Nodes, Utils) {
       scope.getMarkerEnd = function (hovered, value) {
         var type = (hovered) ? "hoveredArrow" : "arrow";
         var size = parseInt(Math.min(Math.log2(value + 2), 5));
-        return "url(#" + type + size + ")"
+        return "url(#" + type + size + ")";
       };
 
       scope.calcRadius = function (element) {
@@ -104,7 +122,7 @@ module.exports = function ($window, Properties, Nodes, Utils) {
           return;
         }
 
-        if (d.type === 'property') {
+        if (d.type === 'property' || d.type === 'datatypeProperty') {
           // uri may occur multiple times
           scope.data.selectedIndex = d.index;
         }
@@ -113,7 +131,7 @@ module.exports = function ($window, Properties, Nodes, Utils) {
 
         var message = {};
 
-        if (d.type === 'property') {
+        if (d.type === 'property' || d.type === 'datatypeProperty') {
           console.log("[Graph] Selected property '" + d.uri + "'.");
           message.item = Properties.getByNodeIndex(d.index);
 
@@ -152,7 +170,7 @@ module.exports = function ($window, Properties, Nodes, Utils) {
         var zoom = d3.behavior.zoom()
                     .duration(150)
                     .scaleExtent([0.1,2.0])
-                    .on("zoom", scope.redraw)
+                    .on("zoom", scope.redraw);
         svg.call(zoom)
             .on("mousedown.zoom", null); // deactivate panning
 
@@ -175,7 +193,7 @@ module.exports = function ($window, Properties, Nodes, Utils) {
 
           if (s !== undefined && i !== undefined && t !== undefined) {
             // get direct class links
-            if (s.type === 'class' && t.type === 'class') {
+            if (s.type !== 'property' && t.type !== 'property') {
 
               i.value = link.value;
 
@@ -243,16 +261,6 @@ module.exports = function ($window, Properties, Nodes, Utils) {
               d3.select(this).attr("marker-end", function (d) { return scope.getMarkerEnd(false, d.value); });
             });
 
-        var typesContainer = svg.append('g')
-                              .attr('class', 'typeContainer');
-
-        var type = typesContainer.selectAll('.type')
-                      .data(nodes)
-                    .enter().append('g')
-                    .filter(function (d) { return d.type === 'type'; })
-                      .attr('class', 'type')
-                    .call(scope.force.drag);
-
         var nodeContainer = svg.append('g')
                               .attr('class', 'nodeContainer');
 
@@ -260,9 +268,11 @@ module.exports = function ($window, Properties, Nodes, Utils) {
                       .data(nodes)
                     .enter().append('g')
                     .classed('node', true)
-                    .classed('class', function (d) {return d.type === 'class';})
-                    .classed('property', function (d) {return d.type === 'property';})
-                    .classed('active', function(d) {return d.uri === data.selected;})
+                    .classed('class', function (d) { return d.type === 'class'; })
+                    .classed('property', function (d) { return d.type === 'property'; })
+                    .classed('datatypeProperty', function (d) { return d.type === 'datatypeProperty'; })
+                    .classed('type', function (d) { return d.type === 'type'; })
+                    .classed('active', function(d) { return d.uri === data.selected; })
                     .classed('activeIndex', function (d) {return d.index === data.selectedIndex; })
                     .call(scope.force.drag);
 
@@ -284,32 +294,31 @@ module.exports = function ($window, Properties, Nodes, Utils) {
             .attr('y', (-1 * (defaultPropHeight / 2)))
             .attr('width', scope.calcPropBoxWidth)
             .attr('height', defaultPropHeight)
-            .on('click', scope.updateActive)
-            .on('mouseover', function (d) {
-              //console.log(d);
-            });
+            .on('click', scope.updateActive);
 
-        // for classes and properties
+        nodeContainer.selectAll('.datatypeProperty')
+          .append('rect')
+            .attr('x', scope.calcPropBoxOffset)
+            .attr('y', (-1 * (defaultPropHeight / 2)))
+            .attr('width', scope.calcPropBoxWidth)
+            .attr('height', defaultPropHeight)
+            .on('click', scope.updateActive);
+
+        nodeContainer.selectAll('.type')
+          .append('rect')
+            .attr('x', '-30')
+            .attr('y', '-10')
+            .attr('width', '60')
+            .attr('height', '20')
+            .style('fill', '#FC3');
+
+        // for classes properties and types
         node.append('text')
               .attr('class', 'text')
               .attr('dy', '.35em')
               .attr('text-anchor', 'middle')
               .text(function(d) {
                 return scope.getName(d, (d.type === 'property'));
-              });
-
-        type.append('rect')
-              .attr('x', '-30')
-              .attr('y', '-10')
-              .attr('width', '60')
-              .attr('height', '20')
-              .style('fill', '#FC3');
-
-        type.append('text')
-              .attr('class', 'text')
-              .attr('text-anchor', 'middle')
-              .text(function (d) {
-                return scope.getName(d, false);
               });
 
         scope.force.on('tick', function() {
@@ -335,8 +344,6 @@ module.exports = function ($window, Properties, Nodes, Utils) {
           });
 
           node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
-
-          type.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
         });
       };
     }

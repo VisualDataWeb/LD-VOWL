@@ -39,12 +39,19 @@ circle {
   stroke-width: 3px;
 }
 
-.node circle, .property rect {
-  fill: #acf;
+.node circle, .property rect, .datatypeProperty rect {
   cursor: pointer;
 }
 
-.node circle:hover, .property rect:hover {
+.node circle, .property rect {
+  fill: #acf;
+}
+
+.datatypeProperty rect {
+  fill: #9c6;
+}
+
+.node circle:hover, .property rect:hover, .datatypeProperty rect:hover {
   fill: #f00;
 }
 

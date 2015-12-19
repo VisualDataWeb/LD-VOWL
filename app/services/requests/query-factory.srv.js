@@ -276,6 +276,16 @@ module.exports = function () {
         return query;
       },
 
+      getNumberOfCommonInstancesQuery: function (classURI1, classURI2) {
+        var query = prefixes() +
+          'SELECT (count(?commonInstance) AS ?commonInstanceCount)' +
+          'WHERE { ' +
+            '?commonInstance a <' + classURI1 + '>. ' +
+            '?commonInstance a <' + classURI2 + '>. ' +
+          '}';
+        return query;
+      },
+
       // DETAILS QUERIES
 
       getCommentQuery: function (uri) {

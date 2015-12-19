@@ -40,8 +40,8 @@ class RelationExtractor extends Extractor {
    * @param targetClassURI - the uri of the class to go to
    */
   requestClassClassRelation(originClassURI, targetClassURI, limit, offset) {
-    var offset = offset || 0;
-    var limit = limit || 10;
+    offset = offset || 0;
+    limit = limit || 10;
     var query = QFACTORY.getClassClassRelationQuery(originClassURI, targetClassURI, limit, offset);
     var endpointURL = RCONFIG.getEndpointURL();
 
@@ -147,7 +147,7 @@ class RelationExtractor extends Extractor {
       });
   }
 
-  requestClassPropertyRelation(classURI, typeURI) {
+  requestClassTypeRelation(classURI, typeURI, targetIndex) {
     var query = QFACTORY.getClassTypeRelationQuery(classURI, typeURI);
     var endpointURL = RCONFIG.getEndpointURL();
 
@@ -161,11 +161,29 @@ class RelationExtractor extends Extractor {
           console.log("[Relations] Found '" + bindings.length + "' between " + classURI + "' and '" + typeURI + "'.");
 
           for (var i = 0; i < bindings.length; i++) {
-            if (bindings[i].prop.value !== undefined && bindings[i].prop.Name !== '') {
-              var sourceIndex = NODES.getIndexOf(classURI);
-              var targetIndex = NODES.getIndexOf(typeURI);
-              if (sourceIndex !== -1 && targetIndex !== -1) {
-                PROPS.addProperty(sourceIndex, targetIndex, bindings[i].prop.value);
+            if (bindings[i].prop.value !== undefined) {
+              var originIndex = NODES.getIndexOf(classURI);
+              //var targetIndex = NODES.getIndexOf(typeURI);
+
+              var uriInBetween = PROPS.existsBetween(originIndex, targetIndex);
+
+              var intermediateIndex = -1;
+              if (uriInBetween === false) {
+                // add property node
+                var propNode = {};
+                propNode.uri = bindings[i].prop.value;
+                propNode.type = 'datatypeProperty';
+                propNode.value = 1;
+                intermediateIndex = NODES.addNode(propNode);
+              } else {
+                intermediateIndex = PROPS.getIntermediateIndex(originIndex, targetIndex);
+                NODES.incValueOfIndex(intermediateIndex);
+              }
+
+              if (originIndex !== -1 && targetIndex !== -1 && intermediateIndex !== -1) {
+                PROPS.addProperty(originIndex, intermediateIndex, targetIndex, bindings[i].prop.value);
+              } else {
+                console.error("[Relations] Error adding relation between '" + classURI + "' and '" + typeURI + "'.");
               }
             }
           }
@@ -174,8 +192,48 @@ class RelationExtractor extends Extractor {
       }, function (err) {
         console.error(err);
       });
-  }
+  } // end of requestClassPropertyRelation()
 
+  /**
+   * Request whether given classes are equal by having the same instances.
+   *
+   * @param classURI1 - the uri of the first class to check for equality
+   * @param classURI2 - the uri of the second class to check for equality
+   */
+  requestClassEquality(classURI1, classURI2) {
+    var query = QFACTORY.getNumberOfCommonInstancesQuery(classURI1, classURI2);
+    var endpointURL = RCONFIG.getEndpointURL();
+
+    var index1 = NODES.getIndexOf(classURI1);
+    var index2 = NODES.getIndexOf(classURI2);
+
+    // TODO get counts from
+    var count1 = NODES.getInstanceCountByIndex(index1);
+    var count2 = NODES.getInstanceCountByIndex(index2);
+
+    if (Math.abs(count1 - count2) < count1 * 0.1) {
+      console.log("[Relations] Query for number of common Instances of '" + classURI1 + "' and '" + classURI2 + "'...");
+
+      HTTP.get(endpointURL, RCONFIG.forQuery(query))
+        .then(function (response) {
+
+          var bindings = response.data.results.bindings;
+
+          if (bindings !== undefined && bindings.length > 0) {
+
+            var commonCount = bindings[0].commonInstanceCount.value;
+
+            if (commonCount !== undefined) {
+              console.log("[Relations] Classes '" + classURI1 + "' and '" + classURI2 + "' have " + commonCount +
+                " common instances!");
+              // TODO check whether numbers are the same
+            }
+          }
+        }, function (err) {
+          console.error(err);
+        });
+    }
+  } // end of requestClassEquality()
 } // end of class RelationExtractor
 
 module.exports = RelationExtractor;

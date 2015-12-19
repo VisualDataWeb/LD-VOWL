@@ -131,7 +131,8 @@ app.service('ClassExtractor', ['$http', '$q', 'PREFIX', 'CLASS_BLACKLIST', 'Requ
   'QueryFactory', 'Nodes', ClassExtractor]);
 app.service('RelationExtractor', ['$http', 'PREFIX', 'PROPERTY_BLACKLIST', 'QueryFactory', 'RequestConfig',
   'Nodes', 'Properties', RelationExtractor]);
-app.service('TypeExtractor', ['$http', 'RequestConfig', 'QueryFactory', 'Nodes', 'RelationExtractor', TypeExtractor]);
+app.service('TypeExtractor', ['$http', 'RequestConfig', 'QueryFactory', 'Nodes', 'Properties', 'RelationExtractor',
+  TypeExtractor]);
 app.service('DetailExtractor', ['$http', 'QueryFactory', 'RequestConfig', 'Nodes', DetailExtractor]);
 
 app.controller('GraphCtrl', ['$scope', '$log', 'Filters',  'ClassExtractor', 'RelationExtractor',

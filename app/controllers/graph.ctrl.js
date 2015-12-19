@@ -56,19 +56,10 @@ module.exports = function ($scope, $log, Filters, ClassExtractor, RelationExtrac
     vm.numberOfProps += 5;
   };
 
-  vm.toggleLiterals = function () {
+  vm.toggleTypes = function () {
     vm.extractTypes = Filters.toggleLiterals();
     if (vm.extractTypes) {
       vm.loadTypes();
-    }
-  };
-
-  vm.loadTypes = function () {
-    $log.info("[Graph] Send requests for types...");
-    for (var i = 0; i < vm.classes.length; i++) {
-      if (vm.classes[i].class !== undefined) {
-        TypeExtractor.requestReferringTypes(vm.classes[i].class.value);
-      }
     }
   };
 
@@ -79,6 +70,18 @@ module.exports = function ($scope, $log, Filters, ClassExtractor, RelationExtrac
     }
   };
 
+  /**
+   * Load referring types for each class.
+   */
+  vm.loadTypes = function () {
+    for (var i = 0; i < vm.classes.length; i++) {
+      TypeExtractor.requestReferringTypes(vm.classes[i]);
+    }
+  };
+
+  /**
+   * Load loop relations, this means class-class relation from one class to itself.
+   */
   vm.loadLoops = function () {
     for (var i = 0; i < vm.classes.length; i++) {
       var currentClass = vm.classes[i];
@@ -88,22 +91,38 @@ module.exports = function ($scope, $log, Filters, ClassExtractor, RelationExtrac
     }
   };
 
+  /**
+   * Start loading data requesting classes. For each class request referring types and search class-class relations.
+   */
   vm.startLoading = function () {
-    ClassExtractor.requestClasses().then(function (classes) {
+    ClassExtractor.requestClasses().then(function (newClasses) {
 
-      vm.classes = classes;
+      if (newClasses.length === 0) {
+        console.log("[Graph] No new classes!");
+      } else {
+        // merge existing and new classes
+        for (var i = 0; i < newClasses.length; i++) {
+          vm.classes.push(newClasses[i]);
+        }
+      }
 
-      vm.loadTypes();
+      // optionally extract types referring to instances of the classes
+      if (vm.extractTypes) {
+        console.log("[Graph] Send requests for types...");
+        vm.loadTypes();
+      }
 
       console.log("[Graph] Send requests for relations.");
 
-      // search for relations between classes
-      for (var end = 0; end < classes.length; end++) {
-        for (var start = 0; start < classes.length; start++) {
+      // for each pair of classes search relation and check equality
+      for (var end = 0; end < vm.classes.length; end++) {
+        for (var start = 0; start < vm.classes.length; start++) {
           if (vm.includeLoops || start !== end) {
-            var origin = classes[start];
-            var target = classes[end];
+            var origin = vm.classes[start];
+            var target = vm.classes[end];
+
             RelationExtractor.requestClassClassRelation(origin, target, 10, 0);
+            RelationExtractor.requestClassEquality(origin, target);
           }
         }
       }

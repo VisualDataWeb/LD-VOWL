@@ -1,12 +1,20 @@
 'use strict';
 
-module.exports = function ($http, RequestConfig, QueryFactory, Nodes, RelationExtractor) {
+module.exports = function ($http, RequestConfig, QueryFactory, Nodes, Properties, RelationExtractor) {
 
   var that = this;
 
   that.requestReferringTypes = function (classURI) {
     var query = QueryFactory.getInstanceReferringTypesQuery(classURI, 5);
     var endpointURL = RequestConfig.getEndpointURL();
+
+    // avoid loading types multiple times
+    if (Nodes.getTypesLoaded()) {
+      console.log("[Referring Types] Types for '" + classURI + "' are already loaded!");
+      return;
+    }
+
+    console.log("[Referring Types] Send requests for types referring to instances of '" + classURI + "...");
 
     $http.get(endpointURL, RequestConfig.forQuery(query))
       .then(function (response) {
@@ -17,14 +25,17 @@ module.exports = function ($http, RequestConfig, QueryFactory, Nodes, RelationEx
 
           console.log("[Referring Types] Found " + bindings.length + " for '" + classURI + "'.");
 
-          for (var i = 0; i < bindings.length; i++) {
-            if (bindings[i].valType !== undefined && bindings[i].valType.hasOwnProperty('value')) {
-              var newNode = {};
-              newNode.uri = bindings[i].valType.value;
-              newNode.type = 'type';
-              Nodes.addNode(newNode);
+          Nodes.setTypesLoaded(classURI);
 
-              RelationExtractor.requestClassPropertyRelation(classURI, bindings[i].valType.value);
+          for (var j = 0; j < bindings.length; j++) {
+            if (bindings[j].valType !== undefined && bindings[j].valType.hasOwnProperty('value')) {
+              var newNode = {};
+              newNode.uri = bindings[j].valType.value;
+              newNode.type = 'type';
+              newNode.value = 1;
+              var typeIndex = Nodes.addNode(newNode);
+
+              RelationExtractor.requestClassTypeRelation(classURI, bindings[j].valType.value, typeIndex);
             }
           }
 
