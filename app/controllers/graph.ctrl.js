@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function ($scope, $log, Filters, ClassExtractor, RelationExtractor, TypeExtractor, DetailExtractor,
+module.exports = function ($scope, $q, $log, Filters, ClassExtractor, RelationExtractor, TypeExtractor, DetailExtractor,
                            RequestConfig, Requests) {
 
   var vm = this;
@@ -71,15 +71,6 @@ module.exports = function ($scope, $log, Filters, ClassExtractor, RelationExtrac
   };
 
   /**
-   * Load referring types for each class.
-   */
-  vm.loadTypes = function () {
-    for (var i = 0; i < vm.classes.length; i++) {
-      TypeExtractor.requestReferringTypes(vm.classes[i]);
-    }
-  };
-
-  /**
    * Load loop relations, this means class-class relation from one class to itself.
    */
   vm.loadLoops = function () {
@@ -97,36 +88,71 @@ module.exports = function ($scope, $log, Filters, ClassExtractor, RelationExtrac
   vm.startLoading = function () {
     ClassExtractor.requestClasses().then(function (newClasses) {
 
+      // merge existing and new classes
       if (newClasses.length === 0) {
         console.log("[Graph] No new classes!");
       } else {
-        // merge existing and new classes
         for (var i = 0; i < newClasses.length; i++) {
           vm.classes.push(newClasses[i]);
         }
       }
 
-      // optionally extract types referring to instances of the classes
-      if (vm.extractTypes) {
-        console.log("[Graph] Send requests for types...");
-        vm.loadTypes();
-      }
-
-      console.log("[Graph] Send requests for relations.");
-
-      // for each pair of classes search relation and check equality
+      var promises = [];
       for (var end = 0; end < vm.classes.length; end++) {
-        for (var start = 0; start < vm.classes.length; start++) {
-          if (vm.includeLoops || start !== end) {
-            var origin = vm.classes[start];
-            var target = vm.classes[end];
-
-            RelationExtractor.requestClassClassRelation(origin, target, 10, 0);
-            RelationExtractor.requestClassEquality(origin, target);
-          }
+        for (var start = 0; start < end; start++) {
+          promises.push(RelationExtractor.requestClassEquality(vm.classes[start], vm.classes[end]));
         }
       }
+
+      // after class equality is checked for all pairs, types and relations can be loaded
+      $q.allSettled(promises).then(function (data) {
+
+        console.log("[Graph] Now all should be settled!");
+
+        // remove merged class for class list to avoid further request for these classes
+        for (var i = 0; i < data.length; i++) {
+          if (data[i]['state'] === 'fulfilled') {
+            var indexToRemove = vm.classes.indexOf(data[i]['value']);
+            vm.classes.splice(indexToRemove, 1);
+          }
+        }
+
+        // optionally extract types referring to instances of the classes
+        if (vm.extractTypes) {
+          console.log("[Graph] Send requests for types...");
+          vm.loadTypes();
+        }
+
+        vm.loadRelations();
+      });
     });
+  };
+
+  /**
+   * Load referring types for each class.
+   */
+  vm.loadTypes = function () {
+    console.log("[Graph] Loading types..." + vm.classes.length);
+    for (var i = 0; i < vm.classes.length; i++) {
+      TypeExtractor.requestReferringTypes(vm.classes[i]);
+    }
+  };
+
+  vm.loadRelations = function () {
+
+    console.log("[Graph] Send requests for relations.");
+
+    // for each pair of classes search relation and check equality
+    for (var end = 0; end < vm.classes.length; end++) {
+      for (var start = 0; start < vm.classes.length; start++) {
+        if (vm.includeLoops || start !== end) {
+          var origin = vm.classes[start];
+          var target = vm.classes[end];
+
+          RelationExtractor.requestClassClassRelation(origin, target, 10, 0);
+        }
+      }
+    }
   };
 
   vm.startLoading();

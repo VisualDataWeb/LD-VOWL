@@ -32,9 +32,11 @@ class ClassExtractor extends Extractor {
   requestClasses() {
     var deferred = this.$q.defer();
 
-    //do not request further classes
+    // do not request further classes
     if (!this.nodes.isEmpty()) {
+      console.log("[Classes] Skip loading further classes...");
       deferred.resolve([]);
+      return deferred.promise;
     }
 
     var limit = this.reqConfig.getLimit() || 10;
@@ -57,25 +59,26 @@ class ClassExtractor extends Extractor {
             // endpoint may ignore limit
             bindings = bindings.slice(0, Math.min(bindings.length, limit*2));
 
-            var classes = [];
+            var newClassIds = [];
 
             for (var i = 0; i < bindings.length; i++) {
 
               var currentClassURI = bindings[i].class.value;
 
               if (!self.inBlacklist(currentClassURI)) {
-                classes.push(currentClassURI);
-
                 var node = {};
+
                 node.uri = currentClassURI;
                 node.name = (bindings[i].label !== undefined) ? bindings[i].label.value : '';
                 node.value = parseInt(bindings[i].instanceCount.value);
                 node.type = 'class';
                 node.active = false;
-                self.nodes.addNode(node);
+                var newClassId = self.nodes.addNode(node);
+
+                newClassIds.push(newClassId);
 
                 if (bindings[i].class !== undefined && bindings[i].class.value !== undefined) {
-                  self.requestClassLabel(currentClassURI);
+                  self.requestClassLabel(newClassId, currentClassURI);
 
                   // optionally get sub classes
                   if (self.extractSubClasses) {
@@ -85,7 +88,7 @@ class ClassExtractor extends Extractor {
               }
             }
 
-            deferred.resolve(classes);
+            deferred.resolve(newClassIds);
           } else {
             console.log('[Classes] No further classes found!');
             deferred.resolve([]);
@@ -101,7 +104,7 @@ class ClassExtractor extends Extractor {
       return deferred.promise;
   }
 
-  requestClassLabel (classURI) {
+  requestClassLabel (classId, classURI) {
     var labelLang = this.reqConfig.getLabelLanguage();
     var labelQuery = this.queryFactory.getLabelQuery(classURI, labelLang);
     var endpointURL = this.reqConfig.getEndpointURL();
@@ -114,9 +117,10 @@ class ClassExtractor extends Extractor {
       .then(function (response) {
         var bindings = response.data.results.bindings;
 
-        if (bindings !== undefined && bindings[0].label !== undefined && bindings[0].label.value !== '') {
+        if (bindings !== undefined && bindings.length > 0 && bindings[0].label !== undefined &&
+            bindings[0].label.value !== '') {
           var label = bindings[0].label.value;
-          self.nodes.insertValue(classURI, 'name', label);
+          self.nodes.insertLabel(classId, label);
           console.log("[Class Label] Found '" + label + "' for '" + classURI + "'.");
         } else {
           console.log("[Class Label] Found None for '" + classURI + "'.");

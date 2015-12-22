@@ -4,7 +4,8 @@ module.exports = function ($http, RequestConfig, QueryFactory, Nodes, Properties
 
   var that = this;
 
-  that.requestReferringTypes = function (classURI) {
+  that.requestReferringTypes = function (classId) {
+    var classURI = Nodes.getURIById(classId);
     var query = QueryFactory.getInstanceReferringTypesQuery(classURI, 5);
     var endpointURL = RequestConfig.getEndpointURL();
 
@@ -25,7 +26,7 @@ module.exports = function ($http, RequestConfig, QueryFactory, Nodes, Properties
 
           console.log("[Referring Types] Found " + bindings.length + " for '" + classURI + "'.");
 
-          Nodes.setTypesLoaded(classURI);
+          Nodes.setTypesLoaded(classId);
 
           for (var j = 0; j < bindings.length; j++) {
             if (bindings[j].valType !== undefined && bindings[j].valType.hasOwnProperty('value')) {
@@ -33,9 +34,9 @@ module.exports = function ($http, RequestConfig, QueryFactory, Nodes, Properties
               newNode.uri = bindings[j].valType.value;
               newNode.type = 'type';
               newNode.value = 1;
-              var typeIndex = Nodes.addNode(newNode);
+              var typeId = Nodes.addNode(newNode);
 
-              RelationExtractor.requestClassTypeRelation(classURI, bindings[j].valType.value, typeIndex);
+              RelationExtractor.requestClassTypeRelation(classId, typeId);
             }
           }
 
@@ -44,7 +45,13 @@ module.exports = function ($http, RequestConfig, QueryFactory, Nodes, Properties
         }
 
       }, function (err) {
-        console.error(err);
+        if (err !== undefined && err.hasOwnProperty('status')) {
+          if (err.status === 500 &&  err.hasOwnProperty('data') && err.data.search('estimated execution time') !== -1) {
+            console.log("[Referring Types] Request would take to long!");
+          }
+        } else {
+          console.error(err);
+        }
       });
   };
 };

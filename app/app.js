@@ -2,7 +2,9 @@
 // var d3Service = require('./services/graph/d3.srv');
 // var d3 = d3Module.factory('d3Service', ['$document', '$q', '$rootScope', '$window', d3Service]);
 
-var app = angular.module('ldVOWLApp', ['ngRoute', 'ngAnimate', 'ui.bootstrap', 'ngCookies']);
+require('./utilities/q-all-settled');
+
+var app = angular.module('ldVOWLApp', ['ngRoute', 'ngAnimate', 'ui.bootstrap', 'ngCookies', 'qAllSettled']);
 //var app = angular.module('ldVOWLApp', ['ngRoute', 'ngAnimate', 'ui.bootstrap', 'd3Module']);
 
 var nodeLinkGraph = require('./directives/nodelink-graph.drv');
@@ -129,13 +131,13 @@ app.service('Filters', ['$cookies', Filters]);
 
 app.service('ClassExtractor', ['$http', '$q', 'PREFIX', 'CLASS_BLACKLIST', 'RequestConfig',
   'QueryFactory', 'Nodes', ClassExtractor]);
-app.service('RelationExtractor', ['$http', 'PREFIX', 'PROPERTY_BLACKLIST', 'QueryFactory', 'RequestConfig',
+app.service('RelationExtractor', ['$http', '$q', 'PREFIX', 'PROPERTY_BLACKLIST', 'QueryFactory', 'RequestConfig',
   'Nodes', 'Properties', RelationExtractor]);
 app.service('TypeExtractor', ['$http', 'RequestConfig', 'QueryFactory', 'Nodes', 'Properties', 'RelationExtractor',
   TypeExtractor]);
 app.service('DetailExtractor', ['$http', 'QueryFactory', 'RequestConfig', 'Nodes', DetailExtractor]);
 
-app.controller('GraphCtrl', ['$scope', '$log', 'Filters',  'ClassExtractor', 'RelationExtractor',
+app.controller('GraphCtrl', ['$scope', '$q', '$log', 'Filters',  'ClassExtractor', 'RelationExtractor',
   'TypeExtractor', 'DetailExtractor', 'RequestConfig', 'Requests', GraphCtrl]);
 app.controller('HeaderCtrl', ['$scope', '$location', HeaderCtrl]);
 app.controller('StartCtrl', ['$location', 'Nodes', 'Properties', 'Requests', 'RequestConfig', StartCtrl]);

@@ -75,19 +75,26 @@ module.exports = function ($interval) {
     sessionStorage.setItem("properties", JSON.stringify(self.properties));
   };
 
-  self.existsBetween = function (source, target) {
-    for (var i = 0; i < self.properties.length; i++) {
-      var currentProp = self.properties[i];
+  self.existsBetween = function (sourceId, targetId) {
 
-      if (currentProp.source === source && currentProp.target === target) {
-        return currentProp.uri;
+    if (sourceId !== undefined && typeof sourceId === 'string' && targetId !== undefined &&
+        typeof targetId === 'string') {
+
+      for (var i = 0; i < self.properties.length; i++) {
+        var currentProp = self.properties[i];
+
+        if (currentProp.source === sourceId && currentProp.target === targetId) {
+          return currentProp.uri;
+        }
       }
+
     }
+
     return false;
   };
 
   self.addProperty = function (source, intermediate, target, uri) {
-    if (typeof source === 'number' && typeof intermediate === 'number' && typeof target === 'number') {
+    if (typeof source === 'string' && typeof intermediate === 'string' && typeof target === 'string') {
 
       // only add it, if it doesn't already exist
       if (!self.existsBetween(source, target)) {
@@ -145,22 +152,22 @@ module.exports = function ($interval) {
   };
 
   /**
-   * Returns the index of the node between the given nodes.
+   * Returns the id of the node between two given nodes.
    *
-   * @param source - the index of the source node
-   * @param target - the index of the target node
-   * @returns {number}
+   * @param sourceId - the id of the source node
+   * @param targetId - the id of the target node
+   * @returns {string}
    */
-  self.getIntermediateIndex = function (source, target) {
-    var intermediateIndex = -1;
-    for (var i=0; i<self.properties.length; i++) {
+  self.getIntermediateIndex = function (sourceId, targetId) {
+    var intermediateId = "";
+    for (var i = 0; i<self.properties.length; i++) {
       var currentProp = self.properties[i];
-      if (currentProp.source === source && currentProp.target === target) {
-        intermediateIndex = currentProp.intermediate;
+      if (currentProp.source === sourceId && currentProp.target === targetId) {
+        intermediateId = currentProp.intermediate;
         break;
       }
     }
-    return intermediateIndex;
+    return intermediateId;
   };
 
   self.clearAll = function () {
@@ -214,6 +221,20 @@ module.exports = function ($interval) {
     } else {
       console.error("[Properties] " + uri + " was not found!");
       console.error("[Properties] There is no property at index " + index + "!");
+    }
+  };
+
+  self.mergePropertiesBetween = function (classId1, classId2) {
+    for (var i = 0; i < self.properties.length; i++) {
+      var currentProp = self.properties[i];
+
+      if (currentProp.source === classId2) {
+        currentProp.source = classId1;
+      }
+
+      if (currentProp.target === classId2) {
+        currentProp.target = classId1;
+      }
     }
   };
 

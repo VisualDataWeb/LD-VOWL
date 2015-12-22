@@ -43,11 +43,18 @@ module.exports = function ($window, Properties, Nodes, Utils) {
         scope.render(scope.data);
       });
 
+      scope.$watch('data.nodes.size', function () {
+        console.log("[Graph] Number of nodes has changed!");
+        return scope.render(scope.data);
+      });
+
       /**
        * Watch for data changes, and consider time difference since last update, otherwise there may be too much
        * refreshes if responses are cached.
        */
       scope.$watch('data', function(newVals) {
+        //console.log("[Graph] Needs Update!");
+
         if (lastUpdate === null) {
           // first update, store current time and render
           lastUpdate = new Date();
@@ -122,6 +129,8 @@ module.exports = function ($window, Properties, Nodes, Utils) {
           return;
         }
 
+        console.log(d);
+
         if (d.type === 'property' || d.type === 'datatypeProperty') {
           // uri may occur multiple times
           scope.data.selectedIndex = d.index;
@@ -163,7 +172,7 @@ module.exports = function ($window, Properties, Nodes, Utils) {
         // clear all elements
         svg.selectAll('*').remove();
 
-        if (!data) {
+        if (!data || data.nodes === undefined) {
           return;
         }
 
@@ -176,34 +185,42 @@ module.exports = function ($window, Properties, Nodes, Utils) {
 
         scope.maxValue = 0;
 
-        for (var i = 0; i < data.nodes.length; i++) {
-          if (data.nodes[i].value > scope.maxValue) {
-            scope.maxValue = data.nodes[i].value;
-          }
-        }
-
-        var nodes = data.nodes.slice();
+        var nodes = [];
         var links = [];
         var bilinks = [];
 
-        data.properties.forEach(function (link) {
-          var s = data.nodes[link.source];
-          var i = data.nodes[link.intermediate];
-          var t = data.nodes[link.target];
+        for (var n of data.nodes.values()) {
+          var currentValue = n.value;
 
-          if (s !== undefined && i !== undefined && t !== undefined) {
-            // get direct class links
-            if (s.type !== 'property' && t.type !== 'property') {
-
-              i.value = link.value;
-
-              // create two links
-              links.push({source: s, target: i });
-              links.push({source: i, target: t });
-              bilinks.push({source: s, intermediate: i, target: t, value: link.value});
-            }
+          if (currentValue > scope.maxValue) {
+            scope.maxValue = currentValue;
           }
-        });
+
+          nodes.push(n);
+        }
+
+        if (data.properties !== undefined) {
+
+          data.properties.forEach(function (link) {
+            var s = data.nodes.get(link.source);
+            var i = data.nodes.get(link.intermediate);
+            var t = data.nodes.get(link.target);
+
+            if (s !== undefined && i !== undefined && t !== undefined) {
+              // get direct class links
+              if (s.type !== 'property' && t.type !== 'property') {
+
+                i.value = link.value;
+
+                // create two links
+                links.push({source: s, target: i });
+                links.push({source: i, target: t });
+                bilinks.push({source: s, intermediate: i, target: t, value: link.value});
+              }
+            }
+          });
+
+        }
 
         // set up dimensions
         var width = d3.select(element[0]).node().offsetWidth - margin;

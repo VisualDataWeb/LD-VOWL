@@ -7,7 +7,9 @@ module.exports = function ($http, QueryFactory, RequestConfig, Nodes) {
   /**
    * Request the rdfs:comment for the given uri and insert it into the right node.
    */
-  that.requestCommentForClass = function (uri) {
+  that.requestCommentForClass = function (id) {
+    var uri = Nodes.getURIById(id);
+
     var query = QueryFactory.getCommentQuery(uri);
     var endpointURL = RequestConfig.getEndpointURL();
 
@@ -18,7 +20,7 @@ module.exports = function ($http, QueryFactory, RequestConfig, Nodes) {
       if (bindings.length > 0) {
         var newComment = bindings[0].comment;
         if (newComment !== undefined && newComment.hasOwnProperty('value')) {
-          Nodes.insertValue(uri, 'comment', bindings[0].comment.value);
+          Nodes.insertComment(id, newComment.value);
         } else {
           console.error("[DetailExtractor] Error parsing comment for '" + uri + "'.");
         }
