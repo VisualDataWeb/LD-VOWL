@@ -129,11 +129,9 @@ module.exports = function ($window, Properties, Nodes, Utils) {
           return;
         }
 
-        console.log(d);
-
         if (d.type === 'property' || d.type === 'datatypeProperty') {
           // uri may occur multiple times
-          scope.data.selectedIndex = d.index;
+          scope.data.selectedId = d.id;
         }
 
         scope.data.selected = d.uri;
@@ -141,19 +139,33 @@ module.exports = function ($window, Properties, Nodes, Utils) {
         var message = {};
 
         if (d.type === 'property' || d.type === 'datatypeProperty') {
+
           console.log("[Graph] Selected property '" + d.uri + "'.");
-          message.item = Properties.getByNodeIndex(d.index);
+
+          // get relation and nodes involved
+          var prop = Properties.getByNodeId(d.id);
+          var sourceNode = Nodes.getById(prop.source);
+          var targetNode = Nodes.getById(prop.target);
+
+          // create message and store basic information
+          message.item = {};
+          message.item.id = d.id;
+          message.item.type = d.type;
 
           // add source and target node information
-          message.item.sourceNode = Nodes.getByIndex(message.item.source);
-          message.item.targetNode = Nodes.getByIndex(message.item.target);
+          message.item.sourceName = sourceNode.name;
+          message.item.sourceURI = sourceNode.uri;
+          message.item.targetName = targetNode.name;
+          message.item.targetURI = targetNode.uri;
 
-          console.log(message);
+          // finally add all properties involved
+          message.item.props = prop.props.slice();
         } else {
           console.log("[Graph] Selected class '" + d.uri + "'.");
           message.item = d;
         }
 
+        // send message to onClick function
         return scope.onClick(message);
       };
 
@@ -290,7 +302,7 @@ module.exports = function ($window, Properties, Nodes, Utils) {
                     .classed('datatypeProperty', function (d) { return d.type === 'datatypeProperty'; })
                     .classed('type', function (d) { return d.type === 'type'; })
                     .classed('active', function(d) { return d.uri === data.selected; })
-                    .classed('activeIndex', function (d) {return d.index === data.selectedIndex; })
+                    .classed('activeIndex', function (d) {return d.id === data.selectedId; })
                     .call(scope.force.drag);
 
         var cardinalSpline = d3.svg.line()

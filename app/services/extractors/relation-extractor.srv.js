@@ -85,7 +85,7 @@ class RelationExtractor extends Extractor {
                     propNode.value = 1;
                     intermediateId = NODES.addNode(propNode);
                   } else {
-                    intermediateId = PROPS.getIntermediateIndex(originId, targetId);
+                    intermediateId = PROPS.getIntermediateId(originId, targetId);
                     NODES.incValueOfId(intermediateId);
                   }
 
@@ -182,7 +182,7 @@ class RelationExtractor extends Extractor {
                 propNode.value = 1;
                 intermediateId = NODES.addNode(propNode);
               } else {
-                intermediateId = PROPS.getIntermediateIndex(originClassId, targetTypeId);
+                intermediateId = PROPS.getIntermediateId(originClassId, targetTypeId);
                 NODES.incValueOfId(intermediateId);
               }
 
@@ -200,7 +200,7 @@ class RelationExtractor extends Extractor {
           if (err.status === 500 && err.data.search('estimated execution time') !== -1) {
             console.log("[Relations] Request would take too long.");
           } else {
-            console.err(err);
+            console.error(err);
           }
         }  else {
           console.error(err);

@@ -139,26 +139,33 @@ module.exports = function ($interval) {
     return prop;
   };
 
-  self.getByNodeIndex = function (intermediateNodeIndex) {
-    var p = null;
-    for (var i=0; i < self.properties.length; i++) {
-      var currentProp = self.properties[i];
-      if (currentProp.intermediate === intermediateNodeIndex) {
-        p = currentProp;
+  /**
+   * Returns the property with the given id as its intermediate node or null if no such property exists.
+   *
+   * @param intermediateNodeId - the id of the intermediate node
+   * @returns {*}
+   */
+  self.getByNodeId = function (intermediateNodeId) {
+    var searchedProperty = null;
+    // TODO a better way would be to create a map with intermediate id as keys
+    for (var i = 0; i < self.properties.length; i++) {
+      var currentProperty = self.properties[i];
+      if (currentProperty.intermediate === intermediateNodeId) {
+        searchedProperty = currentProperty;
         break;
       }
     }
-    return p;
+    return searchedProperty;
   };
 
   /**
    * Returns the id of the node between two given nodes.
    *
-   * @param sourceId - the id of the source node
-   * @param targetId - the id of the target node
+   * @param sourceId - the id of the property source node
+   * @param targetId - the id of the property target node
    * @returns {string}
    */
-  self.getIntermediateIndex = function (sourceId, targetId) {
+  self.getIntermediateId = function (sourceId, targetId) {
     var intermediateId = "";
     for (var i = 0; i<self.properties.length; i++) {
       var currentProp = self.properties[i];

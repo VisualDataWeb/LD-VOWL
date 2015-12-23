@@ -19,11 +19,12 @@
             <span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span> Selection
           </uib-accordion-heading>
 
-          <p ng-hide="vm.data.selected !== undefined">
+          <p ng-hide="selected.type !== ''">
             Select a class or property to see more details.
           </p>
+
           <!-- for selected classes -->
-          <div ng-show="vm.data.selected !== undefined && selected.type === 'class'">
+          <div ng-show="selected !== undefined && selected.type === 'class'">
             <p ng-hide="selected.name === ''">
               <strong>Label:</strong> {{selected.name}}
             </p>
@@ -48,24 +49,24 @@
           </div>
 
           <!-- for selected properties -->
-          <div ng-show="vm.data.selected !== undefined && selected.type === 'property'">
+          <div ng-show="selected !== undefined && selected.type === 'property'">
             <p>
               <strong>Type:</strong> {{selected.type}}
             </p>
 
             <p>
               <strong>From instances of:</strong>
-              <a href="{{selected.sourceNode.uri}}">
-                {{selected.sourceNode.name}}
-                <span ng-hide="selected.sourceNode.name.length > 0">{{selected.sourceNode.uri | uriLabel }}</span>
+              <a href="{{selected.sourceURI}">
+                {{selected.sourceName}}
+                <span ng-hide="selected.sourceName.length > 0">{{selected.sourceURI | uriLabel }}</span>
               </a>
             </p>
 
             <p>
               <strong>To instances of:</strong>
-              <a href="{{selected.targetNode.uri}}">
-                {{selected.targetNode.name}}
-                <span ng-hide="selected.targetNode.name.length > 0">{{selected.targetNode.uri | uriLabel }}</span>
+              <a href="{{selected.targetURI}}">
+                {{selected.targetName}}
+                <span ng-hide="selected.targetName.length > 0">{{selected.targetURI | uriLabel }}</span>
               </a>
             </p>
 

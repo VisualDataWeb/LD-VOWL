@@ -35,14 +35,9 @@ module.exports = function ($scope, $q, $log, Filters, ClassExtractor, RelationEx
 
   $scope.onClick = function(item) {
     $scope.$apply(function () {
-      if (item.hasOwnProperty('uri')) {
-          vm.data.selected  = item.uri;
-          $scope.selected = item;
-          DetailExtractor.requestCommentForClass(item.uri);
-          $scope.showSelection = true;
-        } else {
-          $scope.selected.uri = 'none';
-        }
+      $scope.selected = item;
+      DetailExtractor.requestCommentForClass(item.id);
+      $scope.showSelection = true;
     });
   };
 
