@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function () {
+module.exports = function ($log) {
 
   var classUriIdMap = new Map();
 
@@ -13,11 +13,11 @@ module.exports = function () {
       var sessionNodes = sessionStorage.getItem('nodes');
 
       if (sessionNodes !== undefined && sessionNodes !== null) {
-        console.log("[Nodes] Use nodes from session storage!");
+        $log.debug("[Nodes] Use nodes from session storage!");
         nodes = new Map(JSON.parse(sessionNodes));
       }
     } else {
-      console.error("[Nodes] No Session Storage, caching disabled!");
+      $log.error("[Nodes] No Session Storage, caching disabled!");
     }
   };
 
@@ -51,7 +51,7 @@ module.exports = function () {
         newId = newNode.type + nodes.size;
         newNode.id = newId;
         nodes.set(newId, newNode);
-        console.log("[Nodes] Add new Node '" + newNode.uri +"'.");
+        $log.debug("[Nodes] Add new Node '" + newNode.uri +"'.");
       }
 
       that.updateSessionStorage();
@@ -115,7 +115,7 @@ module.exports = function () {
     if (searchedItem !== undefined && searchedItem.hasOwnProperty('uri')) {
       uri = searchedItem.uri;
     } else {
-      console.error("[Nodes] Can not resolve uri of '" + id + "'! Node doesn't exist!");
+      $log.error("[Nodes] Can not resolve uri of '" + id + "'! Node doesn't exist!");
     }
 
     return uri;
@@ -133,7 +133,7 @@ module.exports = function () {
     if (searchedItem !== undefined) {
       searchedItem.name = label;
     } else {
-      console.error("[Nodes] Can't add label to node with id '" + id + "', node was not found!");
+      $log.error("[Nodes] Can't add label to node with id '" + id + "', node was not found!");
     }
   };
 
@@ -149,7 +149,7 @@ module.exports = function () {
     if (searchedItem !== undefined) {
       searchedItem.comment = commentToAdd;
     } else {
-      console.error("[Nodes] Unable to add comment '" + commentToAdd + "' to node with id '" + id +
+      $log.error("[Nodes] Unable to add comment '" + commentToAdd + "' to node with id '" + id +
         "'. There is no node with this id!");
     }
   };
@@ -186,6 +186,12 @@ module.exports = function () {
     return false;
   };
 
+  /**
+   * Merge two classes with given ids by saving the seconds URI into the first and then deleting the second.
+   *
+   * @param classId1 - the id of the class to merge into
+   * @param classId2 - the id of the class to merge (will be deleted)
+   */
   that.mergeClasses = function (classId1, classId2) {
     if (classId1 !== undefined && typeof classId1 === 'string' && classId2 !== undefined &&
         typeof classId2 === 'string') {
@@ -196,41 +202,12 @@ module.exports = function () {
       if (cl1 !== undefined && cl1.type === 'class' && cl2 !== undefined && cl2.type === 'class') {
         cl1.equivalentURI = cl2.uri;
         nodes.delete(classId2);
-        console.log("[Nodes] Merged '" + classId1 + "' and '" + classId2 + "'.");
+        $log.debug("[Nodes] Merged '" + classId1 + "' and '" + classId2 + "'.");
       } else {
-        console.error("[Nodes] Unable to merge '" + classId1 + "' and '" + classId2 + "!" +
+        $log.error("[Nodes] Unable to merge '" + classId1 + "' and '" + classId2 + "!" +
           " at least one of them can not be found!");
       }
     }
-
-    //
-    //var index1 = -1;
-    //
-    //var index2 = -1;
-    //for (var i = 0; i < nodes.length; i++) {
-    //
-    //  var currentNode = nodes[i];
-    //  if (currentNode.type === 'class') {
-    //    if (currentNode.uri === classURI1) {
-    //      index1 = i;
-    //    } else if (currentNode.uri === classURI2) {
-    //      // skip, everything was found
-    //      index2 = i;
-    //    }
-    //  }
-    //
-    //  if (index1 !== -1 && index2 !== -1) {
-    //    break;
-    //  }
-    //}
-    //
-    //if (index1 !== -1 && index2 !== -1) {
-    //
-    //  // save all information into class1
-    //  nodes[index1].equivalentURI = nodes[index2].uri;
-    //  // remove element at index2
-    //  nodes[index2].hidden = true;
-    //}
   };
 
   that.incValueOfId = function (id) {
@@ -242,17 +219,6 @@ module.exports = function () {
     }
     return -1;
   };
-
-  /**
-   * Increase the value of the node at the given index.
-   *
-   * @param index - the index of the node to increase
-   * @returns {*} - the new value of the node at the given index
-   */
-  //that.incValueOfIndex = function () {
-  //  nodes[index].value += 1;
-  //  return nodes[index].value;
-  //};
 
   /**
    * Returns true if there are no nodes, false otherwise.

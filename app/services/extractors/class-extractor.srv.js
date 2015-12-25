@@ -4,15 +4,31 @@ var Extractor = require('./extractor.srv');
 
 /**
  * @Name ClassExtractor
+ * @extends Extractor
  */
 class ClassExtractor extends Extractor {
 
-  constructor ($http, $q, PREFIX, CLASS_BLACKLIST, RequestConfig, QueryFactory, Nodes) {
+  /**
+   * Create a new ClassExtractor.
+   *
+   * @param $http
+   * @param $q
+   * @param $log
+   * @param PREFIX
+   * @param CLASS_BLACKLIST
+   * @param RequestConfig
+   * @param QueryFactory
+   * @param Nodes
+   */
+  constructor ($http, $q, $log, PREFIX, CLASS_BLACKLIST, RequestConfig, QueryFactory, Nodes) {
+
+    // call constructor of Extractor
     super();
     
     // set up attributes
     this.$http = $http;
     this.$q = $q;
+    this.$log = $log;
     this.reqConfig = RequestConfig;
     this.queryFactory = QueryFactory;
     this.nodes = Nodes;
@@ -30,11 +46,13 @@ class ClassExtractor extends Extractor {
   }
 
   requestClasses() {
+    var self = this;
+
     var deferred = this.$q.defer();
 
     // do not request further classes
     if (!this.nodes.isEmpty()) {
-      console.log("[Classes] Skip loading further classes...");
+      self.$log.debug("[Classes] Skip loading further classes...");
       deferred.resolve([]);
       return deferred.promise;
     }
@@ -45,9 +63,7 @@ class ClassExtractor extends Extractor {
     var query = this.queryFactory.getClassQuery(limit, offset);
     var endpointURL = this.reqConfig.getEndpointURL();
 
-    var self = this;
-
-    console.log('[Classes] Send Request...');
+    self.$log.debug('[Classes] Send Request...');
 
     this.$http.get(endpointURL, this.reqConfig.forQuery(query))
       .then(function (response) {
@@ -90,14 +106,14 @@ class ClassExtractor extends Extractor {
 
             deferred.resolve(newClassIds);
           } else {
-            console.log('[Classes] No further classes found!');
+            self.$log.debug('[Classes] No further classes found!');
             deferred.resolve([]);
           }
         } else {
-          console.error(response);
+          self.$log.error(response);
         }
       }, function (err) {
-        console.error(err);
+        self.$log.error(err);
         deferred.reject([]);
       });
 
@@ -105,13 +121,13 @@ class ClassExtractor extends Extractor {
   }
 
   requestClassLabel (classId, classURI) {
+    var self = this;
+
     var labelLang = this.reqConfig.getLabelLanguage();
     var labelQuery = this.queryFactory.getLabelQuery(classURI, labelLang);
     var endpointURL = this.reqConfig.getEndpointURL();
 
-    console.log("[Class Label] Send request for '" + classURI + "'...");
-
-    var self = this;
+    self.$log.debug("[Class Label] Send request for '" + classURI + "'...");
 
     this.$http.get(endpointURL, this.reqConfig.forQuery(labelQuery))
       .then(function (response) {
@@ -121,12 +137,12 @@ class ClassExtractor extends Extractor {
             bindings[0].label.value !== '') {
           var label = bindings[0].label.value;
           self.nodes.insertLabel(classId, label);
-          console.log("[Class Label] Found '" + label + "' for '" + classURI + "'.");
+          self.$log.debug("[Class Label] Found '" + label + "' for '" + classURI + "'.");
         } else {
-          console.log("[Class Label] Found None for '" + classURI + "'.");
+          self.$log.debug("[Class Label] Found None for '" + classURI + "'.");
         }
       },function (err) {
-        console.error(err);
+        self.$log.error(err);
       });
   }
 
@@ -154,13 +170,12 @@ class ClassExtractor extends Extractor {
             }
           }
         } else {
-          console.log("[Subclasses] None found for '" + classURI + "'.");
+          self.$log.debug("[Subclasses] None found for '" + classURI + "'.");
         }
       }, function (err) {
-        console.error(err);
+        self.$log.error(err);
       });
   }
-
 } // end of class 'ClassExtractor'
 
 module.exports = ClassExtractor;

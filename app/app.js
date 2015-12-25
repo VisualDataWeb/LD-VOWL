@@ -124,32 +124,32 @@ app.filter('responseTime', function () {
   };
 });
 
-app.directive('nodeLinkGraph', ['$window', 'Properties', 'Nodes', 'Utils', nodeLinkGraph]);
+app.directive('nodeLinkGraph', ['$window', '$log', 'Properties', 'Nodes', 'Utils', nodeLinkGraph]);
 app.directive('slider', Slider);
 
 app.service('RequestConfig', ['$cookies', RequestConfig]);
 app.factory('QueryFactory', QueryFactory);
 app.factory('RequestCounter', ['$q', 'Requests', RequestCounter]);
 
-app.service('Nodes', Nodes);
-app.service('Properties', ['$interval', Properties]);
+app.service('Nodes', ['$log', Nodes]);
+app.service('Properties', ['$interval', '$log', Properties]);
 app.service('Types', Types);
 app.service('Requests', ['$rootScope', Requests]);
 app.factory('Utils', Utils);
 app.service('Filters', ['$cookies', Filters]);
 
-app.service('ClassExtractor', ['$http', '$q', 'PREFIX', 'CLASS_BLACKLIST', 'RequestConfig',
+app.service('ClassExtractor', ['$http', '$q', '$log', 'PREFIX', 'CLASS_BLACKLIST', 'RequestConfig',
   'QueryFactory', 'Nodes', ClassExtractor]);
-app.service('RelationExtractor', ['$http', '$q', 'PREFIX', 'PROPERTY_BLACKLIST', 'QueryFactory', 'RequestConfig',
-  'Nodes', 'Properties', RelationExtractor]);
-app.service('TypeExtractor', ['$http', 'RequestConfig', 'QueryFactory', 'Nodes', 'Properties', 'RelationExtractor',
-  TypeExtractor]);
-app.service('DetailExtractor', ['$http', 'QueryFactory', 'RequestConfig', 'Nodes', DetailExtractor]);
+app.service('RelationExtractor', ['$http', '$q', '$log', 'PREFIX', 'PROPERTY_BLACKLIST', 'QueryFactory',
+  'RequestConfig', 'Nodes', 'Properties', RelationExtractor]);
+app.service('TypeExtractor', ['$http', '$log', 'RequestConfig', 'QueryFactory', 'Nodes', 'Properties',
+  'RelationExtractor', TypeExtractor]);
+app.service('DetailExtractor', ['$http', '$log', 'QueryFactory', 'RequestConfig', 'Nodes', DetailExtractor]);
 
 app.controller('GraphCtrl', ['$scope', '$q', '$log', 'Filters',  'ClassExtractor', 'RelationExtractor',
   'TypeExtractor', 'DetailExtractor', 'RequestConfig', 'Requests', GraphCtrl]);
 app.controller('HeaderCtrl', ['$scope', '$location', HeaderCtrl]);
-app.controller('StartCtrl', ['$location', 'Nodes', 'Properties', 'Requests', 'RequestConfig', StartCtrl]);
+app.controller('StartCtrl', ['$log','$location', 'Nodes', 'Properties', 'Requests', 'RequestConfig', StartCtrl]);
 app.controller('SettingsCtrl', ['PREFIX', 'PROPERTY_BLACKLIST', 'CLASS_BLACKLIST',
   'RequestConfig', 'Nodes', 'Properties', 'Requests', 'ClassExtractor', 'RelationExtractor', SettingsCtrl]);
 

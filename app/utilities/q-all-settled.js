@@ -5,7 +5,6 @@ module.exports = angular.module('qAllSettled', []).config(function($provide) {
     $q.allSettled = function(promises) {
       var wrappedPromises = angular.isArray(promises) ? promises.slice(0) : {};
 
-      console.log(promises);
       angular.forEach(promises, function(promise, index) {
         wrappedPromises[index] = promise.then(function(value) {
           return { state: 'fulfilled', value: value };

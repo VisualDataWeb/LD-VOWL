@@ -1,30 +1,31 @@
 'use strict';
 
 var SUBCLASS_URI = "http://my-own-sub-class";
-var HTTP = {};
-var QFACTORY = {};
-var RCONFIG = {};
-var NODES = {};
-var PROPS = {};
 
 var Extractor = require('./extractor.srv');
 
+/**
+ * @name RelationExtractor
+ * @extends Extractor
+ */
 class RelationExtractor extends Extractor {
   
   /**
    * Creates a RelationExtractor.
    */
-  constructor($http, $q, PREFIX, PROPERTY_BLACKLIST, QueryFactory, RequestConfig, Nodes, Properties) {
+  constructor($http, $q, $log, PREFIX, PROPERTY_BLACKLIST, QueryFactory, RequestConfig, Nodes, Properties) {
+
+    // call constructor of super class Extractor
     super();
 
     this.blacklist = [];
+    this.$http = $http;
     this.$q = $q;
-
-    HTTP = $http;
-    QFACTORY = QueryFactory;
-    RCONFIG = RequestConfig;
-    NODES = Nodes;
-    PROPS = Properties;
+    this.$log = $log;
+    this.qFactory = QueryFactory;
+    this.rConfig = RequestConfig;
+    this.nodes = Nodes;
+    this.props = Properties;
 
     for (var type in PROPERTY_BLACKLIST) {
       if (PROPERTY_BLACKLIST.hasOwnProperty(type)) {
@@ -47,24 +48,24 @@ class RelationExtractor extends Extractor {
     offset = offset || 0;
     limit = limit || 10;
 
-    var originClassURI = NODES.getURIById(originId);
-    var targetClassURI = NODES.getURIById(targetId);
+    var originClassURI = this.nodes.getURIById(originId);
+    var targetClassURI = this.nodes.getURIById(targetId);
 
-    var query = QFACTORY.getClassClassRelationQuery(originClassURI, targetClassURI, limit, offset);
-    var endpointURL = RCONFIG.getEndpointURL();
+    var query = this.qFactory.getClassClassRelationQuery(originClassURI, targetClassURI, limit, offset);
+    var endpointURL = this.rConfig.getEndpointURL();
 
     var self = this;
 
-    //console.log("[Relations] Search between '" + originClassURI + "' and '" + targetClassURI + "'...");
+    //self.$log.debug("[Relations] Search between '" + originClassURI + "' and '" + targetClassURI + "'...");
 
-    HTTP.get(endpointURL, RCONFIG.forQuery(query))
+    this.$http.get(endpointURL, this.rConfig.forQuery(query))
       .then(function (response) {
         if (response.data.results !== undefined) {
           var bindings = response.data.results.bindings;
 
           if (bindings !== undefined && bindings.length > 0) {
 
-            console.log("[Relations] " + bindings.length + " between '" + originClassURI + "' and '" +
+            self.$log.debug("[Relations] " + bindings.length + " between '" + originClassURI + "' and '" +
               targetClassURI + "'.");
 
             if (bindings[0].prop !== undefined && bindings[0].prop.value !== undefined &&
@@ -77,23 +78,23 @@ class RelationExtractor extends Extractor {
                 // only add prop if not black listed
                 if (!self.inBlacklist(currentURI)) {
                   var intermediateId = "";
-                  var uriBetween = PROPS.existsBetween(originId, targetId);
+                  var uriBetween = self.props.existsBetween(originId, targetId);
                   if (uriBetween === false) {
                     var propNode = {};
                     propNode.uri = currentURI;
                     propNode.type = 'property';
                     propNode.value = 1;
-                    intermediateId = NODES.addNode(propNode);
+                    intermediateId = self.nodes.addNode(propNode);
                   } else {
-                    intermediateId = PROPS.getIntermediateId(originId, targetId);
-                    NODES.incValueOfId(intermediateId);
+                    intermediateId = self.props.getIntermediateId(originId, targetId);
+                    self.nodes.incValueOfId(intermediateId);
                   }
 
                   if (intermediateId.length < 1) {
-                    console.error("[Relations] Intermediate " + uriBetween + " was not found!");
+                    self.$log.error("[Relations] Intermediate " + uriBetween + " was not found!");
                   }
 
-                  PROPS.addProperty(originId, intermediateId, targetId, currentURI);
+                  self.props.addProperty(originId, intermediateId, targetId, currentURI);
                 }
               } // end of for loop over all bindings
 
@@ -108,18 +109,18 @@ class RelationExtractor extends Extractor {
               }
             }
           } else {
-            console.log("[Relations] None between '" + originClassURI + "' and '" + targetClassURI + "'...");
+            self.$log.debug("[Relations] None between '" + originClassURI + "' and '" + targetClassURI + "'...");
           }
         }
       }, function (err) {
         if (err !== undefined && err.hasOwnProperty('status')) {
           if (err.status === -1) {
-            console.log("[Relations] No results, likely because of CORS.");
+            self.$log.warn("[Relations] No results, likely because of CORS.");
           } else if (err.status === 500 && err.data.search("estimated execution time ") !== -1) {
-            console.log("[Relations] Request would take too long!");
+            self.$log.debug("[Relations] Request would take too long!");
           }
         } else {
-          console.error(err);
+          self.$log.error(err);
         }
       });
   }
@@ -130,47 +131,52 @@ class RelationExtractor extends Extractor {
    * @param uri - the uri of the property which label should be caught
    */
   requestPropertyLabel(uri) {
-    var labelLang = RCONFIG.getLabelLanguage();
-    var query = QFACTORY.getLabelQuery(uri, labelLang);
-    var endpointURL = RCONFIG.getEndpointURL();
+    var labelLang = this.rConfig.getLabelLanguage();
+    var query = this.qFactory.getLabelQuery(uri, labelLang);
+    var endpointURL = this.rConfig.getEndpointURL();
 
-    console.log("[Property Label] Send Request for '" + uri + "'...");
+    var self = this;
 
-    HTTP.get(endpointURL, RCONFIG.forQuery(query))
+    self.$log.debug("[Property Label] Send Request for '" + uri + "'...");
+
+    this.$http.get(endpointURL, this.rConfig.forQuery(query))
       .then(function (response) {
         var bindings = response.data.results.bindings;
         if (bindings !== undefined && bindings.length > 0 && bindings[0].label !== undefined) {
           var label = bindings[0].label.value;
-          console.log("[Property Label] Found '" + label + "' for '" + uri + "'.");
-          PROPS.insertValue(uri, 'name', label);
+          self.$log.debug("[Property Label] Found '" + label + "' for '" + uri + "'.");
+          self.props.insertValue(uri, 'name', label);
         } else {
-          console.log("[Property Label] Found None for '" + uri + "'.");
+          self.$log.debug("[Property Label] Found None for '" + uri + "'.");
         }
       }, function (err) {
-        console.error(err);
+        self.$log.error(err);
       });
   }
 
   requestClassTypeRelation(originClassId, targetTypeId) {
-    var classURI = NODES.getURIById(originClassId);
-    var typeURI = NODES.getURIById(targetTypeId);
+    var classURI = this.nodes.getURIById(originClassId);
+    var typeURI = this.nodes.getURIById(targetTypeId);
 
-    var query = QFACTORY.getClassTypeRelationQuery(classURI, typeURI);
-    var endpointURL = RCONFIG.getEndpointURL();
+    var query = this.qFactory.getClassTypeRelationQuery(classURI, typeURI);
+    var endpointURL = this.rConfig.getEndpointURL();
 
-    HTTP.get(endpointURL, RCONFIG.forQuery(query))
+    var self = this;
+
+    this.$http.get(endpointURL, this.rConfig.forQuery(query))
       .then(function (response) {
 
         var bindings = response.data.results.bindings;
 
         if (bindings !== undefined && bindings.length > 0) {
 
-          console.log("[Relations] Found '" + bindings.length + "' between " + classURI + "' and '" + typeURI + "'.");
+          self.$log.debug("[Relations] Found '" + bindings.length + "' between " + classURI + "' and '" + typeURI +
+            "'.");
 
           for (var i = 0; i < bindings.length; i++) {
             if (bindings[i].prop.value !== undefined) {
 
-              var uriInBetween = PROPS.existsBetween(originClassId, targetTypeId);
+              var uriInBetween = self.props.existsBetween(originClassId, targetTypeId);
 
               var intermediateId = "";
               if (uriInBetween === false) {
@@ -180,30 +186,25 @@ class RelationExtractor extends Extractor {
                 propNode.uri = bindings[i].prop.value;
                 propNode.type = 'datatypeProperty';
                 propNode.value = 1;
-                intermediateId = NODES.addNode(propNode);
+                intermediateId = self.nodes.addNode(propNode);
               } else {
-                intermediateId = PROPS.getIntermediateId(originClassId, targetTypeId);
-                NODES.incValueOfId(intermediateId);
+                intermediateId = self.props.getIntermediateId(originClassId, targetTypeId);
+                self.nodes.incValueOfId(intermediateId);
               }
 
-              PROPS.addProperty(originClassId, intermediateId, targetTypeId, bindings[i].prop.value);
-              //if (originClassId !== -1 && targetTypeId !== -1 && intermediateId !== "") {
-              //} else {
-              //  console.error("[Relations] Error adding relation between '" + classURI + "' and '" + typeURI + "'.");
-              //}
+              self.props.addProperty(originClassId, intermediateId, targetTypeId, bindings[i].prop.value);
             }
-          }
+          } // end of for loop over each binding
         }
-
       }, function (err) {
         if (err !== undefined && err.hasOwnProperty('status')) {
           if (err.status === 500 && err.data.search('estimated execution time') !== -1) {
-            console.log("[Relations] Request would take too long.");
+            self.$log.debug("[Relations] Request would take too long.");
           } else {
-            console.error(err);
+            self.$log.error(err);
           }
         }  else {
-          console.error(err);
+          self.$log.error(err);
         }
       });
   } // end of requestClassPropertyRelation()
@@ -212,7 +213,7 @@ class RelationExtractor extends Extractor {
    * Request whether given classes are equal by having the same instances.
    *
    * @param classId1 - the id of the first class to check for equality
-   * @param classId - the id of the second class to check for equality
+   * @param classId2 - the id of the second class to check for equality
    */
   requestClassEquality(classId1, classId2) {
 
@@ -229,19 +230,22 @@ class RelationExtractor extends Extractor {
       return deferred.promise;
     }
 
-    var classURI1 = NODES.getURIById(classId1);
-    var classURI2 = NODES.getURIById(classId2);
+    var classURI1 = this.nodes.getURIById(classId1);
+    var classURI2 = this.nodes.getURIById(classId2);
 
-    var query = QFACTORY.getNumberOfCommonInstancesQuery(classURI1, classURI2);
-    var endpointURL = RCONFIG.getEndpointURL();
+    var query = this.qFactory.getNumberOfCommonInstancesQuery(classURI1, classURI2);
+    var endpointURL = this.rConfig.getEndpointURL();
 
-    var count1 = NODES.getInstanceCountById(classId1);
-    var count2 = NODES.getInstanceCountById(classId2);
+    var count1 = this.nodes.getInstanceCountById(classId1);
+    var count2 = this.nodes.getInstanceCountById(classId2);
+
+    var self = this;
 
     if (Math.abs(count1 - count2) < count1 * 0.1) {
-      console.log("[Relations] Query for number of common Instances of '" + classURI1 + "' and '" + classURI2 + "'...");
+      self.$log.debug("[Relations] Query for number of common Instances of '" + classURI1 + "' and '" + classURI2 +
+        "'...");
 
-      HTTP.get(endpointURL, RCONFIG.forQuery(query))
+      this.$http.get(endpointURL, this.rConfig.forQuery(query))
         .then(function (response) {
 
           var results = response.data.results;
@@ -255,19 +259,19 @@ class RelationExtractor extends Extractor {
               var commonCount = parseInt(bindings[0].commonInstanceCount.value);
 
               if (commonCount !== undefined) {
-                console.log("[Relations] Classes '" + classURI1 + "' (" + count1 + ") and '" +
+                self.$log.debug("[Relations] Classes '" + classURI1 + "' (" + count1 + ") and '" +
                   classURI2 + "' (" + count2 + ") have " + commonCount + " common instances!");
 
                 var subClassPropNode;
                 var subClassPropNodeId;
 
                 if ((commonCount === count1) && (commonCount === count2)) {
-                  console.log("[Relations] Merge class '" + classId1 + "' and ' " + classId2 + "'...");
+                  self.$log.debug("[Relations] Merge class '" + classId1 + "' and ' " + classId2 + "'...");
                   //  first change all existing relations between the two classes
-                  PROPS.mergePropertiesBetween(classId1, classId2);
+                  self.props.mergePropertiesBetween(classId1, classId2);
 
                   // classes are equivalent, merge them
-                  NODES.mergeClasses(classId1, classId2);
+                  self.nodes.mergeClasses(classId1, classId2);
 
                   // save merged class
                   deferred.resolve(classId2);
@@ -280,10 +284,10 @@ class RelationExtractor extends Extractor {
                   subClassPropNode.type = "property";
                   subClassPropNode.value = 1;
 
-                  subClassPropNodeId = NODES.addNode(subClassPropNode);
+                  subClassPropNodeId = self.nodes.addNode(subClassPropNode);
 
                   // create a property
-                  PROPS.addProperty(classId1, subClassPropNodeId, classId2, SUBCLASS_URI);
+                  self.props.addProperty(classId1, subClassPropNodeId, classId2, SUBCLASS_URI);
                   deferred.reject("subclass");
                 } else if (commonCount === count2 && commonCount < count1) {
                   // class2 is a subclass of class1, create a relation
@@ -294,13 +298,13 @@ class RelationExtractor extends Extractor {
                   subClassPropNode.type = "property";
                   subClassPropNode.value = 1;
 
-                  subClassPropNodeId = NODES.addNode(subClassPropNode);
+                  subClassPropNodeId = self.nodes.addNode(subClassPropNode);
 
                   // create a property
-                  PROPS.addProperty(classId2, subClassPropNodeId, classId1, SUBCLASS_URI);
+                  self.props.addProperty(classId2, subClassPropNodeId, classId1, SUBCLASS_URI);
                   deferred.reject("subclass");
                 } else {
-                  console.log("[Relations] No Relation between '" + classURI1 + "' and '" + classURI2 +
+                  self.$log.debug("[Relations] No Relation between '" + classURI1 + "' and '" + classURI2 +
                     "' was found via instance count.");
                   deferred.reject("no relation");
                 }
@@ -308,17 +312,15 @@ class RelationExtractor extends Extractor {
             }
           }
         }, function (err) {
-          console.error(err);
+          self.$log.error(err);
           deferred.reject(err);
         });
-
     } else {
       deferred.reject("not needed");
     }
 
     // always return a promise
     return deferred.promise;
-
   } // end of requestClassEquality()
 } // end of class RelationExtractor
 

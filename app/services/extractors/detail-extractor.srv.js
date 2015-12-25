@@ -1,6 +1,7 @@
 'use strict';
 
-module.exports = function ($http, QueryFactory, RequestConfig, Nodes) {
+// TODO make this a ES6 class
+module.exports = function ($http, $log, QueryFactory, RequestConfig, Nodes) {
 
   var that = this;
 
@@ -22,13 +23,13 @@ module.exports = function ($http, QueryFactory, RequestConfig, Nodes) {
         if (newComment !== undefined && newComment.hasOwnProperty('value')) {
           Nodes.insertComment(id, newComment.value);
         } else {
-          console.error("[DetailExtractor] Error parsing comment for '" + uri + "'.");
+          $log.error("[DetailExtractor] Error parsing comment for '" + uri + "'.");
         }
       } else {
-        console.log("[DetailExtractor] No Comment for " + uri + ".");
+        $log.debug("[DetailExtractor] No Comment for " + uri + ".");
       }
     }, function (err) {
-      console.error(err);
+      $log.error(err);
     });
   };
 

@@ -2,7 +2,7 @@
  * Created by marc on 09.12.15.
  */
 
-module.exports = function ($cookies) {
+module.exports = function ($cookies, $log) {
 
   // TODO move into constant
   var cookiePrefix = "ldvowl_";
@@ -27,11 +27,11 @@ module.exports = function ($cookies) {
     var cookieName = cookiePrefix + "include_loops";
     if (self.getIncludeLoops()) {
       $cookies.put(cookieName, "false");
-      console.log("[Filters] Disable loops.");
+      $log.debug("[Filters] Disable loops.");
       return false;
     } else {
       $cookies.put(cookieName, "true");
-      console.log("[Filters] Enable loops");
+      $log.debug("[Filters] Enable loops");
       return true;
     }
   };
@@ -43,12 +43,12 @@ module.exports = function ($cookies) {
   self.toggleLiterals = function () {
     var cookieName = cookiePrefix + "include_literals";
     if (self.getIncludeLiterals()) {
-      console.log("[Filters] Disable Literals.");
+      $log.debug("[Filters] Disable Literals.");
       $cookies.put(cookieName, "false");
       return false;
     } else {
       $cookies.put(cookieName, "true");
-      console.log("[Filters] Enable Literals");
+      $log.debug("[Filters] Enable Literals");
       return true;
     }
   };

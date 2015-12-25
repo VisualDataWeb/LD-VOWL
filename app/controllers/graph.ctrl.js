@@ -85,7 +85,7 @@ module.exports = function ($scope, $q, $log, Filters, ClassExtractor, RelationEx
 
       // merge existing and new classes
       if (newClasses.length === 0) {
-        console.log("[Graph] No new classes!");
+        $log.debug("[Graph] No new classes!");
       } else {
         for (var i = 0; i < newClasses.length; i++) {
           vm.classes.push(newClasses[i]);
@@ -102,19 +102,24 @@ module.exports = function ($scope, $q, $log, Filters, ClassExtractor, RelationEx
       // after class equality is checked for all pairs, types and relations can be loaded
       $q.allSettled(promises).then(function (data) {
 
-        console.log("[Graph] Now all should be settled!");
+        $log.debug("[Graph] Now all should be settled!");
 
         // remove merged class for class list to avoid further request for these classes
         for (var i = 0; i < data.length; i++) {
           if (data[i]['state'] === 'fulfilled') {
             var indexToRemove = vm.classes.indexOf(data[i]['value']);
-            vm.classes.splice(indexToRemove, 1);
+
+            if (indexToRemove !== -1) {
+              vm.classes.splice(indexToRemove, 1);
+              $log.debug("[Graph] Removed '" + data[i]['value'] + "' from class list.");
+            } else {
+              $log.error("[Graph] Unable to remove '" + data[i]['value'] + "' from class list, class doesn't exist!");
+            }
           }
         }
 
         // optionally extract types referring to instances of the classes
         if (vm.extractTypes) {
-          console.log("[Graph] Send requests for types...");
           vm.loadTypes();
         }
 
@@ -127,15 +132,18 @@ module.exports = function ($scope, $q, $log, Filters, ClassExtractor, RelationEx
    * Load referring types for each class.
    */
   vm.loadTypes = function () {
-    console.log("[Graph] Loading types..." + vm.classes.length);
+    $log.debug("[Graph] Loading types..." + vm.classes.length);
     for (var i = 0; i < vm.classes.length; i++) {
       TypeExtractor.requestReferringTypes(vm.classes[i]);
     }
   };
 
+  /**
+   * Load relations for each pair of classes.
+   */
   vm.loadRelations = function () {
 
-    console.log("[Graph] Send requests for relations.");
+    $log.debug("[Graph] Send requests for relations...");
 
     // for each pair of classes search relation and check equality
     for (var end = 0; end < vm.classes.length; end++) {

@@ -2,7 +2,18 @@
 
 var d3 = require('d3');
 
-module.exports = function ($window, Properties, Nodes, Utils) {
+/**
+ * @Name nodeLinkGraph
+ *
+ * @param $window
+ * @param $log
+ * @param Properties
+ * @param Nodes
+ * @param Utils
+ *
+ * @returns {{restrict: string, scope: {data: string, onClick: string}, link: link}}
+ */
+module.exports = function ($window, $log, Properties, Nodes, Utils) {
   return {
     restrict: 'EA',
     scope: {
@@ -44,7 +55,7 @@ module.exports = function ($window, Properties, Nodes, Utils) {
       });
 
       scope.$watch('data.nodes.size', function () {
-        console.log("[Graph] Number of nodes has changed!");
+        $log.debug("[Graph] Number of nodes has changed!");
         return scope.render(scope.data);
       });
 
@@ -53,7 +64,7 @@ module.exports = function ($window, Properties, Nodes, Utils) {
        * refreshes if responses are cached.
        */
       scope.$watch('data', function(newVals) {
-        //console.log("[Graph] Needs Update!");
+        //$log.debug("[Graph] Needs Update!");
 
         if (lastUpdate === null) {
           // first update, store current time and render
@@ -140,7 +151,7 @@ module.exports = function ($window, Properties, Nodes, Utils) {
 
         if (d.type === 'property' || d.type === 'datatypeProperty') {
 
-          console.log("[Graph] Selected property '" + d.uri + "'.");
+          $log.debug("[Graph] Selected property '" + d.uri + "'.");
 
           // get relation and nodes involved
           var prop = Properties.getByNodeId(d.id);
@@ -161,7 +172,7 @@ module.exports = function ($window, Properties, Nodes, Utils) {
           // finally add all properties involved
           message.item.props = prop.props.slice();
         } else {
-          console.log("[Graph] Selected class '" + d.uri + "'.");
+          $log.debug("[Graph] Selected class '" + d.uri + "'.");
           message.item = d;
         }
 
@@ -175,7 +186,7 @@ module.exports = function ($window, Properties, Nodes, Utils) {
 
       scope.render = function (data) {
 
-        //console.log(data);
+        //$log.debug(data);
 
         if (scope.force.stop !== undefined) {
           scope.force.stop();

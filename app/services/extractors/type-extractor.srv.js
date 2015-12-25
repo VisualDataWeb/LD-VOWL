@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function ($http, RequestConfig, QueryFactory, Nodes, Properties, RelationExtractor) {
+module.exports = function ($http, $log, RequestConfig, QueryFactory, Nodes, Properties, RelationExtractor) {
 
   var that = this;
 
@@ -11,11 +11,11 @@ module.exports = function ($http, RequestConfig, QueryFactory, Nodes, Properties
 
     // avoid loading types multiple times
     if (Nodes.getTypesLoaded()) {
-      console.log("[Referring Types] Types for '" + classURI + "' are already loaded!");
+      $log.debug("[Referring Types] Types for '" + classURI + "' are already loaded!");
       return;
     }
 
-    console.log("[Referring Types] Send requests for types referring to instances of '" + classURI + "...");
+    $log.debug("[Referring Types] Send requests for types referring to instances of '" + classURI + "...");
 
     $http.get(endpointURL, RequestConfig.forQuery(query))
       .then(function (response) {
@@ -24,7 +24,7 @@ module.exports = function ($http, RequestConfig, QueryFactory, Nodes, Properties
 
         if (bindings !== undefined && bindings.length > 0) {
 
-          console.log("[Referring Types] Found " + bindings.length + " for '" + classURI + "'.");
+          $log.debug("[Referring Types] Found " + bindings.length + " for '" + classURI + "'.");
 
           Nodes.setTypesLoaded(classId);
 
@@ -39,19 +39,19 @@ module.exports = function ($http, RequestConfig, QueryFactory, Nodes, Properties
               RelationExtractor.requestClassTypeRelation(classId, typeId);
             }
           }
-
         } else {
-          console.log("[Referring Types] None found for instances of '" + classURI + "'.");
+          $log.debug("[Referring Types] None found for instances of '" + classURI + "'.");
         }
-
       }, function (err) {
         if (err !== undefined && err.hasOwnProperty('status')) {
           if (err.status === 500 &&  err.hasOwnProperty('data') && err.data.search('estimated execution time') !== -1) {
-            console.log("[Referring Types] Request would take to long!");
+            $log.debug("[Referring Types] Request would take to long!");
           }
         } else {
-          console.error(err);
+          $log.error(err);
         }
       });
-  };
-};
+
+  }; // end of requestReferringTypes()
+
+}; // end of TypeExtractor

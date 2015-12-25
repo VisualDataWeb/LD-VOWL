@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function ($interval) {
+module.exports = function ($interval, $log) {
 
   var self = this;
 
@@ -21,13 +21,15 @@ module.exports = function ($interval) {
         var savedItems = JSON.parse(sessionProperties);
 
         if (savedItems !== undefined && savedItems.length > 0) {
-          console.log("[Properties] Re-use " + savedItems.length + " properties from session storage!");
+          $log.debug("[Properties] Re-use " + savedItems.length + " properties from session storage!");
           self.properties = savedItems;
+        } else {
+          $log.debug("[Properties] No saved properties in session storage!");
         }
       }
       self.startSessionStorageUpdate();
     } else {
-      console.error("[Properties] SessionStorage is not available! Properties will not be saved across page reloads!");
+      $log.error("[Properties] SessionStorage is not available! Properties will not be saved across page reloads!");
     }
   };
 
@@ -36,7 +38,7 @@ module.exports = function ($interval) {
    */
   self.startSessionStorageUpdate = function () {
 
-    console.log("[Properties] Start Session Store upgrade!");
+    $log.debug("[Properties] Start Session Store upgrade!");
     if (self.sessionStorageUpdate !== undefined) {
       return;
     }
@@ -46,7 +48,7 @@ module.exports = function ($interval) {
         self.updateSessionStorage();
         self.needsUpdate = false;
       } else {
-        console.log("[Properties] No SessionStorage update needed!");
+        $log.debug("[Properties] No SessionStorage update needed!");
         self.unusedRounds++;
         if (self.unusedRounds >= 2) {
           self.endSessionStorageUpdate();
@@ -60,7 +62,7 @@ module.exports = function ($interval) {
    */
   self.endSessionStorageUpdate = function () {
     if (self.sessionStorageUpdate !== undefined) {
-      console.log("[Properties] End SessionStorage update.");
+      $log.debug("[Properties] End SessionStorage update.");
       $interval.cancel(self.sessionStorageUpdate);
       self.sessionStorageUpdate = undefined;
       self.unusedRounds = 0;
@@ -71,7 +73,7 @@ module.exports = function ($interval) {
    * Function which is triggered to update properties in HTML5 SessionStore.
    */
   self.updateSessionStorage = function () {
-    console.log("[Properties] Update SessionStorage!");
+    $log.debug("[Properties] Update SessionStorage!");
     sessionStorage.setItem("properties", JSON.stringify(self.properties));
   };
 
@@ -87,7 +89,6 @@ module.exports = function ($interval) {
           return currentProp.uri;
         }
       }
-
     }
 
     return false;
@@ -226,8 +227,8 @@ module.exports = function ($interval) {
       self.properties[index][key] = value;
       self.needsUpdate = true;
     } else {
-      console.error("[Properties] " + uri + " was not found!");
-      console.error("[Properties] There is no property at index " + index + "!");
+      $log.error("[Properties] " + uri + " was not found!");
+      $log.error("[Properties] There is no property at index " + index + "!");
     }
   };
 
