@@ -32,6 +32,8 @@ module.exports = function ($window, $log, Properties, Nodes, Utils) {
                   .append('svg')
                   .style('width', '100%');
 
+      var root = svg.append("g");
+
       var lastUpdate = null;
 
       var minUpdateInterval = 1500;
@@ -181,7 +183,7 @@ module.exports = function ($window, $log, Properties, Nodes, Utils) {
       };
 
       scope.redraw = function () {
-        svg.attr('transform', 'translate(' + d3.event.translate + ')' + 'scale(' + d3.event.scale + ')');
+        root.attr('transform', 'translate(' + d3.event.translate + ')' + 'scale(' + d3.event.scale + ')');
       };
 
       scope.render = function (data) {
@@ -193,7 +195,7 @@ module.exports = function ($window, $log, Properties, Nodes, Utils) {
         }
 
         // clear all elements
-        svg.selectAll('*').remove();
+        root.selectAll('*').remove();
 
         if (!data || data.nodes === undefined) {
           return;
@@ -265,7 +267,7 @@ module.exports = function ($window, $log, Properties, Nodes, Utils) {
           .links(links)
           .start();
 
-        var linkContainer = svg.append('g')
+        var linkContainer = root.append('g')
                               .attr('class', 'linkContainer');
 
         // create the arrow heads
@@ -301,7 +303,7 @@ module.exports = function ($window, $log, Properties, Nodes, Utils) {
               d3.select(this).attr("marker-end", function (d) { return scope.getMarkerEnd(false, d.value); });
             });
 
-        var nodeContainer = svg.append('g')
+        var nodeContainer = root.append('g')
                               .attr('class', 'nodeContainer');
 
         var node = nodeContainer.selectAll('.node')

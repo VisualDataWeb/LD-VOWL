@@ -56,9 +56,8 @@ body {
 }
 
 /* Custom page header */
-.header {
-  border-bottom: 1px solid #e5e5e5;
-  margin-bottom: 10px;
+.header .navbar{
+  margin-bottom: 15px;
 }
 /* Make the masthead heading the same height as the navigation */
 .header h3 {
