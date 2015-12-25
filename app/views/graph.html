@@ -1,3 +1,4 @@
+<!--suppress HtmlUnknownTarget -->
 <div class="container-fluid">
   <div class="row">
 
@@ -37,6 +38,11 @@
               <strong>URI:</strong> <a href="{{selected.uri}}" target="_blank">{{ selected.uri }}</a>
             </p>
 
+            <p ng-show="selected.equivalentURI !== undefined">
+              <strong>Equivalent Class:</strong>
+              <a href="{{selected.uri}}" target="_blank">{{selected.equivalentURI | uriLabel}}</a>
+            </p>
+
             <p>
               <strong># Instances:</strong>
               {{selected.value | number}}
@@ -56,17 +62,19 @@
 
             <p>
               <strong>From instances of:</strong>
-              <a href="{{selected.sourceURI}">
+              <a href="{{selected.sourceURI}}" target="_blank">
                 {{selected.sourceName}}
                 <span ng-hide="selected.sourceName.length > 0">{{selected.sourceURI | uriLabel }}</span>
+                <span class="glyphicon glyphicon-new-window"></span>
               </a>
             </p>
 
             <p>
               <strong>To instances of:</strong>
-              <a href="{{selected.targetURI}}">
+              <a href="{{selected.targetURI}}" target="_blank">
                 {{selected.targetName}}
                 <span ng-hide="selected.targetName.length > 0">{{selected.targetURI | uriLabel }}</span>
+                <span class="glyphicon glyphicon-new-window"></span>
               </a>
             </p>
 
@@ -128,7 +136,7 @@
         <uib-accordion-group heading="Graph">
           <p>
             <label for="edgeLength">Edge Length: {{edgeLength}}</label>
-            <div id="edgeLength"slider class="cdbl-slider" model="edgeLength" min="10" max="100"></div>
+            <div id="edgeLength" slider class="cdbl-slider" model="edgeLength" min="10" max="100"></div>
           </p>
         </uib-accordion-group>
 

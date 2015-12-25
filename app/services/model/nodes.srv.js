@@ -102,22 +102,6 @@ module.exports = function () {
   };
 
   /**
-   * Returns an array with all class URIs.
-   *
-   * @returns {Array}
-   */
-  // TODO remove me
-  //that.getClassURIs = function () {
-  //  var uris = [];
-  //
-  //  for (var uri of classUriIdMap.keys()) {
-  //    uris.push(uri);
-  //  }
-  //
-  //  return uris;
-  //};
-
-  /**
    * Returns the URI of the node with the given id or an empty string if no such node exists.
    *
    * @param id - the id of the node which URI should be returned

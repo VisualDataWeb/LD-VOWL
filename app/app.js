@@ -64,16 +64,19 @@ app.config(['$httpProvider', function($httpProvider) {
 app.config(function ($routeProvider) {
     $routeProvider
       .when('/', {
+        title: 'Start',
         templateUrl: 'views/start.html',
         controller: 'StartCtrl',
         controllerAs: 'start'
       })
       .when('/settings', {
+        title: 'Settings',
         templateUrl: 'views/settings.html',
         controller: 'SettingsCtrl',
         controllerAs: 'vm'
       })
       .when('/graph', {
+        title: 'Graph',
         templateUrl: 'views/graph.html',
         controller: 'GraphCtrl',
         controllerAs: 'vm'
@@ -86,6 +89,12 @@ app.config(function ($routeProvider) {
     $httpProvider.defaults.useXDomain = true;
     delete $httpProvider.defaults.headers.common['X-Requested-With'];
   }]);
+
+app.run(['$rootScope', function ($rootScope) {
+  $rootScope.$on('$routeChangeSuccess', function (event, current, previous) {
+    $rootScope.title = current.$$route.title;
+  });
+}]);
 
 // FILTER
 

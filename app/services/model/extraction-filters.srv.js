@@ -11,11 +11,11 @@ module.exports = function ($cookies) {
 
   self.init = function () {
     var loopCookie = cookiePrefix + "include_loops";
-    var includeLoops = self.getIncludeLoops() || false;
+    var includeLoops = self.getIncludeLoops() || true;
     $cookies.put(loopCookie, includeLoops);
 
     var literalCookie = cookiePrefix + "include_literals";
-    var includeLiterals = self.getIncludeLiterals() || false;
+    var includeLiterals = self.getIncludeLiterals() || true;
     $cookies.put(literalCookie, includeLiterals);
   };
 
