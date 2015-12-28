@@ -26,7 +26,7 @@ circle {
   stroke-width: 3px;
 }
 
-.node.active circle {
+.node.active circle:first-child {
   stroke: #f00;
 }
 

@@ -27,7 +27,7 @@ module.exports = function ($window, $log, Properties, Nodes, Utils) {
       var defaultRadius = 20;
 
       var defaultPropHeight = 20;
-      var ringWidth = 5;
+      var ringWidth = 4;
       var svg = d3.select(element[0])
                   .append('svg')
                   .style('width', '100%');
@@ -283,7 +283,6 @@ module.exports = function ($window, $log, Properties, Nodes, Utils) {
         }
 
         if (data.properties !== undefined) {
-
           data.properties.forEach(function (link) {
             var s = data.nodes.get(link.source);
             var i = data.nodes.get(link.intermediate);
@@ -302,7 +301,6 @@ module.exports = function ($window, $log, Properties, Nodes, Utils) {
               }
             }
           });
-
         }
 
         // set up dimensions
@@ -369,6 +367,7 @@ module.exports = function ($window, $log, Properties, Nodes, Utils) {
                     .enter().append('g')
                     .classed('node', true)
                     .classed('class', function (d) { return d.type === 'class'; })
+                    .classed('equivalent', function (d) {return d.equivalentURI !== undefined; })
                     .classed('property', function (d) { return d.type === 'property'; })
                     .classed('datatypeProperty', function (d) { return d.type === 'datatypeProperty'; })
                     .classed('type', function (d) { return d.type === 'type'; })
@@ -380,6 +379,11 @@ module.exports = function ($window, $log, Properties, Nodes, Utils) {
                               .x(function (d) { return d.x; })
                               .y(function(d) { return d.y; })
                               .interpolate("cardinal");
+
+        nodeContainer.selectAll('.equivalent')
+          .append('circle')
+          .attr('r', function (d) { return d.radius + ringWidth + 'px'; })
+          .style('fill', '#fff');
 
         nodeContainer.selectAll('.class')
           .append('circle')
