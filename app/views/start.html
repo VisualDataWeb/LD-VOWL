@@ -1,19 +1,30 @@
 <div class="container">
   <div class="jumbotron">
     <h1>Linked Data VOWL</h1>
-    <p>Extract ontologies out of arbitrary SPARQL endpoints and visualize them using VOWL.</p>
+    <p>
+      Extracts ontologies out of arbitrary SPARQL endpoints and visualizes them in a node link graph using an slightly
+      adjusted form of <a href="http://vowl.visualdataweb.org/v2/" target="_blank">VOWL</a>.
+    </p>
+    <p>
+      A list of publicly available endpoints can be found
+      <a href="http://sparqles.ai.wu.ac.at/" target="_blank">here</a>.
+    </p>
   </div>
 
   <div class="well">
-    <form class="form-horizontal" autocomplete="off">
+    <form class="form-horizontal" autocomplete="off" name="endpointForm">
       <div class="form-group">
         <label class="control-label col-sm-2" for="endpoint">Endpoint</label>
         <div class="col-sm-7">
-          <input id="endpoint" ng-model="start.endpoint" type="text" class="form-control" title="endpoint"
-                 uib-typeahead="url for url in start.endpoints | filter:$viewValue | limitTo:8" required/>
+          <input name="url" id="endpoint" ng-model="start.endpoint" type="url" class="form-control" title="endpoint"
+                 uib-typeahead="url for url in start.endpoints | filter:$viewValue | limitTo:8" required
+                 ng-minlength="7" placeholder="Type in an URL or select some from the dropdown list"/>
         </div>
         <div class="col-sm-3">
-          <button type="button" class="btn btn-primary" ng-click="start.showGraph()">Show Graph &raquo;</button>
+          <button type="button" class="btn btn-primary" ng-click="start.showGraph()"
+                  ng-disabled="endpointForm.url.$dirty && endpointForm.url.$invalid">
+            Show Graph &raquo;
+          </button>
         </div>
       </div>
     </form>

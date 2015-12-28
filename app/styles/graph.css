@@ -39,7 +39,7 @@ circle {
   stroke-width: 3px;
 }
 
-.node circle, .property rect, .datatypeProperty rect {
+.node circle, .property rect, .datatypeProperty rect, .type rect {
   cursor: pointer;
 }
 

@@ -186,6 +186,64 @@ module.exports = function ($window, $log, Properties, Nodes, Utils) {
         root.attr('transform', 'translate(' + d3.event.translate + ')' + 'scale(' + d3.event.scale + ')');
       };
 
+      scope.getCircleOutlinePoint = function (d) {
+        var deltaX = d.target.x - d.intermediate.x;
+        var deltaY = d.target.y - d.intermediate.y;
+
+        // Pythagoras rule
+        var totalLength = Math.sqrt((deltaX * deltaX) + (deltaY * deltaY));
+
+        var radius = d.target.radius;
+        var offsetX = (deltaX * (radius)) / totalLength;
+        var offsetY = (deltaY * (radius)) / totalLength;
+
+        return {x: (d.target.x - offsetX), y: (d.target.y - offsetY)};
+      };
+
+      scope.getRectOutlinePoint = function (d) {
+        var m = (d.target.y - d.intermediate.y) / (d.target.x - d.intermediate.x);
+
+        var boxWidth = scope.calcPropBoxWidth(d.target);
+
+        var minX = d.target.x - (boxWidth / 2);
+        var maxX = d.target.x + (boxWidth / 2);
+
+        var minY = d.target.y - (defaultPropHeight / 2);
+        var maxY = d.target.y + (defaultPropHeight / 2);
+
+        // left side
+        if (d.intermediate.x < d.target.x) {
+          var minXy = m * (minX - d.intermediate.x) + d.intermediate.y;
+          if (minY < minXy && minXy < maxY) {
+            return {x: minX, y: minXy};
+          }
+        }
+
+        // right side
+        if (d.intermediate.x >= d.target.x) {
+          var maxXy = m * (maxX - d.intermediate.x) + d.intermediate.y;
+          if (minY < maxXy && maxXy < maxY) {
+            return {x: maxX, y: maxXy};
+          }
+        }
+
+        // top side
+        if (d.intermediate.y < d.target.y) {
+          var minYx = (minY - d.intermediate.y) / m + d.intermediate.x;
+          if (minX < minYx && minYx < maxX) {
+            return {x: minYx, y: minY};
+          }
+        }
+
+        // bottom side
+        if (d.intermediate.y >= d.target.y) {
+          var maxYx = (maxY - d.intermediate.y) / m + d.intermediate.x;
+          if (minX < maxYx && maxYx < maxX) {
+            return {x: maxYx, y: maxY};
+          }
+        }
+      };
+
       scope.render = function (data) {
 
         //$log.debug(data);
@@ -364,23 +422,16 @@ module.exports = function ($window, $log, Properties, Nodes, Utils) {
               });
 
         scope.force.on('tick', function() {
-
           link.attr('d', function(d) {
-            var deltaX = d.target.x - d.intermediate.x;
-            var deltaY = d.target.y - d.intermediate.y;
-
-            // Pythagoras rule
-            var totalLength = Math.sqrt((deltaX * deltaX) + (deltaY * deltaY));
-
-            var radius = d.target.radius;
-
-            var offsetX = (deltaX * (radius)) / totalLength;
-            var offsetY = (deltaY * (radius)) / totalLength;
-
             var lineData = [];
             lineData.push({x: d.source.x, y: d.source.y});
             lineData.push({x: d.intermediate.x, y: d.intermediate.y});
-            lineData.push({x: (d.target.x - offsetX), y: (d.target.y - offsetY)});
+
+            if (d.target.type === 'class') {
+              lineData.push(scope.getCircleOutlinePoint(d));
+            } else {
+              lineData.push(scope.getRectOutlinePoint(d));
+            }
 
             return cardinalSpline(lineData);
           });
