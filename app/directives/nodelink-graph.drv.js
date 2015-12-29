@@ -26,6 +26,8 @@ module.exports = function ($window, $log, Properties, Nodes, Utils) {
       var linkDistance = parseInt(attrs.linkDistance) || 60;
       var defaultRadius = 20;
 
+      var maxNameLength = 15;
+
       var defaultPropHeight = 20;
       var ringWidth = 4;
       var svg = d3.select(element[0])
@@ -82,12 +84,18 @@ module.exports = function ($window, $log, Properties, Nodes, Utils) {
         }
       }, true);
 
-      scope.getName = function (obj, values) {
+      scope.getName = function (obj, values, clip) {
         var name = '';
+        clip =  (clip !== undefined) ? clip : false;
+
         if (obj.name !== undefined && obj.name !== '') {
           name = obj.name;
         } else {
           name = Utils.labelFromURI(obj.uri);
+        }
+
+        if (clip && name.length > maxNameLength) {
+          name = name.substr(0, maxNameLength-2) + '...';
         }
 
         if (values && obj.value !== undefined && obj.value > 1) {
@@ -126,7 +134,7 @@ module.exports = function ($window, $log, Properties, Nodes, Utils) {
       };
 
       scope.calcPropBoxWidth = function (d) {
-        return (scope.getName(d, true).length * 8);
+        return (scope.getName(d, true, true).length * 8);
       };
 
       scope.calcPropBoxOffset = function (d) {
@@ -263,8 +271,7 @@ module.exports = function ($window, $log, Properties, Nodes, Utils) {
                     .duration(150)
                     .scaleExtent([0.1,2.0])
                     .on("zoom", scope.redraw);
-        svg.call(zoom)
-            .on("mousedown.zoom", null); // deactivate panning
+        svg.call(zoom);
 
         scope.maxValue = 0;
 
@@ -311,6 +318,11 @@ module.exports = function ($window, $log, Properties, Nodes, Utils) {
           .linkDistance(linkDistance)
           .gravity(0.05)
           .size([width, height]);
+
+        // needed to make panning and dragging of nodes work
+        var drag = scope.force.drag().on('dragstart', function () {
+          d3.event.sourceEvent.stopPropagation();
+        });
 
         svg.attr('width', width - 50)
           .attr('height', height - 50);
@@ -380,6 +392,7 @@ module.exports = function ($window, $log, Properties, Nodes, Utils) {
                               .y(function(d) { return d.y; })
                               .interpolate("cardinal");
 
+        // draw a ring for equivalent classes
         nodeContainer.selectAll('.equivalent')
           .append('circle')
           .attr('r', function (d) { return d.radius + ringWidth + 'px'; })
@@ -398,7 +411,9 @@ module.exports = function ($window, $log, Properties, Nodes, Utils) {
             .attr('y', (-1 * (defaultPropHeight / 2)))
             .attr('width', scope.calcPropBoxWidth)
             .attr('height', defaultPropHeight)
-            .on('click', scope.updateActive);
+            .on('click', scope.updateActive)
+            .append('title')
+              .text(function(d) { return scope.getName(d, false, false); });
 
         nodeContainer.selectAll('.datatypeProperty')
           .append('rect')
@@ -406,23 +421,26 @@ module.exports = function ($window, $log, Properties, Nodes, Utils) {
             .attr('y', (-1 * (defaultPropHeight / 2)))
             .attr('width', scope.calcPropBoxWidth)
             .attr('height', defaultPropHeight)
-            .on('click', scope.updateActive);
+            .on('click', scope.updateActive)
+            .append('title')
+              .text(function(d) { return scope.getName(d, false, false); });
 
         nodeContainer.selectAll('.type')
           .append('rect')
-            .attr('x', '-30')
-            .attr('y', '-10')
-            .attr('width', '60')
-            .attr('height', '20')
-            .style('fill', '#FC3');
+            .attr('x', scope.calcPropBoxOffset)
+            .attr('y', (-1 * (defaultPropHeight / 2)))
+            .attr('width', scope.calcPropBoxWidth)
+            .attr('height', defaultPropHeight)
+            .append('title')
+              .text(function(d) { return scope.getName(d, false, false); });
 
-        // for classes properties and types
+        // for classes, properties, datatype properties and types
         node.append('text')
               .attr('class', 'text')
               .attr('dy', '.35em')
               .attr('text-anchor', 'middle')
               .text(function(d) {
-                return scope.getName(d, (d.type === 'property'));
+                return scope.getName(d, (d.type === 'property'), true);
               });
 
         scope.force.on('tick', function() {

@@ -51,11 +51,12 @@ circle {
   fill: #9c6;
 }
 
-.node circle:hover, .property rect:hover, .datatypeProperty rect:hover {
+.node circle:hover, .property rect:hover, .datatypeProperty rect:hover, .type rect:hover{
   fill: #f00;
 }
 
 .type rect {
+  fill: #FC3;
   stroke: #000;
   stroke-width: 1.5px;
 }
