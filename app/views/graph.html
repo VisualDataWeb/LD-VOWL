@@ -54,6 +54,35 @@
             </p>
           </div>
 
+          <!-- for selected datatype properties -->
+          <div ng-show="selected !== undefined && selected.type === 'datatypeProperty'">
+            <p>
+              <strong>Type:</strong> datatype property
+            </p>
+
+            <p ng-hide="selected.props.length < 1">
+              <strong>URI:</strong>
+              <a href="{{selected.props[0].uri}}" target="_blank">
+                {{selected.props[0].uri}}
+              </a>
+            </p>
+
+            <p>
+              <strong>From instances of:</strong>
+              <a href="{{selected.sourceURI}}" target="_blank">
+                {{selected.sourceName}}
+                <span ng-hide="selected.sourceName.length > 0">{{selected.sourceURI | uriLabel}}</span>
+              </a>
+            </p>
+
+            <p>
+              <strong>To instances of data type:</strong>
+              <a href="{{selected.targetURI}}" target="_blank">
+                {{selected.targetURI | uriLabel}}
+              </a>
+            </p>
+          </div>
+
           <!-- for selected properties -->
           <div ng-show="selected !== undefined && selected.type === 'property'">
             <p>
