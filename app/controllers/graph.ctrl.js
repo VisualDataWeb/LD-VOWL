@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = function ($scope, $q, $log, Filters, ClassExtractor, RelationExtractor, TypeExtractor, DetailExtractor,
-                           RequestConfig, Requests) {
+                           RequestConfig, Requests, Prefixes) {
 
   var vm = this;
 
@@ -16,6 +16,7 @@ module.exports = function ($scope, $q, $log, Filters, ClassExtractor, RelationEx
 
   vm.classes = [];
 
+  $scope.prefixes = Prefixes.getPrefixes();
   $scope.edgeLength = 60;
 
   // TODO avoid $scope, use controllerAs syntax instead
@@ -45,6 +46,10 @@ module.exports = function ($scope, $q, $log, Filters, ClassExtractor, RelationEx
     $scope.pendingRequests = pending;
     $scope.successfulRequests = Requests.getSuccessfulRequests();
     $scope.failedRequests = Requests.getFailedRequests();
+  });
+
+  $scope.$on('prefixes-changed', function (event, pending) {
+    $scope.prefixes = Prefixes.getPrefixes();
   });
 
   vm.incNumberOfProps = function () {

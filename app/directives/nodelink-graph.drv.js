@@ -13,7 +13,7 @@ var d3 = require('d3');
  *
  * @returns {{restrict: string, scope: {data: string, onClick: string}, link: link}}
  */
-module.exports = function ($window, $log, Properties, Nodes, Utils) {
+module.exports = function ($window, $log, Properties, Nodes, Prefixes, Utils) {
   return {
     restrict: 'EA',
     scope: {
@@ -256,6 +256,9 @@ module.exports = function ($window, $log, Properties, Nodes, Utils) {
 
         //$log.debug(data);
 
+        var prefixes = Prefixes.getPrefixes();
+
+
         if (scope.force.stop !== undefined) {
           scope.force.stop();
         }
@@ -385,6 +388,9 @@ module.exports = function ($window, $log, Properties, Nodes, Utils) {
                     .classed('type', function (d) { return d.type === 'type'; })
                     .classed('active', function(d) { return d.uri === data.selected; })
                     .classed('activeIndex', function (d) {return d.id === data.selectedId; })
+                    .classed('extern', function (d) {
+                      return !(prefixes[0] !== undefined && d.uri.indexOf(prefixes[0].prefix) !== -1);
+                    })
                     .call(scope.force.drag);
 
         var cardinalSpline = d3.svg.line()

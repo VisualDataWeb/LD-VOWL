@@ -51,6 +51,14 @@ circle {
   fill: #9c6;
 }
 
+.extern circle {
+  fill: #36c;
+}
+
+.class.extern text {
+  fill: #fff;
+}
+
 .node circle:hover, .property rect:hover, .datatypeProperty rect:hover, .type rect:hover{
   fill: #f00;
 }

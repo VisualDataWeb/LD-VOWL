@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function ($log) {
+module.exports = function ($log, Prefixes) {
 
   var classUriIdMap = new Map();
 
@@ -15,9 +15,23 @@ module.exports = function ($log) {
       if (sessionNodes !== undefined && sessionNodes !== null) {
         $log.debug("[Nodes] Use nodes from session storage!");
         nodes = new Map(JSON.parse(sessionNodes));
+        $log.debug("[Nodes] Build prefix map for nodes from session storage!");
+        that.buildPrefixMap();
       }
     } else {
       $log.error("[Nodes] No Session Storage, caching disabled!");
+    }
+  };
+
+  that.buildPrefixMap = function () {
+    Prefixes.clear();
+
+    for (var node of nodes.values()) {
+      if (node.uri !== undefined && node.uri.length > 0) {
+        var pre = node.uri.replace(/([^\/]*)\/?$/, '');
+
+        Prefixes.addPrefix(pre);
+      }
     }
   };
 
@@ -45,8 +59,11 @@ module.exports = function ($log) {
           newNode.id = newId;
           nodes.set(newId, newNode);
           classUriIdMap.set(newNode.uri, newId);
-        }
 
+          var pre = newNode.uri.replace(/([^\/]*)\/?$/, '');
+
+          Prefixes.addPrefix(pre);
+        }
       } else {
         newId = newNode.type + nodes.size;
         newNode.id = newId;
@@ -235,6 +252,7 @@ module.exports = function ($log) {
   that.clearAll = function () {
     classUriIdMap = new Map();
     nodes = new Map();
+    Prefixes.clear();
   };
 
   that.initMap();

@@ -169,6 +169,14 @@
           </p>
         </uib-accordion-group>
 
+        <uib-accordion-group heading="Namspaces">
+          <ul class="properties">
+            <li ng-repeat="pre in prefixes">
+              {{pre.prefix}} ({{pre.value}})
+            </li>
+          </ul>
+        </uib-accordion-group>
+
         <uib-accordion-group heading="Endpoint" is-open="true">
           <p>
             <strong>URL:</strong>

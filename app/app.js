@@ -26,6 +26,7 @@ var RelationExtractor = require('./services/extractors/relation-extractor.srv');
 var TypeExtractor = require('./services/extractors/type-extractor.srv');
 var DetailExtractor = require('./services/extractors/detail-extractor.srv');
 
+var Prefixes = require('./services/model/prefixes.srv');
 var Nodes = require('./services/model/nodes.srv');
 var Requests = require('./services/model/requests.srv');
 var Types = require('./services/model/types.srv');
@@ -124,14 +125,15 @@ app.filter('responseTime', function () {
   };
 });
 
-app.directive('nodeLinkGraph', ['$window', '$log', 'Properties', 'Nodes', 'Utils', nodeLinkGraph]);
+app.directive('nodeLinkGraph', ['$window', '$log', 'Properties', 'Nodes', 'Prefixes', 'Utils', nodeLinkGraph]);
 app.directive('slider', Slider);
 
 app.service('RequestConfig', ['$cookies', RequestConfig]);
 app.factory('QueryFactory', QueryFactory);
 app.factory('RequestCounter', ['$q', 'Requests', RequestCounter]);
 
-app.service('Nodes', ['$log', Nodes]);
+app.service('Prefixes', ['$rootScope', Prefixes]);
+app.service('Nodes', ['$log', 'Prefixes', Nodes]);
 app.service('Properties', ['$interval', '$log', Properties]);
 app.service('Types', Types);
 app.service('Requests', ['$rootScope', Requests]);
@@ -147,7 +149,7 @@ app.service('TypeExtractor', ['$http', '$log', 'RequestConfig', 'QueryFactory', 
 app.service('DetailExtractor', ['$http', '$log', 'QueryFactory', 'RequestConfig', 'Nodes', DetailExtractor]);
 
 app.controller('GraphCtrl', ['$scope', '$q', '$log', 'Filters',  'ClassExtractor', 'RelationExtractor',
-  'TypeExtractor', 'DetailExtractor', 'RequestConfig', 'Requests', GraphCtrl]);
+  'TypeExtractor', 'DetailExtractor', 'RequestConfig', 'Requests', 'Prefixes', GraphCtrl]);
 app.controller('HeaderCtrl', ['$scope', '$location', HeaderCtrl]);
 app.controller('StartCtrl', ['$log','$location', 'Nodes', 'Properties', 'Requests', 'RequestConfig', StartCtrl]);
 app.controller('SettingsCtrl', ['PREFIX', 'PROPERTY_BLACKLIST', 'CLASS_BLACKLIST',
