@@ -23,7 +23,10 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Utils) {
     link: function (scope, element, attrs) {
       var margin = parseInt(attrs.margin) || 20;
       var height = parseInt(attrs.height) || 300;
-      var linkDistance = parseInt(attrs.linkDistance) || 60;
+
+      var propDistance = 80;
+      var dtPropDistance = 20;
+
       var defaultRadius = 20;
 
       var maxNameLength = 15;
@@ -299,14 +302,21 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Utils) {
             var t = data.nodes.get(link.target);
 
             if (s !== undefined && i !== undefined && t !== undefined) {
+
               // get direct class links
               if (s.type !== 'property' && t.type !== 'property') {
+
+                var linktype = 'property';
+
+                if (t.type === 'type') {
+                  linktype = 'datatypeProperty';
+                }
 
                 i.value = link.value;
 
                 // create two links
-                links.push({source: s, target: i });
-                links.push({source: i, target: t });
+                links.push({source: s, target: i, type: linktype });
+                links.push({source: i, target: t, type: linktype });
                 bilinks.push({source: s, intermediate: i, target: t, value: link.value});
               }
             }
@@ -318,7 +328,10 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Utils) {
 
         scope.force = d3.layout.force()
           .charge(-800)
-          .linkDistance(linkDistance)
+          .linkDistance(function (d) {
+            // datatype properties should have lower distance then normal properties
+            return (d.type === 'datatypeProperty') ? dtPropDistance : propDistance;
+          })
           .gravity(0.05)
           .size([width, height]);
 
