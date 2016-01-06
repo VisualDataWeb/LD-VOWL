@@ -112,17 +112,17 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Utils) {
         var arrowHeads = [];
 
         for (var lwidth = 1; lwidth <= 5; lwidth++) {
-          arrowHeads.push({id: 'arrow' + lwidth, class: 'arrow', size: 9-lwidth});
+          arrowHeads.push({id: 'Arrow' + lwidth, class: 'arrow', size: 9-lwidth});
           arrowHeads.push({id: 'hoveredArrow' + lwidth, class: 'hovered', size: 9-lwidth});
+          arrowHeads.push({id: 'subclassArrow' + lwidth, class: 'subclass', size: 9-lwidth});
         }
 
         return arrowHeads;
       };
 
-      scope.getMarkerEnd = function (hovered, value) {
-        var type = (hovered) ? "hoveredArrow" : "arrow";
+      scope.getMarkerEnd = function (type, value) {
         var size = parseInt(Math.min(Math.log2(value + 2), 5));
-        return "url(#" + type + size + ")";
+        return "url(#" + type + 'Arrow' +  size + ")";
       };
 
       scope.calcRadius = function (element) {
@@ -317,7 +317,7 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Utils) {
                 // create two links
                 links.push({source: s, target: i, type: linktype });
                 links.push({source: i, target: t, type: linktype });
-                bilinks.push({source: s, intermediate: i, target: t, value: link.value});
+                bilinks.push({source: s, intermediate: i, target: t, value: link.value, type: link.type});
               }
             }
           });
@@ -360,14 +360,14 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Utils) {
           .enter().append("marker")
             .attr("id", function(d) { return d.id; })
             .attr("class", function (d) { return d.class; })
-            .attr("viewBox", function (d) {return "0 " + (d.size * (-1)) + " " + (d.size * 2) + " " + (d.size * 2); })
+            .attr("viewBox", function (d) {return "-1 " + ((d.size+1) * (-1)) + " " + ((d.size + 1) * 2) + " " + ((d.size + 1) * 2); })
             .attr("refX", function(d) { return d.size * 2; })
             .attr("refY", 0)
             .attr("markerWidth", function (d) { return d.size; })
             .attr("markerHeight", function (d) { return d.size; })
             .attr("orient", "auto")
           .append("path")
-            .attr("d", function (d) { return "M0," + (d.size * -1) + "L" + (d.size * 2) + ",0L0," + d.size; });
+            .attr("d", function (d) { return "M0," + (d.size * -1) + "L" + (d.size * 2) + ",0L0," + d.size + "Z"; });
 
         var link = linkContainer.selectAll(".link")
             .data(bilinks)
@@ -375,17 +375,27 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Utils) {
             .append("g")
             .attr("class", "link")
             .append("path")
-            .attr("class", "link-line")
-            .attr("marker-end", function(d) { return scope.getMarkerEnd(false, d.value); })
+              .attr("class", "link-line")
+              .classed('subClassProperty', function (d) { return d.type === 'subClassProperty'; });
+
+        linkContainer.selectAll('.link-line')
+            .attr("marker-end", function(d) { return scope.getMarkerEnd('', d.value); })
             .style("stroke-width", function (d) {
                 return Math.min(Math.log2(d.value + 2), 5);
             })
             .on('mouseover', function () {
-              d3.select(this).attr("marker-end", function (d) { return scope.getMarkerEnd(true, d.value); });
+              d3.select(this).attr("marker-end", function (d) { return scope.getMarkerEnd('hovered', d.value); });
             })
             .on("mouseout", function () {
-              d3.select(this).attr("marker-end", function (d) { return scope.getMarkerEnd(false, d.value); });
+              d3.select(this).attr("marker-end", function (d) { return scope.getMarkerEnd('', d.value); });
             });
+
+        linkContainer.selectAll('.subClassProperty')
+          .attr("marker-end", function(d) { return scope.getMarkerEnd('subclass', d.value); })
+          .on("mouseout", function () {
+            d3.select(this).attr("marker-end", function (d) { return scope.getMarkerEnd('subclass', d.value); });
+          })
+          .style('stroke-dasharray', '5, 5');
 
         var nodeContainer = root.append('g')
                               .attr('class', 'nodeContainer');
@@ -398,6 +408,7 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Utils) {
                     .classed('equivalent', function (d) {return d.equivalentURI !== undefined; })
                     .classed('property', function (d) { return d.type === 'property'; })
                     .classed('datatypeProperty', function (d) { return d.type === 'datatypeProperty'; })
+                    .classed('subClassProperty', function (d) { return d.type === 'subClassProperty'; })
                     .classed('type', function (d) { return d.type === 'type'; })
                     .classed('active', function(d) { return d.uri === data.selected; })
                     .classed('activeIndex', function (d) {return d.id === data.selectedId; })
@@ -443,6 +454,16 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Utils) {
             .on('click', scope.updateActive)
             .append('title')
               .text(function(d) { return scope.getName(d, false, false); });
+
+        nodeContainer.selectAll('.subClassProperty')
+          .append('rect')
+          .attr('x', scope.calcPropBoxOffset)
+          .attr('y', (-1 * (defaultPropHeight / 2)))
+          .attr('width', scope.calcPropBoxWidth)
+          .attr('height', defaultPropHeight)
+          .on('click', scope.updateActive)
+          .append('title')
+          .text(function(d) { return scope.getName(d, false, false); });
 
         nodeContainer.selectAll('.type')
           .append('rect')

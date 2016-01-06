@@ -241,83 +241,89 @@ class RelationExtractor extends Extractor {
 
     var self = this;
 
-    if (Math.abs(count1 - count2) < count1 * 0.1) {
-      self.$log.debug("[Relations] Query for number of common Instances of '" + classURI1 + "' and '" + classURI2 +
-        "'...");
+    //if (Math.abs(count1 - count2) < count1 * 0.1) {
+    self.$log.debug("[Relations] Query for number of common Instances of '" + classURI1 + "' and '" + classURI2 +
+      "'...");
 
-      this.$http.get(endpointURL, this.rConfig.forQuery(query))
-        .then(function (response) {
+    this.$http.get(endpointURL, this.rConfig.forQuery(query))
+      .then(function (response) {
 
-          var results = response.data.results;
+        var results = response.data.results;
 
-          if (results !== undefined && results.hasOwnProperty('bindings')) {
+        if (results !== undefined && results.hasOwnProperty('bindings')) {
 
-            var bindings = results.bindings;
+          var bindings = results.bindings;
 
-            if (bindings !== undefined && bindings.length > 0 && bindings[0].hasOwnProperty('commonInstanceCount')) {
+          if (bindings !== undefined && bindings.length > 0 && bindings[0].hasOwnProperty('commonInstanceCount')) {
 
-              var commonCount = parseInt(bindings[0].commonInstanceCount.value);
+            var commonCount = parseInt(bindings[0].commonInstanceCount.value);
 
-              if (commonCount !== undefined) {
-                self.$log.debug("[Relations] Classes '" + classURI1 + "' (" + count1 + ") and '" +
-                  classURI2 + "' (" + count2 + ") have " + commonCount + " common instances!");
+            if (commonCount !== undefined) {
+              self.$log.debug("[Relations] Classes '" + classURI1 + "' (" + count1 + ") and '" +
+                classURI2 + "' (" + count2 + ") have " + commonCount + " common instances!");
 
-                var subClassPropNode;
-                var subClassPropNodeId;
+              var subClassPropNode;
+              var subClassPropNodeId;
 
-                if ((commonCount === count1) && (commonCount === count2)) {
-                  self.$log.debug("[Relations] Merge class '" + classId1 + "' and ' " + classId2 + "'...");
-                  //  first change all existing relations between the two classes
-                  self.props.mergePropertiesBetween(classId1, classId2);
+              if ((commonCount === count1) && (commonCount === count2)) {
+                self.$log.debug("[Relations] Merge class '" + classId1 + "' and ' " + classId2 + "'...");
+                //  first change all existing relations between the two classes
+                self.props.mergePropertiesBetween(classId1, classId2);
 
-                  // classes are equivalent, merge them
-                  self.nodes.mergeClasses(classId1, classId2);
+                // classes are equivalent, merge them
+                self.nodes.mergeClasses(classId1, classId2);
 
-                  // save merged class
-                  deferred.resolve(classId2);
-                } else if (commonCount === count1 && commonCount < count2) {
-                  // class1 is a subclass of class2, create a relation
+                // save merged class
+                deferred.resolve(classId2);
+              } else if (commonCount === count1 && commonCount < count2) {
+                // class1 is a subclass of class2, create a relation
+                self.$log.error("[Relations] " + classId1 + " seems to be a subclass of " + classId2 + "!");
 
-                  // create an intermediate node
-                  subClassPropNode = {};
-                  subClassPropNode.uri = SUBCLASS_URI;
-                  subClassPropNode.type = "property";
-                  subClassPropNode.value = 1;
+                // create an intermediate node
+                subClassPropNode = {};
+                subClassPropNode.uri = SUBCLASS_URI;
+                subClassPropNode.type = "subClassProperty";
+                subClassPropNode.name = "Subclass of";
+                subClassPropNode.value = 1;
 
-                  subClassPropNodeId = self.nodes.addNode(subClassPropNode);
+                subClassPropNodeId = self.nodes.addNode(subClassPropNode);
 
-                  // create a property
-                  self.props.addProperty(classId1, subClassPropNodeId, classId2, SUBCLASS_URI);
-                  deferred.reject("subclass");
-                } else if (commonCount === count2 && commonCount < count1) {
-                  // class2 is a subclass of class1, create a relation
+                // create a property
+                //self.props.addProperty(classId1, subClassPropNodeId, classId2, SUBCLASS_URI);
+                self.props.addSubClassProperty(classId1, subClassPropNodeId, classId2);
+                deferred.reject("subclass");
+              } else if (commonCount === count2 && commonCount < count1) {
+                // class2 is a subclass of class1, create a relation
+                self.$log.error("[Relations] " + classId2 + " seems to be a subclass of " + classId1 + "!");
 
-                  // create an intermediate node
-                  subClassPropNode = {};
-                  subClassPropNode.uri = SUBCLASS_URI;
-                  subClassPropNode.type = "property";
-                  subClassPropNode.value = 1;
+                // create an intermediate node
+                subClassPropNode = {};
+                subClassPropNode.uri = SUBCLASS_URI;
+                subClassPropNode.name = "Subclass of";
+                subClassPropNode.type = "subClassProperty";
+                subClassPropNode.value = 100;
 
-                  subClassPropNodeId = self.nodes.addNode(subClassPropNode);
+                subClassPropNodeId = self.nodes.addNode(subClassPropNode);
 
-                  // create a property
-                  self.props.addProperty(classId2, subClassPropNodeId, classId1, SUBCLASS_URI);
-                  deferred.reject("subclass");
-                } else {
-                  self.$log.debug("[Relations] No Relation between '" + classURI1 + "' and '" + classURI2 +
-                    "' was found via instance count.");
-                  deferred.reject("no relation");
-                }
+                // create a property
+                //self.props.addProperty(classId2, subClassPropNodeId, classId1, SUBCLASS_URI);
+                self.props.addSubClassProperty(classId2, subClassPropNodeId, classId1);
+                deferred.reject("subclass");
+              } else {
+                self.$log.debug("[Relations] No Relation between '" + classURI1 + "' and '" + classURI2 +
+                  "' was found via instance count.");
+                deferred.reject("no relation");
               }
             }
           }
-        }, function (err) {
-          self.$log.error(err);
-          deferred.reject(err);
-        });
-    } else {
-      deferred.reject("not needed");
-    }
+        }
+      }, function (err) {
+        self.$log.error(err);
+        deferred.reject(err);
+      });
+    //} else {
+    //  deferred.reject("not needed");
+    //}
 
     // always return a promise
     return deferred.promise;

@@ -2,12 +2,22 @@
   background-color: #F8F8F8;
 }
 
+marker {
+  stroke: #000;
+}
+
 marker.arrow {
   fill: #000;
 }
 
 marker.hovered {
+  stroke: #f00;
   fill: #f00;
+}
+
+marker.subclass {
+  stroke-width: 2px;
+  fill: #f8f8f8;
 }
 
 circle {
@@ -49,6 +59,10 @@ circle {
 
 .datatypeProperty rect {
   fill: #9c6;
+}
+
+.subClassProperty  rect {
+  fill: #f8f8f8;
 }
 
 .extern circle {
