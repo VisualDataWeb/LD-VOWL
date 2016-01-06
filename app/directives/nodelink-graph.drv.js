@@ -150,7 +150,7 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Utils) {
           return;
         }
 
-        if (d.type === 'property' || d.type === 'datatypeProperty') {
+        if (d.type === 'property' || d.type === 'datatypeProperty' || d.type === 'type') {
           // uri may occur multiple times
           scope.data.selectedId = d.id;
         }
@@ -437,6 +437,7 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Utils) {
             .attr('y', (-1 * (defaultPropHeight / 2)))
             .attr('width', scope.calcPropBoxWidth)
             .attr('height', defaultPropHeight)
+            .on('click', scope.updateActive)
             .append('title')
               .text(function(d) { return scope.getName(d, false, false); });
 
