@@ -13,6 +13,7 @@ module.exports = function ($scope, $q, $log, Filters, ClassExtractor, RelationEx
   vm.endpointURL = RequestConfig.getEndpointURL();
   vm.data = {};
   vm.data.nodes = [];
+  vm.data.prefixes = Prefixes.getPrefixes();
 
   vm.classes = [];
 
@@ -161,6 +162,13 @@ module.exports = function ($scope, $q, $log, Filters, ClassExtractor, RelationEx
         }
       }
     }
+  };
+
+  /**
+   * Update the prefixes to the current ones
+   */
+  vm.updatePrefixes = function () {
+    Prefixes.setPrefixes($scope.prefixes);
   };
 
   vm.startLoading();

@@ -30,7 +30,7 @@ module.exports = function ($log, Prefixes) {
       if (node.uri !== undefined && node.uri.length > 0) {
         var pre = node.uri.replace(/([^\/]*)\/?$/, '');
 
-        Prefixes.addPrefix(pre);
+        Prefixes.addPrefix({"prefix": pre});
       }
     }
   };
@@ -62,7 +62,7 @@ module.exports = function ($log, Prefixes) {
 
           var pre = newNode.uri.replace(/([^\/]*)\/?$/, '');
 
-          Prefixes.addPrefix(pre);
+          Prefixes.addPrefix({"prefix": pre});
         }
       } else {
         newId = newNode.type + nodes.size;

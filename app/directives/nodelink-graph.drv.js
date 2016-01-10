@@ -52,7 +52,8 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Utils) {
 
       scope.data = {
         'nodes': Nodes.getNodes(),
-        'properties': Properties.getProperties()
+        'properties': Properties.getProperties(),
+        'prefixes': Prefixes.getPrefixes()
       };
 
       scope.$watch(function () {
@@ -63,6 +64,10 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Utils) {
 
       scope.$watch('data.nodes.size', function () {
         $log.debug("[Graph] Number of nodes has changed!");
+        return scope.render(scope.data);
+      });
+
+      scope.$watch('data.prefixes.length', function () {
         return scope.render(scope.data);
       });
 
@@ -255,6 +260,21 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Utils) {
         }
       };
 
+      scope.isIntern = function (uri) {
+
+        var match = false;
+        for (var i = 0; i < scope.data.prefixes.length; i++) {
+          var currentPre = scope.data.prefixes[i];
+
+          if (currentPre.classification === 'intern' && uri.indexOf(currentPre.prefix) !== -1) {
+            match = true;
+            break;
+          }
+        }
+
+        return match;
+      };
+
       scope.render = function (data) {
 
         //$log.debug(data);
@@ -413,7 +433,7 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Utils) {
                     .classed('active', function(d) { return d.uri === data.selected; })
                     .classed('activeIndex', function (d) {return d.id === data.selectedId; })
                     .classed('extern', function (d) {
-                      return !(prefixes[0] !== undefined && d.uri.indexOf(prefixes[0].prefix) !== -1);
+                      return !(prefixes[0] !== undefined && scope.isIntern(d.uri));
                     })
                     .call(scope.force.drag);
 

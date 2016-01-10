@@ -187,12 +187,16 @@
           </p>
         </uib-accordion-group>
 
-        <uib-accordion-group heading="Namspaces">
-          <ul class="properties">
-            <li ng-repeat="pre in prefixes">
-              {{pre.prefix}} ({{pre.value}})
-            </li>
-          </ul>
+        <uib-accordion-group heading="Namespace Prefixes">
+
+          <div class="row" ng-repeat="pre in prefixes">
+            <button type="button" class="btn btn-default btn-xs" ng-model="pre.classification" uib-btn-checkbox
+                    btn-checkbox-true="'intern'" btn-checkbox-false="'extern'" ng-click="vm.updatePrefixes()">
+              intern
+            </button>
+            {{pre.prefix}} ({{pre.value}})
+          </div>
+
         </uib-accordion-group>
 
         <uib-accordion-group heading="Endpoint" is-open="true">
