@@ -158,9 +158,11 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Utils) {
           return;
         }
 
-        if (d.type === 'property' || d.type === 'datatypeProperty' || d.type === 'type') {
+        if (d.type === 'property' || d.type === 'datatypeProperty' || d.type === 'subClassProperty' || d.type === 'type') {
           // uri may occur multiple times
           scope.data.selectedId = d.id;
+        } else {
+          scope.data.selectedId = '';
         }
 
         scope.data.selected = d.uri;
@@ -260,6 +262,12 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Utils) {
         }
       };
 
+      /**
+       * Returns true if the given URI is an internal one, false otherwise.
+       *
+       * @param uri - the URI to be checked
+       * @returns {boolean}
+       */
       scope.isIntern = function (uri) {
 
         var match = false;
@@ -356,9 +364,10 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Utils) {
           .size([width, height]);
 
         // needed to make panning and dragging of nodes work
-        var drag = scope.force.drag().on('dragstart', function () {
-          d3.event.sourceEvent.stopPropagation();
-        });
+        var drag = scope.force.drag()
+          .on('dragstart', function () {
+            d3.event.sourceEvent.stopPropagation();
+          });
 
         svg.attr('width', width - 50)
           .attr('height', height - 50);
@@ -380,7 +389,7 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Utils) {
           .enter().append("marker")
             .attr("id", function(d) { return d.id; })
             .attr("class", function (d) { return d.class; })
-            .attr("viewBox", function (d) {return "-1 " + ((d.size+1) * (-1)) + " " + ((d.size + 1) * 2) + " " + ((d.size + 1) * 2); })
+            .attr("viewBox", function (d) { return "-1 " + ((d.size + 1) * (-1)) + " " + ((d.size + 1) * 2) + " " + ((d.size + 1) * 2); })
             .attr("refX", function(d) { return d.size * 2; })
             .attr("refY", 0)
             .attr("markerWidth", function (d) { return d.size; })

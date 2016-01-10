@@ -8,6 +8,12 @@ module.exports = function ($rootScope) {
 
   that.addPrefix = function (pre) {
     if (typeof pre === 'object' && pre.prefix !== undefined) {
+
+      if (pre.prefix.length < 8) {
+        console.error('[Prefixes] Prefix is to short!');
+        return;
+      }
+
       var newNumber = 1;
 
       if (prefixes.has(pre.prefix)) {
