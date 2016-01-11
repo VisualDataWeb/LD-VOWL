@@ -284,7 +284,8 @@ class RelationExtractor extends Extractor {
                 subClassPropNode.uri = SUBCLASS_URI;
                 subClassPropNode.type = "subClassProperty";
                 subClassPropNode.name = "Subclass of";
-                subClassPropNode.value = 1;
+                subClassPropNode.value = 10000;
+                subClassPropNode.commonInstances = commonCount;
 
                 subClassPropNodeId = self.nodes.addNode(subClassPropNode);
 
@@ -301,7 +302,8 @@ class RelationExtractor extends Extractor {
                 subClassPropNode.uri = SUBCLASS_URI;
                 subClassPropNode.name = "Subclass of";
                 subClassPropNode.type = "subClassProperty";
-                subClassPropNode.value = 100;
+                subClassPropNode.value = 10000;
+                subClassPropNode.commonInstances = commonCount;
 
                 subClassPropNodeId = self.nodes.addNode(subClassPropNode);
 

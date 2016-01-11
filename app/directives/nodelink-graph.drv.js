@@ -169,7 +169,7 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Utils) {
 
         var message = {};
 
-        if (d.type === 'property' || d.type === 'datatypeProperty') {
+        if (d.type === 'property' || d.type === 'datatypeProperty' || d.type === 'subClassProperty') {
 
           $log.debug("[Graph] Selected property '" + d.uri + "'.");
 
@@ -189,8 +189,11 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Utils) {
           message.item.targetName = targetNode.name;
           message.item.targetURI = targetNode.uri;
 
-          // finally add all properties involved
-          message.item.props = prop.props.slice();
+          if (d.type === 'subClassProperty') {
+            message.item.commonCount = d.commonInstances;
+          } else {
+            message.item.props = prop.props.slice();
+          }
         } else {
           $log.debug("[Graph] Selected class '" + d.uri + "'.");
           message.item = d;
