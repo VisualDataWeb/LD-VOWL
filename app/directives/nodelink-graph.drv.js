@@ -22,7 +22,7 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Utils) {
     },
     link: function (scope, element, attrs) {
       var margin = parseInt(attrs.margin) || 20;
-      var height = parseInt(attrs.height) || 300;
+      var height = parseInt(attrs.height) || $window.innerHeight;
 
       var propDistance = 80;
       var dtPropDistance = 20;
@@ -45,6 +45,8 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Utils) {
 
       // Browser onresize event
       $window.onresize = function () {
+        height = $window.innerHeight;
+        svg.attr('height', height-60);
         scope.$apply();
       };
 
@@ -432,8 +434,8 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Utils) {
             d3.event.sourceEvent.stopPropagation();
           });
 
-        svg.attr('width', width - 50)
-          .attr('height', height - 50);
+        svg.attr('width', width)
+          .attr('height', height - 60);
 
         nodes.forEach(function (node) {
           node.radius = scope.calcRadius(node);

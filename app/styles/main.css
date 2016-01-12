@@ -47,6 +47,15 @@ body {
   padding: 0;
 }
 
+.main {
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.sidebar {
+  margin-top: 15px;
+}
+
 /* Everything but the jumbotron gets side spacing for mobile first views */
 .header,
 .marketing,
@@ -57,8 +66,13 @@ body {
 
 /* Custom page header */
 .header .navbar{
-  margin-bottom: 15px;
+  margin-bottom: 0px;
 }
+
+.jumbotron {
+  margin-top: 30px;
+}
+
 /* Make the masthead heading the same height as the navigation */
 .header h3 {
   margin-top: 0;
@@ -81,6 +95,10 @@ body {
 
 .prefix {
   margin-left: 0px;
+}
+
+.panel-body {
+  overflow-wrap: break-word;
 }
 
 /* Responsive: Portrait tablets and up */
