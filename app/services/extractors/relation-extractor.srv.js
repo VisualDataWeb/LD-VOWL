@@ -241,7 +241,6 @@ class RelationExtractor extends Extractor {
 
     var self = this;
 
-    //if (Math.abs(count1 - count2) < count1 * 0.1) {
     self.$log.debug("[Relations] Query for number of common Instances of '" + classURI1 + "' and '" + classURI2 +
       "'...");
 
@@ -277,7 +276,7 @@ class RelationExtractor extends Extractor {
                 deferred.resolve(classId2);
               } else if (commonCount === count1 && commonCount < count2) {
                 // class1 is a subclass of class2, create a relation
-                self.$log.error("[Relations] " + classId1 + " seems to be a subclass of " + classId2 + "!");
+                self.$log.debug("[Relations] " + classId1 + " seems to be a subclass of " + classId2 + "!");
 
                 // create an intermediate node
                 subClassPropNode = {};
@@ -295,7 +294,7 @@ class RelationExtractor extends Extractor {
                 deferred.reject("subclass");
               } else if (commonCount === count2 && commonCount < count1) {
                 // class2 is a subclass of class1, create a relation
-                self.$log.error("[Relations] " + classId2 + " seems to be a subclass of " + classId1 + "!");
+                self.$log.debug("[Relations] " + classId2 + " seems to be a subclass of " + classId1 + "!");
 
                 // create an intermediate node
                 subClassPropNode = {};
@@ -323,9 +322,6 @@ class RelationExtractor extends Extractor {
         self.$log.error(err);
         deferred.reject(err);
       });
-    //} else {
-    //  deferred.reject("not needed");
-    //}
 
     // always return a promise
     return deferred.promise;

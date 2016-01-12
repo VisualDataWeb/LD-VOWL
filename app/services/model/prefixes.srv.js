@@ -6,6 +6,11 @@ module.exports = function ($rootScope) {
 
   var that = this;
 
+  /**
+   * Add a new prefix.
+   *
+   * @param pre - an object with the prefix to add
+   */
   that.addPrefix = function (pre) {
     if (typeof pre === 'object' && pre.prefix !== undefined) {
 
@@ -19,8 +24,6 @@ module.exports = function ($rootScope) {
       if (prefixes.has(pre.prefix)) {
         var oldPre = prefixes.get(pre.prefix);
         newNumber += oldPre.value;
-      } else {
-        newNumber = newNumber;
       }
 
       pre.value = newNumber;
@@ -41,7 +44,8 @@ module.exports = function ($rootScope) {
   };
 
   /**
-   * Returns a sorted array with all namespace prefixes, their class count and classification
+   * Returns a sorted array with all namespace prefixes, their class count and classification.
+   *
    * @returns {Array}
    */
   that.getPrefixes = function () {
@@ -51,6 +55,7 @@ module.exports = function ($rootScope) {
       pres.push(pre);
     }
 
+    // sort the array
     pres.sort(function(a, b) {
       // compare prefixes according to their value
       if (a.value < b.value) {
@@ -62,6 +67,7 @@ module.exports = function ($rootScope) {
       }
     });
 
+    // by default, the first one is intern
     if (pres.length > 0 && pres[0].classification === undefined) {
       pres[0].classification = 'intern';
     }
@@ -85,4 +91,4 @@ module.exports = function ($rootScope) {
     $rootScope.$broadcast('prefixes-changed', prefixes.size);
   };
 
-};
+}; // end of module exports

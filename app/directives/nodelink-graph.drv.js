@@ -113,6 +113,24 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Utils) {
         return name;
       };
 
+      scope.getNameForSpace = function (obj, maxWidth) {
+        var name = '';
+
+        if (obj !== undefined && obj.hasOwnProperty(name) && obj.name.length > 0) {
+          name = obj.name;
+        } else {
+          name = Utils.labelFromURI(obj.uri);
+        }
+
+        var chars = Math.floor(maxWidth / 7);
+
+        if (chars < name.length) {
+          name = name.substr(0, chars-3) + '...';
+        }
+
+        return name;
+      };
+
       scope.getArrowHeads = function () {
         var arrowHeads = [];
 
@@ -153,12 +171,19 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Utils) {
         return (-1) * (scope.calcPropHighlightBoxWidth(d) / 2);
       };
 
+      /**
+       * Handles the selection of graph items like classes, properties and types.
+       *
+       * @param d - the data of the selected item
+       * @returns {*}
+       */
       scope.updateActive = function (d) {
         if (d3.event.defaultPrevented) {
           return;
         }
 
-        if (d.type === 'property' || d.type === 'datatypeProperty' || d.type === 'subClassProperty' || d.type === 'type') {
+        if (d.type === 'property' || d.type === 'datatypeProperty' || d.type === 'subClassProperty' ||
+            d.type === 'type') {
           // uri may occur multiple times
           scope.data.selectedId = d.id;
         } else {
@@ -286,11 +311,46 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Utils) {
         return match;
       };
 
+      /**
+       * Creates the arrowheads in the given linkContainer.
+       *
+       * @param linkContainer
+       */
+      scope.createArrowHeads = function (linkContainer) {
+        linkContainer.append("defs").selectAll("marker")
+          .data(scope.getArrowHeads())
+          .enter().append("marker")
+          .attr("id", function (d) {
+            return d.id;
+          })
+          .attr("class", function (d) {
+            return d.class;
+          })
+          .attr("viewBox", function (d) {
+            return "-1 " + ((d.size + 1) * (-1)) + " " + ((d.size + 1) * 2) + " " + ((d.size + 1) * 2);
+          })
+          .attr("refX", function (d) {
+            return d.size * 2;
+          })
+          .attr("refY", 0)
+          .attr("markerWidth", function (d) {
+            return d.size;
+          })
+          .attr("markerHeight", function (d) {
+            return d.size;
+          })
+          .attr("orient", "auto")
+          .append("path")
+          .attr("d", function (d) {
+            return "M0," + (d.size * -1) + "L" + (d.size * 2) + ",0L0," + d.size + "Z";
+          });
+      };
+
       scope.render = function (data) {
 
         //$log.debug(data);
 
-        var prefixes = Prefixes.getPrefixes();
+        scope.data.prefixes = Prefixes.getPrefixes();
 
 
         if (scope.force.stop !== undefined) {
@@ -386,20 +446,7 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Utils) {
         var linkContainer = root.append('g')
                               .attr('class', 'linkContainer');
 
-        // create the arrow heads
-        linkContainer.append("defs").selectAll("marker")
-            .data(scope.getArrowHeads())
-          .enter().append("marker")
-            .attr("id", function(d) { return d.id; })
-            .attr("class", function (d) { return d.class; })
-            .attr("viewBox", function (d) { return "-1 " + ((d.size + 1) * (-1)) + " " + ((d.size + 1) * 2) + " " + ((d.size + 1) * 2); })
-            .attr("refX", function(d) { return d.size * 2; })
-            .attr("refY", 0)
-            .attr("markerWidth", function (d) { return d.size; })
-            .attr("markerHeight", function (d) { return d.size; })
-            .attr("orient", "auto")
-          .append("path")
-            .attr("d", function (d) { return "M0," + (d.size * -1) + "L" + (d.size * 2) + ",0L0," + d.size + "Z"; });
+        this.createArrowHeads(linkContainer);
 
         var link = linkContainer.selectAll(".link")
             .data(bilinks)
@@ -445,7 +492,7 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Utils) {
                     .classed('active', function(d) { return d.uri === data.selected; })
                     .classed('activeIndex', function (d) {return d.id === data.selectedId; })
                     .classed('extern', function (d) {
-                      return !(prefixes[0] !== undefined && scope.isIntern(d.uri));
+                      return !(scope.data.prefixes[0] !== undefined && scope.isIntern(d.uri));
                     })
                     .call(scope.force.drag);
 
@@ -513,7 +560,11 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Utils) {
               .attr('dy', '.35em')
               .attr('text-anchor', 'middle')
               .text(function(d) {
-                return scope.getName(d, (d.type === 'property'), true);
+                if (d.type === 'class' && d.radius !== undefined) {
+                  return scope.getNameForSpace(d, d.radius*2);
+                } else {
+                  return scope.getName(d, (d.type === 'property'), true);
+                }
               });
 
         scope.force.on('tick', function() {

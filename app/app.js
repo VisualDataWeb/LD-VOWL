@@ -114,7 +114,7 @@ app.filter('uriLabel', function () {
 app.filter('httpLess', function () {
   return function (uri) {
     return uri.replace('http://', '');
-  }
+  };
 });
 
 app.filter('responseTime', function () {

@@ -209,8 +209,8 @@ module.exports = function ($interval, $log) {
       var currentProperty = self.properties[i];
 
       // find property between source and target, which is NOT a subclass property
-      if (currentProperty.source === sourceIndex && currentProperty.target === targetIndex
-          && currentProperty.type === 'property') {
+      if (currentProperty.source === sourceIndex && currentProperty.target === targetIndex &&
+          currentProperty.type === 'property') {
         index = i;
         break;
       }

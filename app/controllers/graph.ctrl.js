@@ -13,7 +13,6 @@ module.exports = function ($scope, $q, $log, Filters, ClassExtractor, RelationEx
   vm.endpointURL = RequestConfig.getEndpointURL();
   vm.data = {};
   vm.data.nodes = [];
-  vm.data.prefixes = Prefixes.getPrefixes();
 
   vm.classes = [];
 
@@ -50,6 +49,7 @@ module.exports = function ($scope, $q, $log, Filters, ClassExtractor, RelationEx
   });
 
   $scope.$on('prefixes-changed', function (event, pending) {
+    $log.debug('[Graph] Prefixes have changed, update them...');
     $scope.prefixes = Prefixes.getPrefixes();
   });
 
