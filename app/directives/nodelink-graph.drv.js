@@ -13,7 +13,7 @@ var d3 = require('d3');
  *
  * @returns {{restrict: string, scope: {data: string, onClick: string}, link: link}}
  */
-module.exports = function ($window, $log, Properties, Nodes, Prefixes, Utils) {
+module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, Utils) {
   return {
     restrict: 'EA',
     scope: {
@@ -55,7 +55,9 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Utils) {
       scope.data = {
         'nodes': Nodes.getNodes(),
         'properties': Properties.getProperties(),
-        'prefixes': Prefixes.getPrefixes()
+        'prefixes': Prefixes.getPrefixes(),
+        'showTypes': Filters.getIncludeLiterals(),
+        'showLoops': Filters.getIncludeLoops()
       };
 
       scope.$watch(function () {
@@ -72,6 +74,22 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Utils) {
       scope.$watch('data.prefixes.length', function () {
         return scope.render(scope.data);
       });
+
+      scope.$watch(function () {
+          return Filters.getIncludeLiterals();
+        },
+        function (newVal) {
+          scope.data.showTypes = newVal;
+          return scope.render(scope.data);
+      });
+
+      scope.$watch(function () {
+          return Filters.getIncludeLoops();
+        },
+        function (newVal) {
+          scope.data.showLoops = newVal;
+          return scope.render(scope.data);
+        });
 
       /**
        * Watch for data changes, and consider time difference since last update, otherwise there may be too much
@@ -396,11 +414,30 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Utils) {
             scope.maxValue = currentValue;
           }
 
-          nodes.push(n);
+          if (n.type === 'property' && n.hasOwnProperty('isLoopNode') && n.isLoopNode) {
+
+            // only add if loops should be shown
+            if (data.showLoops) {
+              nodes.push(n);
+            }
+          } else if (n.type === 'type' || n.type === 'datatypeProperty') {
+
+            // only add if types should be shown
+            if (data.showTypes) {
+              nodes.push(n);
+            }
+          } else {
+            nodes.push(n);
+          }
         }
 
         if (data.properties !== undefined) {
           data.properties.forEach(function (link) {
+
+            if (link.source === link.target && !data.showLoops) {
+              return;
+            }
+
             var s = data.nodes.get(link.source);
             var i = data.nodes.get(link.intermediate);
             var t = data.nodes.get(link.target);
@@ -413,7 +450,11 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Utils) {
                 var linktype = 'property';
 
                 if (t.type === 'type') {
-                  linktype = 'datatypeProperty';
+                  if (data.showTypes) {
+                    linktype = 'datatypeProperty';
+                  } else {
+                    return;
+                  }
                 }
 
                 i.value = link.value;

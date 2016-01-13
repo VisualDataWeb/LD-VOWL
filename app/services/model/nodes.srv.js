@@ -194,9 +194,11 @@ module.exports = function ($log, Prefixes) {
    * @returns {boolean}
    */
   that.getTypesLoaded = function (classId) {
-    if (classId !== undefined && typeof  classId === 'string') {
+    if (classId !== undefined && typeof classId === 'string') {
       var clazz = nodes.get(classId);
-      if (clazz.type === "class" && clazz.typesLoaded === true) {
+
+      if (clazz.type === "class" && clazz.typesLoaded) {
+        $log.debug("[Nodes] Types for '" + classId + "' are already loaded!");
         return true;
       }
     }

@@ -131,7 +131,8 @@ app.filter('responseTime', function () {
   };
 });
 
-app.directive('nodeLinkGraph', ['$window', '$log', 'Properties', 'Nodes', 'Prefixes', 'Utils', nodeLinkGraph]);
+app.directive('nodeLinkGraph', ['$window', '$log', 'Properties', 'Nodes', 'Prefixes', 'Filters', 'Utils',
+              nodeLinkGraph]);
 app.directive('slider', Slider);
 
 app.service('RequestConfig', ['$cookies', RequestConfig]);
@@ -144,7 +145,7 @@ app.service('Properties', ['$interval', '$log', Properties]);
 app.service('Types', Types);
 app.service('Requests', ['$rootScope', Requests]);
 app.factory('Utils', Utils);
-app.service('Filters', ['$cookies', Filters]);
+app.service('Filters', ['$cookies', '$log', Filters]);
 
 app.service('ClassExtractor', ['$http', '$q', '$log', 'PREFIX', 'CLASS_BLACKLIST', 'RequestConfig',
   'QueryFactory', 'Nodes', ClassExtractor]);

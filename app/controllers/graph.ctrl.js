@@ -48,7 +48,7 @@ module.exports = function ($scope, $q, $log, Filters, ClassExtractor, RelationEx
     $scope.failedRequests = Requests.getFailedRequests();
   });
 
-  $scope.$on('prefixes-changed', function (event, pending) {
+  $scope.$on('prefixes-changed', function () {
     $log.debug('[Graph] Prefixes have changed, update them...');
     $scope.prefixes = Prefixes.getPrefixes();
   });

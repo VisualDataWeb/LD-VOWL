@@ -84,6 +84,7 @@ class RelationExtractor extends Extractor {
                     propNode.uri = currentURI;
                     propNode.type = 'property';
                     propNode.value = 1;
+                    propNode.isLoopNode = (originId === targetId);
                     intermediateId = self.nodes.addNode(propNode);
                   } else {
                     intermediateId = self.props.getIntermediateId(originId, targetId);
