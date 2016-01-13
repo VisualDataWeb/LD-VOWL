@@ -115,19 +115,30 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Utils) {
         return name;
       };
 
+      /**
+       * Returns the name which should be displayed for a given object if the width is restricted to a given amount of
+       * pixels.
+       *
+       * @param obj - the object which name should be displayed, must have a name or uri attribute
+       * @param maxWidth - the maximum amount of space available (in pixels)
+       * @returns {string}
+       */
       scope.getNameForSpace = function (obj, maxWidth) {
         var name = '';
 
-        if (obj !== undefined && obj.hasOwnProperty(name) && obj.name.length > 0) {
+        // start will full name from object or its URI
+        if (obj !== undefined && obj.hasOwnProperty('name') && obj.name.length > 0) {
           name = obj.name;
         } else {
           name = Utils.labelFromURI(obj.uri);
         }
 
+        // estimate for how many chars there will be space
         var chars = Math.floor(maxWidth / 7);
 
+        // cut name and add ellipsis
         if (chars < name.length) {
-          name = name.substr(0, chars-3) + '...';
+          name = name.substr(0, chars - 3) + '...';
         }
 
         return name;
