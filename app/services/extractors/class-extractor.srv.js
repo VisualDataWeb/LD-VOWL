@@ -32,8 +32,6 @@ class ClassExtractor extends Extractor {
     this.reqConfig = RequestConfig;
     this.queryFactory = QueryFactory;
     this.nodes = Nodes;
-    
-    this.extractSubClasses = false;
 
     // set up blacklists
     for (var type in CLASS_BLACKLIST) {
@@ -95,11 +93,6 @@ class ClassExtractor extends Extractor {
 
                 if (bindings[i].class !== undefined && bindings[i].class.value !== undefined) {
                   self.requestClassLabel(newClassId, currentClassURI);
-
-                  // optionally get sub classes
-                  if (self.extractSubClasses) {
-                    self.requestSubClassesOf(currentClassURI);
-                  }
                 }
               }
             }
@@ -144,38 +137,8 @@ class ClassExtractor extends Extractor {
       },function (err) {
         self.$log.error(err);
       });
-  }
+  } // end of requestClassLabel()
 
-  requestSubClassesOf(classURI) {
-    var lang = this.reqConfig.getLabelLanguage();
-    var limit = 5;
-    var offset = 0;
-
-    var query = this.queryFactory.getSubClassQuery(classURI, lang, limit, offset);
-    var endpointURL = this.reqConfig.getEndpointURL();
-
-    var self = this;
-
-    this.$http.get(endpointURL, this.reqConfig.forQuery(query))
-      .then(function (response) {
-        var bindings = response.data.results.bindings;
-
-        if (bindings.length > 0) {
-          for (var i = 0; i < bindings.length; i++) {
-            if (bindings[i].class !== undefined) {
-              var node = {};
-              node.uri = bindings[i].class.value;
-              node.name = bindings[i].label.value;
-              self.nodes.addNode(node);
-            }
-          }
-        } else {
-          self.$log.debug("[Subclasses] None found for '" + classURI + "'.");
-        }
-      }, function (err) {
-        self.$log.error(err);
-      });
-  }
 } // end of class 'ClassExtractor'
 
 module.exports = ClassExtractor;
