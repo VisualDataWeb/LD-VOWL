@@ -11,6 +11,8 @@ module.exports = function (PREFIX, PROPERTY_BLACKLIST, CLASS_BLACKLIST, RequestC
 
   vm.langPreferences = "en, de";
 
+  vm.propsOrdered = true;
+
   vm.propertyBlacklistInput = '';
   vm.classBlacklistInput = '';
 
@@ -20,12 +22,18 @@ module.exports = function (PREFIX, PROPERTY_BLACKLIST, CLASS_BLACKLIST, RequestC
     var classItems = ClassExtractor.getBlacklist();
     var propertyItems = RelationExtractor.getBlacklist();
 
+    vm.propsOrdered = RequestConfig.getPropertiesOrdered();
+
     vm.classBlacklistInput = classItems.join(vm.separator);
     vm.propertyBlacklistInput = propertyItems.join(vm.separator);
   };
 
   vm.updateLabelLanguage = function () {
     RequestConfig.setLabelLanguage(vm.currentLanguage);
+  };
+
+  vm.updatePropsOrdered = function () {
+    RequestConfig.setPropertiesOrdered(vm.propsOrdered);
   };
 
   /**

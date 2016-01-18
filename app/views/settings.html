@@ -12,7 +12,19 @@
       <div class="col-sm-4">
         <input class="form-control" id="limit" type="number" ng-model="vm.currentLimit" />
       </div>
-    </div>
+    </div><!-- /.form-group -->
+
+    <div class="form-group">
+      <div class="col-lg-offset-2 col-sm-10">
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" ng-model="vm.propsOrdered" ng-change="vm.updatePropsOrdered()">
+            fetch properties ordered
+          </label>
+        </div>
+      </div>
+    </div><!-- /.form-group -->
+
     </form>
 
     <h2>Blacklists</h2>
@@ -21,7 +33,7 @@
     <div class="form-group">
       <label for="classBlacklist" class="control-label col-sm-2">Classes</label>
       <div class="col-sm-10">
-        <textarea class="form-control" id="classBlacklist" rows="10" ng-model="vm.classBlacklistInput">
+        <textarea class="form-control" id="classBlacklist" rows="9" ng-model="vm.classBlacklistInput">
         </textarea>
       </div>
     </div>
@@ -29,7 +41,7 @@
     <div class="form-group">
       <label class="control-label col-sm-2" for="propBlacklist">Properties</label>
       <div class="col-sm-10">
-        <textarea class="form-control" id="propBlacklist" rows="10" ng-model="vm.propertyBlacklistInput">
+        <textarea class="form-control" id="propBlacklist" rows="9" ng-model="vm.propertyBlacklistInput">
         </textarea>
       </div>
     </div>

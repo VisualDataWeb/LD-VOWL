@@ -245,6 +245,9 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
           message.item.targetName = targetNode.name;
           message.item.targetURI = targetNode.uri;
 
+          //TODO add ordered attribute
+          message.item.ordered = true;
+
           if (d.type === 'subClassProperty') {
             message.item.commonCount = d.commonInstances;
           } else {

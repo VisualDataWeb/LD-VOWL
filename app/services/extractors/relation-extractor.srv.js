@@ -51,12 +51,15 @@ class RelationExtractor extends Extractor {
     var originClassURI = this.nodes.getURIById(originId);
     var targetClassURI = this.nodes.getURIById(targetId);
 
-    var query = this.qFactory.getClassClassRelationQuery(originClassURI, targetClassURI, limit, offset);
+    var query = '';
+    if (this.rConfig.getPropertiesOrdered()) {
+      query = this.qFactory.getOrderedClassClassRelationQuery(originClassURI, targetClassURI, limit, offset);
+    } else {
+      query = this.qFactory.getUnorderedClassClassRelationQuery(originClassURI, targetClassURI, limit, offset);
+    }
     var endpointURL = this.rConfig.getEndpointURL();
 
     var self = this;
-
-    //self.$log.debug("[Relations] Search between '" + originClassURI + "' and '" + targetClassURI + "'...");
 
     this.$http.get(endpointURL, this.rConfig.forQuery(query))
       .then(function (response) {
@@ -95,8 +98,20 @@ class RelationExtractor extends Extractor {
                     self.$log.error("[Relations] Intermediate " + uriBetween + " was not found!");
                   }
 
-                  self.props.addProperty(originId, intermediateId, targetId, currentURI);
-                }
+                  if (bindings[i].count !== undefined && bindings[i].count.value !== undefined) {
+
+                    self.$log.debug('[Relations] Add ordered properties...');
+
+                    // call method WITH number of instances to indicate ordered prop list
+                    self.props.addProperty(originId, intermediateId, targetId, currentURI, bindings[i].count.value);
+                  } else {
+
+                    self.$log.debug('[Relations] Add unordered properties...');
+
+                    // call method WITHOUT number of instances to indicate unordered prop list
+                    self.props.addProperty(originId, intermediateId, targetId, currentURI);
+                  }
+                } // end of if not blacklisted
               } // end of for loop over all bindings
 
               if (offset === 0 && bindings.length > 0) {

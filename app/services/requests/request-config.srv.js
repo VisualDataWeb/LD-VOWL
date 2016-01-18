@@ -10,6 +10,8 @@ module.exports = function ($cookies) {
   var labelLanguage = 'en';
   var format = 'json';
 
+  var propertiesOrdered = true;
+
   var self = this;
 
   self.init = function () {
@@ -54,6 +56,14 @@ module.exports = function ($cookies) {
 
   self.setLabelLanguage = function (newLang) {
     labelLanguage = newLang;
+  };
+
+  self.getPropertiesOrdered = function () {
+    return propertiesOrdered;
+  };
+
+  self.setPropertiesOrdered = function (ordered) {
+    propertiesOrdered = ordered;
   };
 
   /**

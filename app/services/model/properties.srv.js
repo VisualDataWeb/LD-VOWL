@@ -96,8 +96,16 @@ module.exports = function ($interval, $log) {
     return false;
   };
 
-  self.addProperty = function (source, intermediate, target, uri) {
+  self.addProperty = function (source, intermediate, target, uri, value) {
     if (typeof source === 'string' && typeof intermediate === 'string' && typeof target === 'string') {
+
+      var ordered;
+      if (value !== undefined) {
+        ordered = true;
+      } else {
+        ordered = false;
+        value = 1;
+      }
 
       // only add it, if it doesn't already exist
       if (!self.existsBetween(source, target)) {
@@ -108,13 +116,14 @@ module.exports = function ($interval, $log) {
         newProperty.target = target;
         newProperty.value = 1;
         newProperty.props = [];
-        newProperty.props.push({'uri': uri});
+        newProperty.props.push({'uri': uri, 'value': value});
         newProperty.uri = uri;
         newProperty.type = "property";
+        newProperty.ordered = ordered;
 
         self.properties.push(newProperty);
       } else {
-        self.addURI(source, target, uri);
+        self.addURI(source, target, uri, value);
       }
       self.needsUpdate = true;
     }
@@ -203,7 +212,11 @@ module.exports = function ($interval, $log) {
     self.updateSessionStorage();
   };
 
-  self.addURI = function (sourceIndex, targetIndex, uriToAdd) {
+  self.addURI = function (sourceIndex, targetIndex, uriToAdd, value) {
+    if (value === undefined) {
+      value = 1;
+    }
+
     var index = -1;
     for (var i = 0; i < self.properties.length; i++) {
       var currentProperty = self.properties[i];
@@ -230,7 +243,7 @@ module.exports = function ($interval, $log) {
 
       // uri to add doesn't exist, so it can be added
       if (!exists) {
-        var p = {uri: uriToAdd};
+        var p = {uri: uriToAdd, value: value};
         self.properties[index].props.push(p);
         self.properties[index].value++;
       }

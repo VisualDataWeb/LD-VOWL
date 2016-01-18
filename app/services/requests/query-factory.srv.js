@@ -239,7 +239,23 @@ module.exports = function () {
 
       // RELATION queries
 
-      getClassClassRelationQuery: function (originClass, targetClass, limit, offset) {
+      getOrderedClassClassRelationQuery: function (originClass, targetClass, limit, offset) {
+        var query = prefixes() +
+            "SELECT (count(?originInstance) as ?count) ?prop " +
+            "WHERE { " +
+              "?originInstance a <" + originClass + "> ." +
+              "?targetInstance a <" + targetClass + "> ." +
+              "?originInstance ?prop ?targetInstance . " +
+            "} " +
+            "GROUP BY ?prop " +
+            "ORDER BY DESC(?count)" +
+            "LIMIT " + limit + " " +
+            "OFFSET " + offset;
+        return query;
+      },
+
+      //TODO this may be used if number of distinct props is to high
+      getUnorderedClassClassRelationQuery: function (originClass, targetClass, limit, offset) {
         var query  = prefixes() +
           "SELECT distinct ?prop " +
           "WHERE { " +

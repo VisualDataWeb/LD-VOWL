@@ -135,7 +135,8 @@
             </p>
 
             <div class="prop-list">
-              <ul class="properties">
+              <!-- if props are NOT ordered -->
+              <ul class="properties" ng-if="!selected.ordered">
                 <li ng-repeat="p in selected.props | limitTo: vm.numberOfProps">
                   <a href="{{p.uri}}" target="_blank">
                     {{p.uri | uriLabel}}
@@ -143,6 +144,18 @@
                   </a>
                 </li>
               </ul>
+
+              <!-- if props are ordered -->
+              <ol class="properties" ng-if="selected.ordered">
+                <li ng-repeat="p in selected.props | limitTo: vm.numberOfProps">
+                  <a href="{{p.uri}}" target="_blank">
+                    {{p.uri | uriLabel}}
+                    <span class="glyphicon glyphicon-new-window"></span>
+                  </a>
+                  ({{p.value | number}})
+                </li>
+              </ol>
+
               <button ng-hide="selected.props.length < vm.numberOfProps" type="button" class="btn btn-link"
                       ng-click="vm.incNumberOfProps()">
                 more ...
