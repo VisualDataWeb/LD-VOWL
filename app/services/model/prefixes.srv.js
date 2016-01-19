@@ -30,7 +30,6 @@ module.exports = function ($rootScope) {
 
       prefixes.set(pre.prefix, pre);
 
-      console.log("[Prefixes] Values have changed!");
       $rootScope.$broadcast('prefixes-changed', prefixes.size);
     }
   };
@@ -87,7 +86,6 @@ module.exports = function ($rootScope) {
       prefixes.set(newPrefixes[i].prefix, newPrefixes[i]);
     }
 
-    console.log("[Prefixes] Values have changed!");
     $rootScope.$broadcast('prefixes-changed', prefixes.size);
   };
 

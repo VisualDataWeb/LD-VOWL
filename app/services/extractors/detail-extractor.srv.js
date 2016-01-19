@@ -26,7 +26,7 @@ module.exports = function ($http, $log, QueryFactory, RequestConfig, Nodes) {
           $log.error("[DetailExtractor] Error parsing comment for '" + uri + "'.");
         }
       } else {
-        $log.debug("[DetailExtractor] No Comment for " + uri + ".");
+        $log.debug("[DetailExtractor] No Comment found for '" + uri + "'.");
       }
     }, function (err) {
       $log.error(err);

@@ -99,18 +99,13 @@ class RelationExtractor extends Extractor {
                   }
 
                   if (bindings[i].count !== undefined && bindings[i].count.value !== undefined) {
-
-                    self.$log.debug('[Relations] Add ordered properties...');
-
                     // call method WITH number of instances to indicate ordered prop list
                     self.props.addProperty(originId, intermediateId, targetId, currentURI, bindings[i].count.value);
                   } else {
-
-                    self.$log.debug('[Relations] Add unordered properties...');
-
                     // call method WITHOUT number of instances to indicate unordered prop list
                     self.props.addProperty(originId, intermediateId, targetId, currentURI);
                   }
+
                 } // end of if not blacklisted
               } // end of for loop over all bindings
 
