@@ -1,0 +1,29 @@
+<!-- for selected classes -->
+<div ng-show="selected !== undefined && selected.type === 'class'">
+  <p ng-hide="selected.name === ''">
+    <strong>Label:</strong> {{selected.name}}
+  </p>
+
+  <p>
+    <strong>Type:</strong> {{selected.type}}
+  </p>
+
+  <p>
+    <strong>URI:</strong> <a href="{{selected.uri}}" target="_blank">{{ selected.uri }}</a>
+  </p>
+
+  <p ng-show="selected.equivalentURI !== undefined">
+    <strong>Equivalent Class:</strong>
+    <a href="{{selected.uri}}" target="_blank">{{selected.equivalentURI | uriLabel}}</a>
+  </p>
+
+  <p>
+    <strong># Instances:</strong>
+    {{selected.value | number}}
+  </p>
+
+  <p ng-hide="selected.comment === undefined">
+    <strong>Comment:</strong>
+    <span>{{ selected.comment }}</span>
+  </p>
+</div>

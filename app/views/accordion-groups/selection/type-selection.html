@@ -1,0 +1,17 @@
+<!-- for selected data types -->
+<div ng-show="selected !== undefined && selected.type === 'type'">
+  <p>
+    <strong>Type:</strong>
+    Datatype
+  </p>
+
+  <p>
+    <strong>Label:</strong>
+    {{selected.uri | uriLabel}}
+  </p>
+
+  <p>
+    <strong>URI:</strong>
+    <a href="{{selected.uri}}" target="_blank">{{selected.uri}}</a>
+  </p>
+</div>

@@ -20,185 +20,7 @@
             <span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span> Selection
           </uib-accordion-heading>
 
-          <p ng-hide="selected.type !== ''">
-            Select a class or property to see more details.
-          </p>
-
-          <!-- for selected classes -->
-          <div ng-show="selected !== undefined && selected.type === 'class'">
-            <p ng-hide="selected.name === ''">
-              <strong>Label:</strong> {{selected.name}}
-            </p>
-
-            <p>
-              <strong>Type:</strong> {{selected.type}}
-            </p>
-
-            <p>
-              <strong>URI:</strong> <a href="{{selected.uri}}" target="_blank">{{ selected.uri }}</a>
-            </p>
-
-            <p ng-show="selected.equivalentURI !== undefined">
-              <strong>Equivalent Class:</strong>
-              <a href="{{selected.uri}}" target="_blank">{{selected.equivalentURI | uriLabel}}</a>
-            </p>
-
-            <p>
-              <strong># Instances:</strong>
-              {{selected.value | number}}
-            </p>
-
-            <p ng-hide="selected.comment === undefined">
-              <strong>Comment:</strong>
-              <span>{{ selected.comment }}</span>
-            </p>
-          </div>
-
-          <!-- for selected data types -->
-          <div ng-show="selected !== undefined && selected.type === 'type'">
-            <p>
-              <strong>Type:</strong>
-              Datatype
-            </p>
-
-            <p>
-              <strong>Label:</strong>
-              {{selected.uri | uriLabel}}
-            </p>
-
-            <p>
-              <strong>URI:</strong>
-              <a href="{{selected.uri}}" target="_blank">{{selected.uri}}</a>
-            </p>
-          </div>
-
-          <!-- for selected datatype properties -->
-          <div ng-show="selected !== undefined && selected.type === 'datatypeProperty'">
-            <p>
-              <strong>Type:</strong> datatype property
-            </p>
-
-            <p ng-hide="selected.props.length < 1">
-              <strong>URI:</strong>
-              <a href="{{selected.props[0].uri}}" target="_blank">
-                {{selected.props[0].uri}}
-              </a>
-            </p>
-
-            <p>
-              <strong>From instances of:</strong>
-              <a href="{{selected.sourceURI}}" target="_blank">
-                {{selected.sourceName}}
-                <span ng-hide="selected.sourceName.length > 0">{{selected.sourceURI | uriLabel}}</span>
-              </a>
-            </p>
-
-            <p>
-              <strong>To instances of data type:</strong>
-              <a href="{{selected.targetURI}}" target="_blank">
-                {{selected.targetURI | uriLabel}}
-              </a>
-            </p>
-          </div>
-
-          <!-- for selected properties -->
-          <div ng-show="selected !== undefined && selected.type === 'property'">
-            <p>
-              <strong>Type:</strong> {{selected.type}}
-            </p>
-
-            <p>
-              <strong>From instances of:</strong>
-              <a href="{{selected.sourceURI}}" target="_blank">
-                {{selected.sourceName}}
-                <span ng-hide="selected.sourceName.length > 0">{{selected.sourceURI | uriLabel }}</span>
-                <span class="glyphicon glyphicon-new-window"></span>
-              </a>
-            </p>
-
-            <p>
-              <strong>To instances of:</strong>
-              <a href="{{selected.targetURI}}" target="_blank">
-                {{selected.targetName}}
-                <span ng-hide="selected.targetName.length > 0">{{selected.targetURI | uriLabel }}</span>
-                <span class="glyphicon glyphicon-new-window"></span>
-              </a>
-            </p>
-
-            <p>
-              <strong ng-if="selected.props.length <= vm.numberOfProps">
-                Properties ({{selected.props.length}}):
-              </strong>
-              <strong ng-if="selected.props.length > vm.numberOfProps">
-                Properties ({{vm.numberOfProps}} of {{selected.props.length}}):
-              </strong>
-            </p>
-
-            <div class="prop-list">
-              <!-- if props are NOT ordered -->
-              <ul class="properties" ng-if="!selected.ordered">
-                <li ng-repeat="p in selected.props | limitTo: vm.numberOfProps">
-                  <a href="{{p.uri}}" target="_blank">
-                    {{p.uri | uriLabel}}
-                    <span class="glyphicon glyphicon-new-window"></span>
-                  </a>
-                </li>
-              </ul>
-
-              <!-- if props are ordered -->
-              <ol class="properties" ng-if="selected.ordered">
-                <li ng-repeat="p in selected.props | limitTo: vm.numberOfProps">
-                  <a href="{{p.uri}}" target="_blank">
-                    {{p.uri | uriLabel}}
-                    <span class="glyphicon glyphicon-new-window"></span>
-                  </a>
-                  ({{p.value | number}})
-                </li>
-              </ol>
-
-              <button ng-hide="selected.props.length < vm.numberOfProps" type="button" class="btn btn-link"
-                      ng-click="vm.incNumberOfProps()">
-                more ...
-              </button>
-            </div>
-
-            <p ng-hide="selected.comment === undefined">
-              <strong>Comment:</strong>
-              <span>{{ selected.comment }}</span>
-            </p>
-          </div>
-
-          <!-- for selected subclass properties -->
-          <div ng-show="selected !== undefined && selected.type === 'subClassProperty'">
-
-            <p>
-              <strong>Type:</strong>
-              subclass relation
-            </p>
-
-            <p>
-              <strong>Parent Class:</strong>
-              <a href="{{selected.targetURI}}" target="_blank">
-                {{selected.targetName}}
-                <span ng-hide="selected.targetName.length > 0">{{selected.targetURI | uriLabel }}</span>
-                <span class="glyphicon glyphicon-new-window"></span>
-              </a>
-            </p>
-
-            <p>
-              <strong>Child Class:</strong>
-              <a href="{{selected.sourceURI}}" target="_blank">
-                {{selected.sourceName}}
-                <span ng-hide="selected.sourceName.length > 0">{{selected.sourceURI | uriLabel }}</span>
-                <span class="glyphicon glyphicon-new-window"></span>
-              </a>
-            </p>
-
-            <p ng-hide="selected.commonCount === undefined">
-              <strong>Common Instances:</strong>
-              {{selected.commonCount | number}}
-            </p>
-          </div>
+          <selection-group></selection-group>
 
         </uib-accordion-group>
 
@@ -208,70 +30,21 @@
             <span class="glyphicon glyphicon-filter" aria-hidden="true"></span> Filters
           </uib-accordion-heading>
 
-          <form class="form-horizontal">
-            <div class="checkbox">
-              <label for="showLiterals">
-                <input id="showLiterals" type="checkbox" ng-model="vm.extractTypes" ng-change="vm.toggleTypes()">
-                Show Types
-              </label>
-            </div>
-            <div class="checkbox">
-              <label for="includeLoops">
-                <input id="includeLoops" type="checkbox" ng-model="vm.includeLoops" ng-change="vm.toggleLoops()">
-                Include loops
-              </label>
-            </div>
-          </form>
+          <filter-group></filter-group>
 
         </uib-accordion-group>
 
         <uib-accordion-group heading="Graph">
-          <p>
-            <label for="edgeLength">Edge Length: {{edgeLength}}</label>
-            <div id="edgeLength" slider class="cdbl-slider" model="edgeLength" min="10" max="100"></div>
-          </p>
+          <graph-settings-group></graph-settings-group>
         </uib-accordion-group>
 
         <uib-accordion-group heading="Namespaces">
-          <p>
-            <strong>Class Prefixes:</strong>
-          </p>
-          <div class="row prefix" ng-repeat="pre in prefixes">
-            <button type="button" class="btn btn-default btn-xs" ng-model="pre.classification" uib-btn-checkbox
-                    btn-checkbox-true="'intern'" btn-checkbox-false="'extern'" ng-click="vm.updatePrefixes()">
-              intern
-            </button>
-            <a href="{{pre.prefix}}" target="_blank">{{pre.prefix | httpLess}}</a> ({{pre.value}})
-          </div>
+          <namespace-group></namespace-group>
         </uib-accordion-group><!-- end of namespace prefix group -->
 
         <uib-accordion-group heading="Endpoint" is-open="true">
-          <p>
-            <strong>URL:</strong>
-            <a href="{{vm.endpointURL}}" target="_blank">{{vm.endpointURL}}</a>
-          </p>
-
-          <p>
-            <strong>Pending Requests:</strong>
-            <span ng-hide="pendingRequests === 0">{{pendingRequests | number}}
-              <span class="glyphicon glyphicon-refresh glyphicon-spin"></span>
-            </span>
-            <span ng-show="pendingRequests === 0">None</span>
-          </p>
-
-          <p>
-            <strong>Successful Requests:</strong>
-            <span ng-hide="successfulRequests === 0">{{successfulRequests | number}}</span>
-            <span ng-show="successfulRequests === 0">None</span>
-          </p>
-
-          <p>
-            <strong>Failed Requests:</strong>
-            <span ng-hide="failedRequests === 0">{{failedRequests | number}}</span>
-            <span ng-show="failedRequests === 0">None</span>
-          </p>
-
-        </uib-accordion-group><!-- end of endpoint group -->
+          <endpoint-group></endpoint-group>
+        </uib-accordion-group>
 
       </uib-accordion>
 

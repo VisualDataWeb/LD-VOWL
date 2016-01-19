@@ -1,0 +1,14 @@
+<form class="form-horizontal">
+  <div class="checkbox">
+    <label for="showLiterals">
+      <input id="showLiterals" type="checkbox" ng-model="vm.extractTypes" ng-change="vm.toggleTypes()">
+      Show Types
+    </label>
+  </div>
+  <div class="checkbox">
+    <label for="includeLoops">
+      <input id="includeLoops" type="checkbox" ng-model="vm.includeLoops" ng-change="vm.toggleLoops()">
+      Include loops
+    </label>
+  </div>
+</form>

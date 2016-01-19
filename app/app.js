@@ -34,6 +34,21 @@ var Properties = require('./services/model/properties.srv');
 var Utils = require('./services/utils.srv');
 var Filters = require('./services/model/extraction-filters.srv');
 
+// accordion group directives
+var EndpointGroup = require('./directives/accordion-groups/endpoint-group.drv');
+var NamespaceGroup = require('./directives/accordion-groups/namespace-group.drv');
+var GraphSettingsGroup = require('./directives/accordion-groups/graph-settings-group.drv');
+var FilterGroup = require('./directives/accordion-groups/filter-group.drv');
+var SelectionGroup = require('./directives/accordion-groups/selection-group.drv');
+
+// selection directives
+var NoSelection = require('./directives/accordion-groups/selection/no-selection.drv');
+var ClassSelection = require('./directives/accordion-groups/selection/class-selection.drv');
+var TypeSelection = require('./directives/accordion-groups/selection/type-selection.drv');
+var PropertySelection = require('./directives/accordion-groups/selection/prop-selection.drv');
+var DatatypePropertySelection = require('./directives/accordion-groups/selection/datatype-prop-selection.drv');
+var SubclassPropertySelection = require('./directives/accordion-groups/selection/subclass-prop-selection.drv');
+
 // TODO move constants somewhere else
 app.constant('PREFIX', {
   'RDF': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
@@ -131,9 +146,24 @@ app.filter('responseTime', function () {
   };
 });
 
+// register directives
+
 app.directive('nodeLinkGraph', ['$window', '$log', 'Properties', 'Nodes', 'Prefixes', 'Filters', 'Utils',
               nodeLinkGraph]);
 app.directive('slider', Slider);
+
+app.directive('endpointGroup', EndpointGroup);
+app.directive('namespaceGroup', NamespaceGroup);
+app.directive('graphSettingsGroup', GraphSettingsGroup);
+app.directive('filterGroup', FilterGroup);
+app.directive('selectionGroup', SelectionGroup);
+
+app.directive('noSelection', NoSelection);
+app.directive('classSelection', ClassSelection);
+app.directive('typeSelection', TypeSelection);
+app.directive('propSelection', PropertySelection);
+app.directive('datatypePropSelection', DatatypePropertySelection);
+app.directive('subclassPropSelection', SubclassPropertySelection);
 
 app.service('RequestConfig', ['$cookies', RequestConfig]);
 app.factory('QueryFactory', QueryFactory);

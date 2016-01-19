@@ -1,0 +1,12 @@
+<div>
+  <p>
+    <strong>Class Prefixes:</strong>
+  </p>
+  <div class="row prefix" ng-repeat="pre in prefixes">
+    <button type="button" class="btn btn-default btn-xs" ng-model="pre.classification" uib-btn-checkbox
+            btn-checkbox-true="'intern'" btn-checkbox-false="'extern'" ng-click="vm.updatePrefixes()">
+      intern
+    </button>
+    <a href="{{pre.prefix}}" target="_blank">{{pre.prefix | httpLess}}</a> ({{pre.value}})
+  </div>
+</div>
