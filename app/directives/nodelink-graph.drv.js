@@ -112,6 +112,16 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
         }
       }, true);
 
+      scope.lineColor = d3.scale.log()
+                          .base(2)
+                          .domain([1, 32])
+                          .range(['#000', '#777'])
+                          .clamp(true);
+
+      scope.arrowColor = d3.scale.ordinal()
+                          .domain([5, 6, 7, 8, 9])
+                          .range(['#777', '#666', '#555', '#333', '#000']);
+
       scope.getName = function (obj, values, clip) {
         var name = '';
         clip =  (clip !== undefined) ? clip : false;
@@ -166,9 +176,9 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
         var arrowHeads = [];
 
         for (var lwidth = 1; lwidth <= 5; lwidth++) {
-          arrowHeads.push({id: 'Arrow' + lwidth, class: 'arrow', size: 9-lwidth});
-          arrowHeads.push({id: 'hoveredArrow' + lwidth, class: 'hovered', size: 9-lwidth});
-          arrowHeads.push({id: 'subclassArrow' + lwidth, class: 'subclass', size: 9-lwidth});
+          arrowHeads.push({id: 'Arrow' + lwidth, class: 'arrow', size: 10-lwidth});
+          arrowHeads.push({id: 'hoveredArrow' + lwidth, class: 'hovered', size: 10-lwidth});
+          arrowHeads.push({id: 'subclassArrow' + lwidth, class: 'subclass', size: 10-lwidth});
         }
 
         return arrowHeads;
@@ -374,10 +384,22 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
             return d.size;
           })
           .attr("orient", "auto")
+          .style("stroke", function (d) {
+            return (d.class === 'hovered') ? 'red' : scope.arrowColor(d.size);
+          })
+          .style("fill", function (d) {
+            if (d.class === 'hovered') {
+              return 'red';
+            } else if (d.class === 'subclass') {
+              return 'white';
+            } else {
+              return scope.arrowColor(d.size)
+            }
+          })
           .append("path")
-          .attr("d", function (d) {
-            return "M0," + (d.size * -1) + "L" + (d.size * 2) + ",0L0," + d.size + "Z";
-          });
+            .attr("d", function (d) {
+              return "M0," + (d.size * -1) + "L" + (d.size * 2) + ",0L0," + d.size + "Z";
+            });
       };
 
       scope.render = function (data) {
@@ -510,6 +532,7 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
            .enter()
             .append("g")
             .attr("class", "link")
+            .style("stroke", function (d) { return scope.lineColor(d.value); })
             .append("path")
               .attr("class", "link-line")
               .classed('subClassProperty', function (d) { return d.type === 'subClassProperty'; });
@@ -520,15 +543,18 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
                 return Math.min(Math.log2(d.value + 2), 5);
             })
             .on('mouseover', function () {
+              d3.select(this).attr("stroke", "red");
               d3.select(this).attr("marker-end", function (d) { return scope.getMarkerEnd('hovered', d.value); });
             })
             .on("mouseout", function () {
+              d3.select(this).attr("stroke", function (d) { return scope.lineColor(d.value); });
               d3.select(this).attr("marker-end", function (d) { return scope.getMarkerEnd('', d.value); });
             });
 
         linkContainer.selectAll('.subClassProperty')
           .attr("marker-end", function(d) { return scope.getMarkerEnd('subclass', d.value); })
           .on("mouseout", function () {
+            d3.select(this).attr("stroke", function (d) { return scope.lineColor(d.value); });
             d3.select(this).attr("marker-end", function (d) { return scope.getMarkerEnd('subclass', d.value); });
           })
           .style('stroke-dasharray', '5, 5');

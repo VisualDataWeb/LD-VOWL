@@ -2,22 +2,8 @@
   background-color: #F8F8F8;
 }
 
-marker {
-  stroke: #000;
-}
-
-marker.arrow {
-  fill: #000;
-}
-
-marker.hovered {
-  stroke: #f00;
-  fill: #f00;
-}
-
 marker.subclass {
   stroke-width: 2px;
-  fill: #f8f8f8;
 }
 
 circle {
@@ -90,13 +76,7 @@ circle {
 }
 
 .link {
-  stroke: #000;
   fill: none;
-}
-
-.link:hover {
-  stroke: #f00;
-  stroke-opacity: 1.0;
 }
 
 .link:hover text.text {
