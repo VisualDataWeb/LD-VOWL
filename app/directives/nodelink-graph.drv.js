@@ -9,6 +9,8 @@ var d3 = require('d3');
  * @param $log
  * @param Properties
  * @param Nodes
+ * @param Prefixes
+ * @param Filters
  * @param Utils
  *
  * @returns {{restrict: string, scope: {data: string, onClick: string}, link: link}}
@@ -50,7 +52,9 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
         scope.$apply();
       };
 
+      scope.nodes = {};
       scope.force = {};
+      scope.cardinalSpline = {};
 
       scope.data = {
         'nodes': Nodes.getNodes(),
@@ -393,7 +397,7 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
             } else if (d.class === 'subclass') {
               return 'white';
             } else {
-              return scope.arrowColor(d.size)
+              return scope.arrowColor(d.size);
             }
           })
           .append("path")
@@ -402,12 +406,141 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
             });
       };
 
+      scope.setUpNodes = function (root, data, nodes) {
+        var nodeContainer = root.append('g')
+          .attr('class', 'nodeContainer');
+
+        scope.node = nodeContainer.selectAll('.node')
+          .data(nodes)
+          .enter().append('g')
+          .classed('node', true)
+          .classed('class', function (d) { return d.type === 'class'; })
+          .classed('equivalent', function (d) {return d.equivalentURI !== undefined; })
+          .classed('property', function (d) { return d.type === 'property'; })
+          .classed('datatypeProperty', function (d) { return d.type === 'datatypeProperty'; })
+          .classed('subClassProperty', function (d) { return d.type === 'subClassProperty'; })
+          .classed('type', function (d) { return d.type === 'type'; })
+          .classed('active', function(d) { return d.uri === data.selected; })
+          .classed('activeIndex', function (d) {return d.id === data.selectedId; })
+          .classed('extern', function (d) {
+            return !(scope.data.prefixes[0] !== undefined && scope.isIntern(d.uri));
+          })
+          .call(scope.force.drag);
+
+        scope.cardinalSpline = d3.svg.line()
+          .x(function (d) { return d.x; })
+          .y(function(d) { return d.y; })
+          .interpolate("cardinal");
+
+        // draw a ring for equivalent classes
+        nodeContainer.selectAll('.equivalent')
+          .append('circle')
+          .attr('r', function (d) { return d.radius + ringWidth + 'px'; })
+          .style('fill', '#fff');
+
+        nodeContainer.selectAll('.class')
+          .append('circle')
+          .attr('r', function (d) { return d.radius + "px"; })
+          .on('click', scope.updateActive)
+          .append('title')
+          .text(function(d) {return d.uri;});
+
+        nodeContainer.selectAll('.property')
+          .append('rect')
+          .attr('x', scope.calcPropBoxOffset)
+          .attr('y', (-1 * (defaultPropHeight / 2)))
+          .attr('width', scope.calcPropBoxWidth)
+          .attr('height', defaultPropHeight)
+          .on('click', scope.updateActive)
+          .append('title')
+          .text(function(d) { return scope.getName(d, false, false); });
+
+        nodeContainer.selectAll('.datatypeProperty')
+          .append('rect')
+          .attr('x', scope.calcPropBoxOffset)
+          .attr('y', (-1 * (defaultPropHeight / 2)))
+          .attr('width', scope.calcPropBoxWidth)
+          .attr('height', defaultPropHeight)
+          .on('click', scope.updateActive)
+          .append('title')
+          .text(function(d) { return scope.getName(d, false, false); });
+
+        nodeContainer.selectAll('.subClassProperty')
+          .append('rect')
+          .attr('x', scope.calcPropBoxOffset)
+          .attr('y', (-1 * (defaultPropHeight / 2)))
+          .attr('width', scope.calcPropBoxWidth)
+          .attr('height', defaultPropHeight)
+          .on('click', scope.updateActive)
+          .append('title')
+          .text(function(d) { return scope.getName(d, false, false); });
+
+        nodeContainer.selectAll('.type')
+          .append('rect')
+          .attr('x', scope.calcPropBoxOffset)
+          .attr('y', (-1 * (defaultPropHeight / 2)))
+          .attr('width', scope.calcPropBoxWidth)
+          .attr('height', defaultPropHeight)
+          .on('click', scope.updateActive)
+          .append('title')
+          .text(function(d) { return scope.getName(d, false, false); });
+
+        // for classes, properties, datatype properties and types
+        scope.node.append('text')
+          .attr('class', 'text')
+          .attr('dy', '.35em')
+          .attr('text-anchor', 'middle')
+          .text(function(d) {
+            if (d.type === 'class' && d.radius !== undefined) {
+              return scope.getNameForSpace(d, d.radius*2);
+            } else {
+              return scope.getName(d, (d.type === 'property'), true);
+            }
+          });
+      }; // end of setUpNodes()
+
+      scope.setUpLinks = function(bilinks) {
+        var linkContainer = root.append('g')
+          .attr('class', 'linkContainer');
+
+        scope.createArrowHeads(linkContainer);
+
+        scope.link = linkContainer.selectAll(".link")
+          .data(bilinks)
+          .enter()
+          .append("g")
+          .attr("class", "link")
+          .style("stroke", function (d) { return scope.lineColor(d.value); })
+          .append("path")
+          .attr("class", "link-line")
+          .classed('subClassProperty', function (d) { return d.type === 'subClassProperty'; });
+
+        linkContainer.selectAll('.link-line')
+          .attr("marker-end", function(d) { return scope.getMarkerEnd('', d.value); })
+          .style("stroke-width", function (d) {
+            return Math.min(Math.log2(d.value + 2), 5);
+          })
+          .on('mouseover', function () {
+            d3.select(this).attr("stroke", "red");
+            d3.select(this).attr("marker-end", function (d) { return scope.getMarkerEnd('hovered', d.value); });
+          })
+          .on("mouseout", function () {
+            d3.select(this).attr("stroke", function (d) { return scope.lineColor(d.value); });
+            d3.select(this).attr("marker-end", function (d) { return scope.getMarkerEnd('', d.value); });
+          });
+
+        linkContainer.selectAll('.subClassProperty')
+          .attr("marker-end", function(d) { return scope.getMarkerEnd('subclass', d.value); })
+          .on("mouseout", function () {
+            d3.select(this).attr("stroke", function (d) { return scope.lineColor(d.value); });
+            d3.select(this).attr("marker-end", function (d) { return scope.getMarkerEnd('subclass', d.value); });
+          })
+          .style('stroke-dasharray', '5, 5');
+      };
+
       scope.render = function (data) {
 
-        //$log.debug(data);
-
         scope.data.prefixes = Prefixes.getPrefixes();
-
 
         if (scope.force.stop !== undefined) {
           scope.force.stop();
@@ -454,7 +587,7 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
           } else {
             nodes.push(n);
           }
-        }
+        } // end of for all nodes
 
         if (data.properties !== undefined) {
           data.properties.forEach(function (link) {
@@ -490,8 +623,8 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
                 bilinks.push({source: s, intermediate: i, target: t, value: link.value, type: link.type});
               }
             }
-          });
-        }
+          }); // end of forEach()
+        } // end of if data.properties are defined
 
         // set up dimensions
         var width = d3.select(element[0]).node().offsetWidth - margin;
@@ -506,7 +639,7 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
           .size([width, height]);
 
         // needed to make panning and dragging of nodes work
-        var drag = scope.force.drag()
+        scope.force.drag()
           .on('dragstart', function () {
             d3.event.sourceEvent.stopPropagation();
           });
@@ -522,136 +655,12 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
           .links(links)
           .start();
 
-        var linkContainer = root.append('g')
-                              .attr('class', 'linkContainer');
+        scope.setUpLinks(bilinks);
 
-        this.createArrowHeads(linkContainer);
-
-        var link = linkContainer.selectAll(".link")
-            .data(bilinks)
-           .enter()
-            .append("g")
-            .attr("class", "link")
-            .style("stroke", function (d) { return scope.lineColor(d.value); })
-            .append("path")
-              .attr("class", "link-line")
-              .classed('subClassProperty', function (d) { return d.type === 'subClassProperty'; });
-
-        linkContainer.selectAll('.link-line')
-            .attr("marker-end", function(d) { return scope.getMarkerEnd('', d.value); })
-            .style("stroke-width", function (d) {
-                return Math.min(Math.log2(d.value + 2), 5);
-            })
-            .on('mouseover', function () {
-              d3.select(this).attr("stroke", "red");
-              d3.select(this).attr("marker-end", function (d) { return scope.getMarkerEnd('hovered', d.value); });
-            })
-            .on("mouseout", function () {
-              d3.select(this).attr("stroke", function (d) { return scope.lineColor(d.value); });
-              d3.select(this).attr("marker-end", function (d) { return scope.getMarkerEnd('', d.value); });
-            });
-
-        linkContainer.selectAll('.subClassProperty')
-          .attr("marker-end", function(d) { return scope.getMarkerEnd('subclass', d.value); })
-          .on("mouseout", function () {
-            d3.select(this).attr("stroke", function (d) { return scope.lineColor(d.value); });
-            d3.select(this).attr("marker-end", function (d) { return scope.getMarkerEnd('subclass', d.value); });
-          })
-          .style('stroke-dasharray', '5, 5');
-
-        var nodeContainer = root.append('g')
-                              .attr('class', 'nodeContainer');
-
-        var node = nodeContainer.selectAll('.node')
-                      .data(nodes)
-                    .enter().append('g')
-                    .classed('node', true)
-                    .classed('class', function (d) { return d.type === 'class'; })
-                    .classed('equivalent', function (d) {return d.equivalentURI !== undefined; })
-                    .classed('property', function (d) { return d.type === 'property'; })
-                    .classed('datatypeProperty', function (d) { return d.type === 'datatypeProperty'; })
-                    .classed('subClassProperty', function (d) { return d.type === 'subClassProperty'; })
-                    .classed('type', function (d) { return d.type === 'type'; })
-                    .classed('active', function(d) { return d.uri === data.selected; })
-                    .classed('activeIndex', function (d) {return d.id === data.selectedId; })
-                    .classed('extern', function (d) {
-                      return !(scope.data.prefixes[0] !== undefined && scope.isIntern(d.uri));
-                    })
-                    .call(scope.force.drag);
-
-        var cardinalSpline = d3.svg.line()
-                              .x(function (d) { return d.x; })
-                              .y(function(d) { return d.y; })
-                              .interpolate("cardinal");
-
-        // draw a ring for equivalent classes
-        nodeContainer.selectAll('.equivalent')
-          .append('circle')
-          .attr('r', function (d) { return d.radius + ringWidth + 'px'; })
-          .style('fill', '#fff');
-
-        nodeContainer.selectAll('.class')
-          .append('circle')
-            .attr('r', function (d) { return d.radius + "px"; })
-            .on('click', scope.updateActive)
-          .append('title')
-            .text(function(d) {return d.uri;});
-
-        nodeContainer.selectAll('.property')
-          .append('rect')
-            .attr('x', scope.calcPropBoxOffset)
-            .attr('y', (-1 * (defaultPropHeight / 2)))
-            .attr('width', scope.calcPropBoxWidth)
-            .attr('height', defaultPropHeight)
-            .on('click', scope.updateActive)
-            .append('title')
-              .text(function(d) { return scope.getName(d, false, false); });
-
-        nodeContainer.selectAll('.datatypeProperty')
-          .append('rect')
-            .attr('x', scope.calcPropBoxOffset)
-            .attr('y', (-1 * (defaultPropHeight / 2)))
-            .attr('width', scope.calcPropBoxWidth)
-            .attr('height', defaultPropHeight)
-            .on('click', scope.updateActive)
-            .append('title')
-              .text(function(d) { return scope.getName(d, false, false); });
-
-        nodeContainer.selectAll('.subClassProperty')
-          .append('rect')
-          .attr('x', scope.calcPropBoxOffset)
-          .attr('y', (-1 * (defaultPropHeight / 2)))
-          .attr('width', scope.calcPropBoxWidth)
-          .attr('height', defaultPropHeight)
-          .on('click', scope.updateActive)
-          .append('title')
-          .text(function(d) { return scope.getName(d, false, false); });
-
-        nodeContainer.selectAll('.type')
-          .append('rect')
-            .attr('x', scope.calcPropBoxOffset)
-            .attr('y', (-1 * (defaultPropHeight / 2)))
-            .attr('width', scope.calcPropBoxWidth)
-            .attr('height', defaultPropHeight)
-            .on('click', scope.updateActive)
-            .append('title')
-              .text(function(d) { return scope.getName(d, false, false); });
-
-        // for classes, properties, datatype properties and types
-        node.append('text')
-              .attr('class', 'text')
-              .attr('dy', '.35em')
-              .attr('text-anchor', 'middle')
-              .text(function(d) {
-                if (d.type === 'class' && d.radius !== undefined) {
-                  return scope.getNameForSpace(d, d.radius*2);
-                } else {
-                  return scope.getName(d, (d.type === 'property'), true);
-                }
-              });
+        scope.setUpNodes(root, data, nodes);
 
         scope.force.on('tick', function() {
-          link.attr('d', function(d) {
+          scope.link.attr('d', function(d) {
             var lineData = [];
             lineData.push({x: d.source.x, y: d.source.y});
             lineData.push({x: d.intermediate.x, y: d.intermediate.y});
@@ -662,12 +671,12 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
               lineData.push(scope.getRectOutlinePoint(d));
             }
 
-            return cardinalSpline(lineData);
+            return scope.cardinalSpline(lineData);
           });
 
-          node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+          scope.node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
         });
-      };
-    }
-  };
-};
+      }; // end of scope.render()
+    } // end of link()
+  }; // end of directive
+}; // end of module.exports

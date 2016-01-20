@@ -49,6 +49,10 @@ var PropertySelection = require('./directives/accordion-groups/selection/prop-se
 var DatatypePropertySelection = require('./directives/accordion-groups/selection/datatype-prop-selection.drv');
 var SubclassPropertySelection = require('./directives/accordion-groups/selection/subclass-prop-selection.drv');
 
+// filters
+var HttpLessFilter = require('./filters/http-less');
+var UriLabelFilter = require('./filters/uri-label');
+
 // TODO move constants somewhere else
 app.constant('PREFIX', {
   'RDF': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
@@ -114,24 +118,11 @@ app.run(['$rootScope', function ($rootScope) {
 
 // FILTER
 
-app.filter('uriLabel', function () {
-  return function (uri) {
-    var uriLabel = '';
-    if (uri !== undefined && uri !== '') {
-      var lastSlash = uri.lastIndexOf('/');
-      var lastHash = uri.lastIndexOf('#');
-      uriLabel = uri.substr(Math.max(lastSlash, lastHash) + 1).replace(/\_/g, ' ');
-    }
-    return uriLabel;
-  };
-});
+app.filter('uriLabel', UriLabelFilter);
 
-app.filter('httpLess', function () {
-  return function (uri) {
-    return uri.replace('http://', '');
-  };
-});
+app.filter('httpLess', HttpLessFilter);
 
+//TODO remove me
 app.filter('responseTime', function () {
   return function (time) {
     var timeStr = '';
@@ -165,6 +156,8 @@ app.directive('propSelection', PropertySelection);
 app.directive('datatypePropSelection', DatatypePropertySelection);
 app.directive('subclassPropSelection', SubclassPropertySelection);
 
+// register services
+
 app.service('RequestConfig', ['$cookies', RequestConfig]);
 app.factory('QueryFactory', QueryFactory);
 app.factory('RequestCounter', ['$q', 'Requests', RequestCounter]);
@@ -184,6 +177,8 @@ app.service('RelationExtractor', ['$http', '$q', '$log', 'PREFIX', 'PROPERTY_BLA
 app.service('TypeExtractor', ['$http', '$log', 'RequestConfig', 'QueryFactory', 'Nodes', 'Properties',
   'RelationExtractor', TypeExtractor]);
 app.service('DetailExtractor', ['$http', '$log', 'QueryFactory', 'RequestConfig', 'Nodes', DetailExtractor]);
+
+// register controllers
 
 app.controller('GraphCtrl', ['$scope', '$q', '$log', 'Filters',  'ClassExtractor', 'RelationExtractor',
   'TypeExtractor', 'DetailExtractor', 'RequestConfig', 'Requests', 'Prefixes', GraphCtrl]);
