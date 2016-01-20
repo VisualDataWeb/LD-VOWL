@@ -9,6 +9,7 @@ module.exports = function ($scope, $q, $log, Filters, ClassExtractor, RelationEx
 
   vm.extractTypes = Filters.getIncludeLiterals();
   vm.includeLoops = Filters.getIncludeLoops();
+  vm.showDisjunctNode = false;
 
   vm.endpointURL = RequestConfig.getEndpointURL();
   vm.data = {};
@@ -69,6 +70,10 @@ module.exports = function ($scope, $q, $log, Filters, ClassExtractor, RelationEx
     if (vm.includeLoops) {
       vm.loadLoops();
     }
+  };
+
+  vm.toggleDisjunctNode = function () {
+    //TODO not implemented yet!
   };
 
   /**

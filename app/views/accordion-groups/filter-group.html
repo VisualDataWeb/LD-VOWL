@@ -5,10 +5,19 @@
       Show Types
     </label>
   </div>
+
   <div class="checkbox">
     <label for="includeLoops">
       <input id="includeLoops" type="checkbox" ng-model="vm.includeLoops" ng-change="vm.toggleLoops()">
       Include loops
     </label>
   </div>
-</form>
+
+  <div class="checkbox">
+    <label for="includeDisjunctNode">
+      <input id="includeDisjunctNode" type="checkbox" ng-model="vm.includeDisjunctNode"
+             ng-change="vm.toggleDisjunctNode()">
+      Show disjunct classes
+    </label>
+  </div>
+</form><!-- end of .form-horizontal -->
