@@ -2,9 +2,9 @@
 
 module.exports = function ($interval, $log) {
 
-  var SUBCLASS_URI = "http://my-own-sub-class";
-
   var self = this;
+
+  self.SUBCLASS_URI = "http://my-own-sub-class";
 
   self.properties = [];
   self.needsUpdate = false;
@@ -138,8 +138,8 @@ module.exports = function ($interval, $log) {
     newSubClassProp.target = target;
     newSubClassProp.value = 1;
     newSubClassProp.props = [];
-    newSubClassProp.props.push({'uri': SUBCLASS_URI});
-    newSubClassProp.uri = SUBCLASS_URI;
+    newSubClassProp.props.push({'uri': self.SUBCLASS_URI});
+    newSubClassProp.uri = self.SUBCLASS_URI;
     newSubClassProp.type = "subClassProperty";
 
     self.properties.push(newSubClassProp);

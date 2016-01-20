@@ -1,7 +1,5 @@
 'use strict';
 
-var SUBCLASS_URI = "http://my-own-sub-class";
-
 var Extractor = require('./extractor.srv');
 
 /**
@@ -291,7 +289,7 @@ class RelationExtractor extends Extractor {
 
                 // create an intermediate node
                 subClassPropNode = {};
-                subClassPropNode.uri = SUBCLASS_URI;
+                subClassPropNode.uri = self.props.SUBCLASS_URI;
                 subClassPropNode.type = "subClassProperty";
                 subClassPropNode.name = "Subclass of";
                 subClassPropNode.value = 10000;
@@ -300,7 +298,6 @@ class RelationExtractor extends Extractor {
                 subClassPropNodeId = self.nodes.addNode(subClassPropNode);
 
                 // create a property
-                //self.props.addProperty(classId1, subClassPropNodeId, classId2, SUBCLASS_URI);
                 self.props.addSubClassProperty(classId1, subClassPropNodeId, classId2);
                 deferred.reject("subclass");
               } else if (commonCount === count2 && commonCount < count1) {
@@ -309,7 +306,7 @@ class RelationExtractor extends Extractor {
 
                 // create an intermediate node
                 subClassPropNode = {};
-                subClassPropNode.uri = SUBCLASS_URI;
+                subClassPropNode.uri = self.props.SUBCLASS_URI;
                 subClassPropNode.name = "Subclass of";
                 subClassPropNode.type = "subClassProperty";
                 subClassPropNode.value = 10000;
@@ -318,7 +315,6 @@ class RelationExtractor extends Extractor {
                 subClassPropNodeId = self.nodes.addNode(subClassPropNode);
 
                 // create a property
-                //self.props.addProperty(classId2, subClassPropNodeId, classId1, SUBCLASS_URI);
                 self.props.addSubClassProperty(classId2, subClassPropNodeId, classId1);
                 deferred.reject("subclass");
               } else {

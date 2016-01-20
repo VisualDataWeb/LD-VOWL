@@ -163,7 +163,7 @@ app.factory('QueryFactory', QueryFactory);
 app.factory('RequestCounter', ['$q', 'Requests', RequestCounter]);
 
 app.service('Prefixes', ['$rootScope', Prefixes]);
-app.service('Nodes', ['$log', 'Prefixes', Nodes]);
+app.service('Nodes', ['$log', 'Properties', 'Prefixes', Nodes]);
 app.service('Properties', ['$interval', '$log', Properties]);
 app.service('Types', Types);
 app.service('Requests', ['$rootScope', Requests]);

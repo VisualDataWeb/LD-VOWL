@@ -1,12 +1,14 @@
 'use strict';
 
-module.exports = function ($log, Prefixes) {
+module.exports = function ($log, Properties, Prefixes) {
 
   var classUriIdMap = new Map();
 
   var nodes = new Map();
 
   var that = this;
+
+  that.suffixRegEx = /(#?[^\/#]*)\/?$/;
 
   that.initMap = function () {
     if (sessionStorage !== undefined) {
@@ -27,8 +29,8 @@ module.exports = function ($log, Prefixes) {
     Prefixes.clear();
 
     for (var node of nodes.values()) {
-      if (node.uri !== undefined && node.uri.length > 0) {
-        var pre = node.uri.replace(/([^\/]*)\/?$/, '');
+      if (node.uri !== undefined && node.uri.length > 0 && node.uri !== Properties.SUBCLASS_URI) {
+        var pre = node.uri.replace(that.suffixRegEx, '');
 
         Prefixes.addPrefix({"prefix": pre});
       }
@@ -60,7 +62,8 @@ module.exports = function ($log, Prefixes) {
           nodes.set(newId, newNode);
           classUriIdMap.set(newNode.uri, newId);
 
-          var pre = newNode.uri.replace(/([^\/]*)\/?$/, '');
+          var pre = newNode.uri.replace(that.suffixRegEx, '');
+          $log.debug("[Nodes] Prefix for new node is '" + pre + "'!");
 
           Prefixes.addPrefix({"prefix": pre});
         }
