@@ -72,7 +72,7 @@ app.constant('CLASS_BLACKLIST', {
   'RDFS': ['Resource', 'Literal', 'Class', 'Datatype', 'Statement', 'Container', 'ContainerMembershipProperty'],
   'OWL': ['AllDifferent', 'AnnotationProperty', 'Class', 'DataRange', 'DatatypeProperty', 'DeprecatedClass',
     'DeprecatedProperty', 'FunctionalProperty', 'InverseFunctionalProperty', 'Nothing', 'ObjectProperty', 'Ontology',
-    'OntologyProperty', 'Restriction', 'SymmetricProperty', 'Thing', 'TransiticeProperty']
+    'OntologyProperty', 'Restriction', 'SymmetricProperty', 'Thing', 'TransitiveProperty']
 });
 
 // HTTP Interceptor
