@@ -33,7 +33,7 @@ module.exports = function ($cookies) {
   };
 
   self.setLimit = function (newLimit) {
-    limit = (typeof newLimit === 'number') ? newLimit : limit;
+    limit = (typeof newLimit === 'number' && newLimit > 0) ? newLimit : limit;
   };
 
   self.getTimout = function () {

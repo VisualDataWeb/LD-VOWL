@@ -51,7 +51,7 @@
   "scripts": {
     "start": "webpack-dev-server --content-base app --inline --hot",
     "host": "webpack-dev-server --host 0.0.0.0 --content-base app --inline --hot",
-    "test": "test"
+    "test": "karma start"
   },
   "keywords": [
     "VOWL"
