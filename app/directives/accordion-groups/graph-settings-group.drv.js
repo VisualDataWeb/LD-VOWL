@@ -2,7 +2,7 @@ module.exports = function () {
 
   return {
     restrict: 'E',
-    templateUrl: 'views/accordion-groups/graph-settings-group.html'
+    templateUrl: '../../components/sidebar/graph-settings-group.html'
   };
 
 };

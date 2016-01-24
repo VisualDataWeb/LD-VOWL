@@ -1,20 +1,15 @@
-// var d3Module = angular.module('d3Module', []);
-// var d3Service = require('./services/graph/d3.srv');
-// var d3 = d3Module.factory('d3Service', ['$document', '$q', '$rootScope', '$window', d3Service]);
-
 require('./utilities/q-all-settled');
 
 var app = angular.module('ldVOWLApp', ['ngRoute', 'ngAnimate', 'ui.bootstrap', 'ngCookies', 'qAllSettled']);
-//var app = angular.module('ldVOWLApp', ['ngRoute', 'ngAnimate', 'ui.bootstrap', 'd3Module']);
 
 var nodeLinkGraph = require('./directives/nodelink-graph.drv');
 var Slider = require('./directives/slider.drv');
 
 // Controllers
-var GraphCtrl = require('./controllers/graph.ctrl');
-var HeaderCtrl = require('./controllers/header.ctrl');
-var StartCtrl = require('./controllers/start.ctrl');
-var SettingsCtrl = require('./controllers/settings.ctrl');
+var GraphCtrl = require('./components/graph/graph.ctrl.js');
+var HeaderCtrl = require('./components/header/header.ctrl.js');
+var StartCtrl = require('./components/start/start.ctrl');
+var SettingsCtrl = require('./components/settings/settings.ctrl.js');
 
 // Services
 var RequestConfig = require('./services/requests/request-config.srv');
@@ -75,67 +70,18 @@ app.constant('CLASS_BLACKLIST', {
     'OntologyProperty', 'Restriction', 'SymmetricProperty', 'Thing', 'TransitiveProperty']
 });
 
-// HTTP Interceptor
+import routing from './app.config';
+import runBlock from './app.run';
 
-app.config(['$httpProvider', function($httpProvider) {
-  $httpProvider.interceptors.push('RequestCounter');
-}]);
+runBlock.$inject = ['$rootScope'];
 
-app.config(function ($routeProvider) {
-    $routeProvider
-      .when('/', {
-        title: 'Start',
-        templateUrl: 'views/start.html',
-        controller: 'StartCtrl',
-        controllerAs: 'start'
-      })
-      .when('/settings', {
-        title: 'Settings',
-        templateUrl: 'views/settings.html',
-        controller: 'SettingsCtrl',
-        controllerAs: 'vm'
-      })
-      .when('/graph', {
-        title: 'Graph',
-        templateUrl: 'views/graph.html',
-        controller: 'GraphCtrl',
-        controllerAs: 'vm'
-      })
-      .otherwise({
-        redirectTo: '/'
-      });
-  })
-  .config(['$httpProvider', function($httpProvider) {
-    $httpProvider.defaults.useXDomain = true;
-    delete $httpProvider.defaults.headers.common['X-Requested-With'];
-  }]);
-
-app.run(['$rootScope', function ($rootScope) {
-  $rootScope.$on('$routeChangeSuccess', function (event, current, previous) {
-    $rootScope.title = current.$$route.title;
-  });
-}]);
+app.config(routing);
+app.run(runBlock);
 
 // FILTER
 
 app.filter('uriLabel', UriLabelFilter);
-
 app.filter('httpLess', HttpLessFilter);
-
-//TODO remove me
-app.filter('responseTime', function () {
-  return function (time) {
-    var timeStr = '';
-    if (typeof time === 'number') {
-      if (time > 1000) {
-        timeStr = (time / 1000) + ' s';
-      } else {
-        timeStr = time + ' ms';
-      }
-    }
-    return timeStr;
-  };
-});
 
 // register directives
 

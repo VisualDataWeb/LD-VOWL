@@ -2,7 +2,7 @@ module.exports = function () {
 
   return {
     restrict: 'E',
-    templateUrl: 'views/accordion-groups/selection/class-selection.html'
+    templateUrl: '../../../components/sidebar/selection/class-selection.html'
   };
 
 };
