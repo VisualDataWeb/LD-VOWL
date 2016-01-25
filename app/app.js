@@ -48,27 +48,11 @@ var SubclassPropertySelection = require('./directives/accordion-groups/selection
 var HttpLessFilter = require('./filters/http-less');
 var UriLabelFilter = require('./filters/uri-label');
 
-// TODO move constants somewhere else
-app.constant('PREFIX', {
-  'RDF': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-  'RDFS': 'http://www.w3.org/2000/01/rdf-schema#',
-  'OWL': 'http://www.w3.org/2002/07/owl#'
-});
-app.constant('PROPERTY_BLACKLIST', {
-  'RDF': ['type', 'first', 'rest', 'value', 'subject', 'predicate', 'object'],
-  'RDFS': ['subClassOf', 'subPropertyOf', 'domain', 'range', 'label', 'comment', 'member', 'seeAlso', 'isDefinedBy'],
-  'OWL': ['allValuesFrom', 'backwardCompatibleWith', 'cardinality', 'complementOf', 'differentFrom', 'disjointWith',
-    'distinctMembers', 'equivalentClass', 'equivalentProperty', 'hasValue', 'imports', 'incompatibleWith',
-    'intersectionOf', 'inverseOf', 'maxCardinality', 'minCardinality', 'oneOf', 'onProperty', 'priorVersion', 'sameAs',
-    'someValuesFrom', 'unionOf', 'versionInfo']
-});
-app.constant('CLASS_BLACKLIST', {
-  'RDF': ['List', 'langString', 'HTML', 'XMLLiteral', 'Property', 'Bag', 'Seq', 'Alt'],
-  'RDFS': ['Resource', 'Literal', 'Class', 'Datatype', 'Statement', 'Container', 'ContainerMembershipProperty'],
-  'OWL': ['AllDifferent', 'AnnotationProperty', 'Class', 'DataRange', 'DatatypeProperty', 'DeprecatedClass',
-    'DeprecatedProperty', 'FunctionalProperty', 'InverseFunctionalProperty', 'Nothing', 'ObjectProperty', 'Ontology',
-    'OntologyProperty', 'Restriction', 'SymmetricProperty', 'Thing', 'TransitiveProperty']
-});
+// register constants
+
+app.constant('PREFIX', require('./constants/blacklist_prefixes'));
+app.constant('PROPERTY_BLACKLIST', require('./constants/blacklist_properties'));
+app.constant('CLASS_BLACKLIST', require('./constants/blacklist_classes'));
 
 import routing from './app.config';
 import runBlock from './app.run';
