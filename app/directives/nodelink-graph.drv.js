@@ -26,6 +26,8 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
       var margin = parseInt(attrs.margin) || 20;
       var height = parseInt(attrs.height) || $window.innerHeight;
 
+      var colorRange = [d3.rgb("#3366CC"), d3.rgb('#EE2867')];
+
       var propDistance = 80;
       var dtPropDistance = 20;
 
@@ -56,6 +58,10 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
       scope.force = {};
       scope.cardinalSpline = {};
 
+      scope.color = d3.scale.linear().domain([1, Prefixes.size()])
+        .interpolate(d3.interpolateHsl)
+        .range(colorRange);
+
       scope.data = {
         'nodes': Nodes.getNodes(),
         'properties': Properties.getProperties(),
@@ -72,10 +78,6 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
 
       scope.$watch('data.nodes.size', function () {
         $log.debug("[Graph] Number of nodes has changed!");
-        return scope.render(scope.data);
-      });
-
-      scope.$watch('data.prefixes.length', function () {
         return scope.render(scope.data);
       });
 
@@ -115,6 +117,13 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
           }
         }
       }, true);
+
+      scope.$on('prefixes-changed', function () {
+        scope.color = d3.scale.linear().domain([1, Prefixes.size()])
+          .interpolate(d3.interpolateHsl)
+          .range(colorRange);
+        scope.render(scope.data);
+      });
 
       scope.lineColor = d3.scale.log()
                           .base(2)
@@ -339,27 +348,6 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
       };
 
       /**
-       * Returns true if the given URI is an internal one, false otherwise.
-       *
-       * @param uri - the URI to be checked
-       * @returns {boolean}
-       */
-      scope.isIntern = function (uri) {
-
-        var match = false;
-        for (var i = 0; i < scope.data.prefixes.length; i++) {
-          var currentPre = scope.data.prefixes[i];
-
-          if (currentPre.classification === 'intern' && uri.indexOf(currentPre.prefix) !== -1) {
-            match = true;
-            break;
-          }
-        }
-
-        return match;
-      };
-
-      /**
        * Creates the arrowheads in the given linkContainer.
        *
        * @param linkContainer
@@ -421,10 +409,8 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
           .classed('subClassProperty', function (d) { return d.type === 'subClassProperty'; })
           .classed('type', function (d) { return d.type === 'type'; })
           .classed('active', function(d) { return d.uri === data.selected; })
-          .classed('activeIndex', function (d) {return d.id === data.selectedId; })
-          .classed('extern', function (d) {
-            return !(scope.data.prefixes[0] !== undefined && scope.isIntern(d.uri));
-          })
+          .classed('activeIndex', function (d) { return d.id === data.selectedId; })
+          .classed('external', function (d) { return !(Prefixes.isInternal(d.uri)); })
           .call(scope.force.drag);
 
         scope.cardinalSpline = d3.svg.line()
@@ -440,10 +426,23 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
 
         nodeContainer.selectAll('.class')
           .append('circle')
+          .classed('clazz', true)
           .attr('r', function (d) { return d.radius + "px"; })
           .on('click', scope.updateActive)
+          .on('mouseover', function () {
+            d3.select(this).style('fill', 'red')
+          })
+          .on('mouseout', function (d) {
+            d3.select(this).style('fill', '#acf')
+          })
           .append('title')
-          .text(function(d) {return d.uri;});
+          .text(function(d) { return d.uri; });
+
+        nodeContainer.selectAll('.external circle.clazz')
+          .style('fill', function (d) { return scope.color(Prefixes.getColor(d.uri)); })
+          .on('mouseout', function (d) {
+            d3.select(this).style('fill', scope.color(Prefixes.getColor(d.uri)));
+          });
 
         nodeContainer.selectAll('.property')
           .append('rect')
@@ -540,7 +539,7 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
 
       scope.render = function (data) {
 
-        scope.data.prefixes = Prefixes.getPrefixes();
+        //scope.data.prefixes = Prefixes.getPrefixes();
 
         if (scope.force.stop !== undefined) {
           scope.force.stop();

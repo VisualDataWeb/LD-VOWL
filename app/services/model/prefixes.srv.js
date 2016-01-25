@@ -2,7 +2,9 @@
 
 module.exports = function ($rootScope) {
 
-  var prefixes = new Map();
+  var prefixes = [];
+
+  var colorNumber = 1;
 
   var that = this;
 
@@ -19,18 +21,41 @@ module.exports = function ($rootScope) {
         return;
       }
 
-      var newNumber = 1;
-
-      if (prefixes.has(pre.prefix)) {
-        var oldPre = prefixes.get(pre.prefix);
-        newNumber += oldPre.value;
+      var existingPrefix;
+      for (var i = 0; i < prefixes.length; i++) {
+        prefixes[i].classification = 'extern';
+        if (prefixes[i].prefix === pre.prefix) {
+          existingPrefix = prefixes[i];
+        }
       }
 
-      pre.value = newNumber;
+      if (existingPrefix !== undefined) {
+        existingPrefix.value++;
+      } else {
+        pre.color = colorNumber;
+        pre.value = 1;
+        colorNumber++;
+        prefixes.push(pre);
+      }
 
-      prefixes.set(pre.prefix, pre);
+      // sort the array
+      prefixes.sort(function(a, b) {
+        // compare prefixes according to their value
+        if (a.value < b.value) {
+          return 1;
+        } else if (a.value > b.value) {
+          return -1;
+        } else {
+          return 0;
+        }
+      });
 
-      $rootScope.$broadcast('prefixes-changed', prefixes.size);
+      // by default, the first one is intern
+      if (prefixes.length > 0) {
+        prefixes[0].classification = 'intern';
+      }
+
+      $rootScope.$broadcast('prefixes-changed', prefixes.length);
     }
   };
 
@@ -38,7 +63,8 @@ module.exports = function ($rootScope) {
    * Removes all prefixes.
    */
   that.clear = function () {
-    prefixes = new Map();
+    prefixes = [];
+    colorNumber = 1;
     $rootScope.$broadcast('prefixes-changed', 0);
   };
 
@@ -48,30 +74,7 @@ module.exports = function ($rootScope) {
    * @returns {Array}
    */
   that.getPrefixes = function () {
-    var pres = [];
-
-    for (var pre of prefixes.values()) {
-      pres.push(pre);
-    }
-
-    // sort the array
-    pres.sort(function(a, b) {
-      // compare prefixes according to their value
-      if (a.value < b.value) {
-        return 1;
-      } else if (a.value > b.value) {
-        return -1;
-      } else {
-        return 0;
-      }
-    });
-
-    // by default, the first one is intern
-    if (pres.length > 0 && pres[0].classification === undefined) {
-      pres[0].classification = 'intern';
-    }
-
-    return pres;
+    return prefixes;
   };
 
   /**
@@ -80,13 +83,50 @@ module.exports = function ($rootScope) {
    * @param newPrefixes - array of the new prefixes
    */
   that.setPrefixes = function (newPrefixes) {
-    prefixes = new Map();
+    prefixes = newPrefixes;
 
-    for (var i = 0; i < newPrefixes.length; i++) {
-      prefixes.set(newPrefixes[i].prefix, newPrefixes[i]);
+    $rootScope.$broadcast('prefixes-changed', prefixes.length);
+  };
+
+  /**
+   * Returns true if the given URI is an internal one, false otherwise.
+   *
+   * @param uri - the URI to be checked
+   * @returns {boolean}
+   */
+  that.isInternal = function (uri) {
+
+    var internal = false;
+    for (var i = 0; i < prefixes.length; i++) {
+
+      var pre = prefixes[i];
+
+      if (pre.classification === 'intern' && uri.indexOf(pre.prefix) !== -1) {
+        internal = true;
+        break;
+      }
     }
 
-    $rootScope.$broadcast('prefixes-changed', prefixes.size);
+    return internal;
+  };
+
+  that.getColor = function (uri) {
+    var colorNumber = 1;
+
+    for (var i = 0; i < prefixes.length; i++) {
+      var pre = prefixes[i];
+
+      if (pre.classification !== 'intern' && uri.indexOf(pre.prefix) !== -1) {
+        colorNumber = pre.color;
+        break;
+      }
+    }
+
+    return colorNumber;
+  };
+
+  that.size = function() {
+    return prefixes.length;
   };
 
 }; // end of module exports
