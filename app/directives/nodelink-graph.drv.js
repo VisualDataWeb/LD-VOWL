@@ -57,6 +57,7 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
       scope.nodes = {};
       scope.force = {};
       scope.cardinalSpline = {};
+      scope.loopSpline = {};
 
       scope.color = d3.scale.linear().domain([1, Prefixes.size()])
         .interpolate(d3.interpolateHsl)
@@ -289,6 +290,8 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
         root.attr('transform', 'translate(' + d3.event.translate + ')' + 'scale(' + d3.event.scale + ')');
       };
 
+      // TODO move geo functions into another module
+
       scope.getCircleOutlinePoint = function (d) {
         var deltaX = d.target.x - d.intermediate.x;
         var deltaY = d.target.y - d.intermediate.y;
@@ -304,11 +307,24 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
       };
 
       scope.getAnotherCircleOutlinePoint = function (d, a) {
-        var angle = a * (Math.PI/3);
-        var x = d.target.x + d.target.radius * Math.cos(angle);
-        var y = d.target.y + d.target.radius * Math.sin(angle);
+        var deltaX = (d.intermediate.x - d.source.x);
+        var deltaY = (d.intermediate.y - d.source.y);
 
-        return {x: x,y: y};
+        // the angle of direct connection towards intermediate node
+        var angleToLabel = Math.atan2(deltaY, deltaX);
+
+        // calculate new angle
+        var deltaAngle = (a * (Math.PI / 6));
+        var angle = angleToLabel + deltaAngle;
+
+        var radius = d.target.radius;
+
+        // calculate coordinates on circumference
+        var x = d.target.x + (radius * Math.cos(angle));
+        var y = d.target.y + (radius * Math.sin(angle));
+
+        // return the point on the circle circumference
+        return {x: x, y: y};
       };
 
       scope.getRectOutlinePoint = function (d) {
@@ -424,7 +440,13 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
         scope.cardinalSpline = d3.svg.line()
           .x(function (d) { return d.x; })
           .y(function(d) { return d.y; })
-          .interpolate("cardinal");
+          .interpolate("cardinal")
+
+        scope.loopSpline = d3.svg.line()
+          .x(function (d) { return d.x; })
+          .y(function (d) { return d.y; })
+          .interpolate("cardinal")
+          .tension(0);
 
         // draw a ring for equivalent classes
         nodeContainer.selectAll('.equivalent')
@@ -438,10 +460,10 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
           .attr('r', function (d) { return d.radius + "px"; })
           .on('click', scope.updateActive)
           .on('mouseover', function () {
-            d3.select(this).style('fill', 'red')
+            d3.select(this).style('fill', 'red');
           })
           .on('mouseout', function (d) {
-            d3.select(this).style('fill', '#acf')
+            d3.select(this).style('fill', '#acf');
           })
           .append('title')
           .text(function(d) { return d.uri; });
@@ -544,6 +566,45 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
           })
           .style('stroke-dasharray', '5, 5');
       };
+
+      scope.recalculateLines = function(d) {
+        var line = {};
+
+        // check whether current line is a loop
+        if (d.source.id === d.target.id) {
+
+          var loopData = [];
+
+          // for the loops
+          loopData.push(scope.getAnotherCircleOutlinePoint(d, -1));
+          loopData.push({x: d.intermediate.x, y: d.intermediate.y});
+
+          // loops are always towards classes
+          loopData.push(scope.getAnotherCircleOutlinePoint(d, 1));
+
+          line = scope.loopSpline(loopData);
+        } else {
+
+          // non-loop
+
+          var lineData = [];
+
+          // TODO should also start from circumference
+          lineData.push({x: d.source.x, y: d.source.y});
+          lineData.push({x: d.intermediate.x, y: d.intermediate.y});
+
+          // position depends on node type
+          if (d.target.type === 'class') {
+            lineData.push(scope.getCircleOutlinePoint(d));
+          } else {
+            lineData.push(scope.getRectOutlinePoint(d));
+          }
+
+          line = scope.cardinalSpline(lineData);
+        }
+
+        return line;
+      }; // end of recalculateLines()
 
       scope.render = function (data) {
 
@@ -667,30 +728,7 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
         scope.setUpNodes(root, data, nodes);
 
         scope.force.on('tick', function() {
-          scope.link.attr('d', function(d) {
-            var lineData = [];
-
-            if (d.target.id === d.source.id) {
-              lineData.push(scope.getAnotherCircleOutlinePoint(d, -1));
-            } else {
-              lineData.push({x: d.source.x, y: d.source.y});
-            }
-
-            lineData.push({x: d.intermediate.x, y: d.intermediate.y});
-
-            if (d.target.type === 'class') {
-              if (d.source.id === d.target.id) {
-                lineData.push(scope.getAnotherCircleOutlinePoint(d, 1));
-              } else {
-                lineData.push(scope.getCircleOutlinePoint(d));
-              }
-            } else {
-              lineData.push(scope.getRectOutlinePoint(d));
-            }
-
-            return scope.cardinalSpline(lineData);
-          });
-
+          scope.link.attr('d', scope.recalculateLines);
           scope.node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
         });
       }; // end of scope.render()
