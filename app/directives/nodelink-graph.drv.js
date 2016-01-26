@@ -303,6 +303,14 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
         return {x: (d.target.x - offsetX), y: (d.target.y - offsetY)};
       };
 
+      scope.getAnotherCircleOutlinePoint = function (d, a) {
+        var angle = a * (Math.PI/3);
+        var x = d.target.x + d.target.radius * Math.cos(angle);
+        var y = d.target.y + d.target.radius * Math.sin(angle);
+
+        return {x: x,y: y};
+      };
+
       scope.getRectOutlinePoint = function (d) {
         var m = (d.target.y - d.intermediate.y) / (d.target.x - d.intermediate.x);
 
@@ -661,11 +669,21 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
         scope.force.on('tick', function() {
           scope.link.attr('d', function(d) {
             var lineData = [];
-            lineData.push({x: d.source.x, y: d.source.y});
+
+            if (d.target.id === d.source.id) {
+              lineData.push(scope.getAnotherCircleOutlinePoint(d, -1));
+            } else {
+              lineData.push({x: d.source.x, y: d.source.y});
+            }
+
             lineData.push({x: d.intermediate.x, y: d.intermediate.y});
 
             if (d.target.type === 'class') {
-              lineData.push(scope.getCircleOutlinePoint(d));
+              if (d.source.id === d.target.id) {
+                lineData.push(scope.getAnotherCircleOutlinePoint(d, 1));
+              } else {
+                lineData.push(scope.getCircleOutlinePoint(d));
+              }
             } else {
               lineData.push(scope.getRectOutlinePoint(d));
             }
