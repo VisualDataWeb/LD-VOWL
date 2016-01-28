@@ -10,6 +10,7 @@ module.exports = function ($scope, $q, $log, Filters, ClassExtractor, RelationEx
   vm.extractTypes = Filters.getIncludeLiterals();
   vm.includeLoops = Filters.getIncludeLoops();
   vm.showDisjunctNode = false;
+  vm.differentColors = Prefixes.getDifferentColors();
 
   vm.endpointURL = RequestConfig.getEndpointURL();
   vm.data = {};
@@ -66,7 +67,7 @@ module.exports = function ($scope, $q, $log, Filters, ClassExtractor, RelationEx
   };
 
   vm.toggleLoops = function () {
-    vm.includeLoopse = Filters.toggleLoops();
+    vm.includeLoops = Filters.toggleLoops();
     if (vm.includeLoops) {
       vm.loadLoops();
     }
@@ -74,6 +75,10 @@ module.exports = function ($scope, $q, $log, Filters, ClassExtractor, RelationEx
 
   vm.toggleDisjunctNode = function () {
     //TODO not implemented yet!
+  };
+
+  vm.toggleDifferentColors = function () {
+    vm.differentColors = Prefixes.toggleDifferentColors();
   };
 
   /**

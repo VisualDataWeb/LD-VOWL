@@ -6,6 +6,8 @@ module.exports = function ($rootScope) {
 
   var colorNumber = 1;
 
+  var differentColors = true;
+
   var that = this;
 
   /**
@@ -110,21 +112,50 @@ module.exports = function ($rootScope) {
     return internal;
   };
 
+  /**
+   * Returns the color number for a node with the given URI. If different colors are disabled, this will always return 1
+   * @param uri - the uri of the node to color
+   * @returns {number} the number of the color to use
+   */
   that.getColor = function (uri) {
     var colorNumber = 1;
 
-    for (var i = 0; i < prefixes.length; i++) {
-      var pre = prefixes[i];
+    if (differentColors) {
+      for (var i = 0; i < prefixes.length; i++) {
+        var pre = prefixes[i];
 
-      if (pre.classification !== 'intern' && uri.indexOf(pre.prefix) !== -1) {
-        colorNumber = pre.color;
-        break;
+        if (pre.classification !== 'intern' && uri.indexOf(pre.prefix) !== -1) {
+          colorNumber = pre.color;
+          break;
+        }
       }
     }
 
     return colorNumber;
   };
 
+  /**
+   * Returns true if different colors should be used for external elements, false otherwise
+   * @returns {boolean}
+   */
+  that.getDifferentColors = function () {
+    return differentColors;
+  };
+
+  /**
+   * Toggles the different colors flag broadcasts its modification and returns the new state of the flag.
+   * @returns {boolean}
+   */
+  that.toggleDifferentColors = function () {
+    differentColors = !differentColors;
+    $rootScope.$broadcast('prefixes-changed', prefixes.length);
+    return differentColors;
+  };
+
+  /**
+   * Returns the number of prefixes
+   * @returns {Number}
+   */
   that.size = function() {
     return prefixes.length;
   };

@@ -1,6 +1,18 @@
 <div>
+
+  <p><strong>External Elements</strong></p>
+
+  <div class="checkbox">
+    <label for="differentExternalColors">
+      <input id="differentExternalColors" type="checkbox" ng-model="vm.differentColors"
+             ng-change="vm.toggleDifferentColors()">
+      use different colors
+    </label>
+  </div>
+
   <p>
     <label for="edgeLength">Edge Length: {{edgeLength}}</label>
-  <div id="edgeLength" slider class="cdbl-slider" model="edgeLength" min="10" max="100"></div>
+    <div id="edgeLength" slider class="cdbl-slider" model="edgeLength" min="10" max="100"></div>
   </p>
+
 </div>
