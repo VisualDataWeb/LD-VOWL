@@ -10,9 +10,16 @@
     </label>
   </div>
 
+  <p><strong>Distances</strong></p>
+
   <p>
-    <label for="edgeLength">Edge Length: {{edgeLength}}</label>
-    <div id="edgeLength" slider class="cdbl-slider" model="edgeLength" min="10" max="100"></div>
+    <label for="ctEdgeLength">Class to Class: {{ ccEdgeLength }}</label>
+    <div id="ccEdgeLength" slider class="cdbl-slider" model="ccEdgeLength" min="10" max="100"></div>
+  </p>
+
+  <p>
+    <label for="ctEdgeLength">Class to Type: {{ ctEdgeLength }}</label>
+    <div id="ctEdgeLength" slider class="cdbl-slider" model="ctEdgeLength" min="10" max="100"></div>
   </p>
 
 </div>

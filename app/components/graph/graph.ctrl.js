@@ -18,8 +18,10 @@ module.exports = function ($scope, $q, $log, Filters, ClassExtractor, RelationEx
 
   vm.classes = [];
 
+  $scope.ccEdgeLength = 80;
+  $scope.ctEdgeLength = 20;
+
   $scope.prefixes = Prefixes.getPrefixes();
-  $scope.edgeLength = 60;
 
   // TODO avoid $scope, use controllerAs syntax instead
   $scope.selected = {

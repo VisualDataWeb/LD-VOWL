@@ -28,9 +28,6 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
 
       var colorRange = [d3.rgb("#3366CC"), d3.rgb('#EE2867')];
 
-      var propDistance = 80;
-      var dtPropDistance = 20;
-
       var defaultRadius = 20;
 
       var maxNameLength = 15;
@@ -53,6 +50,9 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
         svg.attr('height', height-60);
         scope.$apply();
       };
+
+      scope.propDistance = 80;
+      scope.dtPropDistance = 20;
 
       scope.nodes = {};
       scope.force = {};
@@ -124,6 +124,22 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
           .interpolate(d3.interpolateHsl)
           .range(colorRange);
         scope.render(scope.data);
+      });
+
+      scope.$on('ccEdgeLength-changed', function (event, newPropDistance) {
+        scope.propDistance = newPropDistance;
+        console.error(scope.propDistance);
+        if (scope.force !== undefined) {
+          scope.force.start();
+        }
+      });
+
+      scope.$on('ctEdgeLength-changed', function (event, newDtPropDistance) {
+        scope.dtPropDistance = newDtPropDistance;
+        console.error(scope.dtPropDistance);
+        if (scope.force !== undefined) {
+          scope.force.start();
+        }
       });
 
       scope.lineColor = d3.scale.log()
@@ -619,6 +635,10 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
         return line;
       }; // end of recalculateLines()
 
+      scope.updateDistances = function () {
+
+      };
+
       scope.render = function (data) {
 
         //scope.data.prefixes = Prefixes.getPrefixes();
@@ -714,7 +734,7 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
           .charge(-800)
           .linkDistance(function (d) {
             // datatype properties should have lower distance then normal properties
-            return (d.type === 'datatypeProperty') ? dtPropDistance : propDistance;
+            return (d.type === 'datatypeProperty') ? scope.dtPropDistance : scope.propDistance;
           })
           .gravity(0.05)
           .size([width, height]);

@@ -4,7 +4,7 @@
 
 require('jquery-ui');
 
-module.exports = function () {
+module.exports = function ($rootScope) {
 
   return {
     restrict: 'AE',
@@ -26,6 +26,7 @@ module.exports = function () {
         slide: function (event, ui) {
           scope.$apply(function () {
             scope.value = parseInt(ui.value);
+            $rootScope.$broadcast(attrs.model + '-changed', ui.value);
           });
         }
       });
