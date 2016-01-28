@@ -434,13 +434,15 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
           .classed('type', function (d) { return d.type === 'type'; })
           .classed('active', function(d) { return d.uri === data.selected; })
           .classed('activeIndex', function (d) { return d.id === data.selectedId; })
-          .classed('external', function (d) { return !(Prefixes.isInternal(d.uri)); })
+          .classed('external', function (d) {
+            return (d.type === 'class' || d.type === 'property') && !(Prefixes.isInternal(d.uri));
+          })
           .call(scope.force.drag);
 
         scope.cardinalSpline = d3.svg.line()
           .x(function (d) { return d.x; })
           .y(function(d) { return d.y; })
-          .interpolate("cardinal")
+          .interpolate("cardinal");
 
         scope.loopSpline = d3.svg.line()
           .x(function (d) { return d.x; })
@@ -468,6 +470,7 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
           .append('title')
           .text(function(d) { return d.uri; });
 
+        // external color for class nodes
         nodeContainer.selectAll('.external circle.clazz')
           .style('fill', function (d) { return scope.color(Prefixes.getColor(d.uri)); })
           .on('mouseout', function (d) {
@@ -483,6 +486,12 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
           .on('click', scope.updateActive)
           .append('title')
           .text(function(d) { return scope.getName(d, false, false); });
+
+        nodeContainer.selectAll('.external rect')
+          .style('fill', function (d) { return scope.color(Prefixes.getColor(d.uri)); })
+          .on('mouseout', function (d) {
+            d3.select(this).style('fill', scope.color(Prefixes.getColor(d.uri)));
+          });
 
         nodeContainer.selectAll('.datatypeProperty')
           .append('rect')
@@ -526,6 +535,10 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
               return scope.getName(d, (d.type === 'property'), true);
             }
           });
+
+        // external background colors are rather dark, so the text should be white
+        nodeContainer.selectAll('.external text')
+          .style('fill', 'white');
       }; // end of setUpNodes()
 
       scope.setUpLinks = function(bilinks) {
