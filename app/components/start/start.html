@@ -23,12 +23,24 @@
           </button>
         </div>
       </div>
+
       <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
           <p class="help-block">
             A list of publicly available endpoints can be found
             <a href="http://sparqles.ai.wu.ac.at/" target="_blank">here</a>.
           </p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" ng-model="start.useLocalProxy" ng-change="start.updateUseLocalProxy()">
+              Use a local proxy
+            </label>
+          </div>
         </div>
       </div><!-- end of .form-group -->
     </form><!-- end of .form-horizontal -->

@@ -7,7 +7,7 @@ module.exports = function ($http, $log, RequestConfig, QueryFactory, Nodes, Prop
   that.requestReferringTypes = function (classId) {
     var classURI = Nodes.getURIById(classId);
     var query = QueryFactory.getInstanceReferringTypesQuery(classURI, 5);
-    var endpointURL = RequestConfig.getEndpointURL();
+    var requestURL = RequestConfig.getRequestURL();
 
     // avoid loading types multiple times
     if (Nodes.getTypesLoaded(classId)) {
@@ -17,7 +17,7 @@ module.exports = function ($http, $log, RequestConfig, QueryFactory, Nodes, Prop
 
     $log.debug("[Referring Types] Send requests for types referring to instances of '" + classURI + "...");
 
-    $http.get(endpointURL, RequestConfig.forQuery(query))
+    $http.get(requestURL, RequestConfig.forQuery(query))
       .then(function (response) {
 
         var bindings = response.data.results.bindings;

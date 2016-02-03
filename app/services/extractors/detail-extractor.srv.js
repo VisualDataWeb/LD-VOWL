@@ -12,9 +12,9 @@ module.exports = function ($http, $log, QueryFactory, RequestConfig, Nodes) {
     var uri = Nodes.getURIById(id);
 
     var query = QueryFactory.getCommentQuery(uri);
-    var endpointURL = RequestConfig.getEndpointURL();
+    var requestURL = RequestConfig.getRequestURL();
 
-    $http.get(endpointURL, RequestConfig.forQuery(query))
+    $http.get(requestURL, RequestConfig.forQuery(query))
     .then(function (response) {
       var bindings = response.data.results.bindings;
 

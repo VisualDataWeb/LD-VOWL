@@ -59,11 +59,11 @@ class ClassExtractor extends Extractor {
     var offset = 0;
 
     var query = this.queryFactory.getClassQuery(limit, offset);
-    var endpointURL = this.reqConfig.getEndpointURL();
+    var requestURL = this.reqConfig.getRequestURL();
 
     self.$log.debug('[Classes] Send Request...');
 
-    this.$http.get(endpointURL, this.reqConfig.forQuery(query))
+    this.$http.get(requestURL, this.reqConfig.forQuery(query))
       .then(function (response) {
         if (response.data.results !== undefined) {
           var bindings = response.data.results.bindings;
@@ -118,11 +118,11 @@ class ClassExtractor extends Extractor {
 
     var labelLang = this.reqConfig.getLabelLanguage();
     var labelQuery = this.queryFactory.getLabelQuery(classURI, labelLang);
-    var endpointURL = this.reqConfig.getEndpointURL();
+    var requestURL = this.reqConfig.getRequestURL();
 
     self.$log.debug("[Class Label] Send request for '" + classURI + "'...");
 
-    this.$http.get(endpointURL, this.reqConfig.forQuery(labelQuery))
+    this.$http.get(requestURL, this.reqConfig.forQuery(labelQuery))
       .then(function (response) {
         var bindings = response.data.results.bindings;
 

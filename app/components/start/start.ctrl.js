@@ -47,9 +47,16 @@ module.exports = function ($log, $location, Nodes, Properties, Requests, Request
     "http://trulla.visus.uni-stuttgart.de:8081/linkedmdb/sparql",
     "http://trulla.visus.uni-stuttgart.de:8081/dblp/sparql",
     "http://trulla.visus.uni-stuttgart.de:8081/ciawfb/sparql",
-    "http://trulla.visus.uni-stuttgart.de:8081/stackexchange/sparql"];
+    "http://trulla.visus.uni-stuttgart.de:8081/stackexchange/sparql",
+    "http://dblp.l3s.de/d2r/sparql"];
 
   start.endpoint = RequestConfig.getEndpointURL();
+
+  start.useLocalProxy = RequestConfig.getUseLocalProxy();
+
+  start.updateUseLocalProxy = function () {
+    RequestConfig.setUseLocalProxy(start.useLocalProxy);
+  };
 
   /**
    * Shows the graph for the current endpoint and clears all data if endpoint has changed.

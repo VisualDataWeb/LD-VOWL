@@ -34,6 +34,16 @@ module.exports = {
           jQuery: "jquery"
       })
   ],
+  devServer: {
+    proxy: {
+      '/sparql': {
+        target: 'http://localhost:8081',
+        rewrite: function (req) {
+          req.url = req.url.replace(/^\/sparql\/?(.+)$/, '$1');
+        }
+      }
+    }
+  },
   output: {
     path: APP,
     filename: 'bundle.js'

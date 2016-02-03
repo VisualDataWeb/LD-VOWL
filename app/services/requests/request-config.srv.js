@@ -4,6 +4,7 @@ module.exports = function ($cookies) {
 
   var cookiePrefix = "ldvowl_";
   var endpointURL = $cookies.get(cookiePrefix + 'endpoint') || 'http://dbpedia.org/sparql';
+  var useLocalProxy = false;
   var limit = 10;
   var sparqlTimeout = 30000;
   var debug = 'on';
@@ -18,6 +19,25 @@ module.exports = function ($cookies) {
     $cookies.put(cookiePrefix + 'endpoint', endpointURL);
   };
 
+  /**
+   * Returns the URL to which the requests should be sent. This can be the URL of the selected endpoint for a direct
+   * connection or a local proxy.
+   *
+   * @returns {*}
+   */
+  self.getRequestURL = function () {
+    var url;
+
+    if (useLocalProxy) {
+      url = 'http://localhost:8080/sparql';
+    } else {
+      endpointURL = $cookies.get(cookiePrefix + 'endpoint');
+      url = endpointURL;
+    }
+
+    return url;
+  };
+
   self.getEndpointURL = function () {
     endpointURL = $cookies.get(cookiePrefix + 'endpoint');
     return endpointURL;
@@ -26,6 +46,14 @@ module.exports = function ($cookies) {
   self.setEndpointURL = function (newEndpoint) {
     endpointURL = newEndpoint;
     $cookies.put(cookiePrefix + 'endpoint', newEndpoint);
+  };
+
+  self.getUseLocalProxy = function () {
+    return useLocalProxy;
+  };
+
+  self.setUseLocalProxy = function (useProxy) {
+    useLocalProxy = useProxy;
   };
 
   self.getLimit = function () {
@@ -82,7 +110,8 @@ module.exports = function ($cookies) {
         timeout: sparqlTimeout,
         debug: debug,
         format: format,
-        query: query
+        query: query,
+        ep: endpointURL
       };
     }
 

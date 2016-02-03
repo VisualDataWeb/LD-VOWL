@@ -55,11 +55,11 @@ class RelationExtractor extends Extractor {
     } else {
       query = this.qFactory.getUnorderedClassClassRelationQuery(originClassURI, targetClassURI, limit, offset);
     }
-    var endpointURL = this.rConfig.getEndpointURL();
+    var requestURL = this.rConfig.getRequestURL();
 
     var self = this;
 
-    this.$http.get(endpointURL, this.rConfig.forQuery(query))
+    this.$http.get(requestURL, this.rConfig.forQuery(query))
       .then(function (response) {
         if (response.data.results !== undefined) {
           var bindings = response.data.results.bindings;
@@ -142,13 +142,13 @@ class RelationExtractor extends Extractor {
   requestPropertyLabel(uri) {
     var labelLang = this.rConfig.getLabelLanguage();
     var query = this.qFactory.getLabelQuery(uri, labelLang);
-    var endpointURL = this.rConfig.getEndpointURL();
+    var requestURL = this.rConfig.getRequestURL();
 
     var self = this;
 
     self.$log.debug("[Property Label] Send Request for '" + uri + "'...");
 
-    this.$http.get(endpointURL, this.rConfig.forQuery(query))
+    this.$http.get(requestURL, this.rConfig.forQuery(query))
       .then(function (response) {
         var bindings = response.data.results.bindings;
         if (bindings !== undefined && bindings.length > 0 && bindings[0].label !== undefined) {
@@ -168,11 +168,11 @@ class RelationExtractor extends Extractor {
     var typeURI = this.nodes.getURIById(targetTypeId);
 
     var query = this.qFactory.getClassTypeRelationQuery(classURI, typeURI);
-    var endpointURL = this.rConfig.getEndpointURL();
+    var requestURL = this.rConfig.getRequestURL();
 
     var self = this;
 
-    this.$http.get(endpointURL, this.rConfig.forQuery(query))
+    this.$http.get(requestURL, this.rConfig.forQuery(query))
       .then(function (response) {
 
         var bindings = response.data.results.bindings;
@@ -243,7 +243,7 @@ class RelationExtractor extends Extractor {
     var classURI2 = this.nodes.getURIById(classId2);
 
     var query = this.qFactory.getNumberOfCommonInstancesQuery(classURI1, classURI2);
-    var endpointURL = this.rConfig.getEndpointURL();
+    var requestURL = this.rConfig.getRequestURL();
 
     var count1 = this.nodes.getInstanceCountById(classId1);
     var count2 = this.nodes.getInstanceCountById(classId2);
@@ -253,7 +253,7 @@ class RelationExtractor extends Extractor {
     self.$log.debug("[Relations] Query for number of common Instances of '" + classURI1 + "' and '" + classURI2 +
       "'...");
 
-    this.$http.get(endpointURL, this.rConfig.forQuery(query))
+    this.$http.get(requestURL, this.rConfig.forQuery(query))
       .then(function (response) {
 
         var results = response.data.results;
