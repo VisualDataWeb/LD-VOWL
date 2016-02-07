@@ -61,56 +61,70 @@ class ClassExtractor extends Extractor {
     var query = this.queryFactory.getClassQuery(limit, offset);
     var requestURL = this.reqConfig.getRequestURL();
 
-    self.$log.debug('[Classes] Send Request...');
+    function doQuery(lastTry) {
+      self.$log.debug('[Classes] Send Request...');
+      self.$http.get(requestURL, self.reqConfig.forQuery(query))
+        .then(function (response) {
+          if (response.data.results !== undefined) {
+            var bindings = response.data.results.bindings;
 
-    this.$http.get(requestURL, this.reqConfig.forQuery(query))
-      .then(function (response) {
-        if (response.data.results !== undefined) {
-          var bindings = response.data.results.bindings;
+            if (bindings !== undefined) {
 
-          if (bindings !== undefined) {
+              // endpoint may ignore limit
+              bindings = bindings.slice(0, Math.min(bindings.length, limit*2));
 
-            // endpoint may ignore limit
-            bindings = bindings.slice(0, Math.min(bindings.length, limit*2));
+              var newClassIds = [];
 
-            var newClassIds = [];
+              for (var i = 0; i < bindings.length; i++) {
 
-            for (var i = 0; i < bindings.length; i++) {
+                var currentClassURI = bindings[i].class.value;
 
-              var currentClassURI = bindings[i].class.value;
+                if (!self.inBlacklist(currentClassURI)) {
+                  var node = {};
 
-              if (!self.inBlacklist(currentClassURI)) {
-                var node = {};
+                  node.uri = currentClassURI;
+                  node.name = (bindings[i].label !== undefined) ? bindings[i].label.value : '';
+                  node.value = parseInt(bindings[i].instanceCount.value);
+                  node.type = 'class';
+                  node.active = false;
+                  var newClassId = self.nodes.addNode(node);
 
-                node.uri = currentClassURI;
-                node.name = (bindings[i].label !== undefined) ? bindings[i].label.value : '';
-                node.value = parseInt(bindings[i].instanceCount.value);
-                node.type = 'class';
-                node.active = false;
-                var newClassId = self.nodes.addNode(node);
+                  newClassIds.push(newClassId);
 
-                newClassIds.push(newClassId);
-
-                if (bindings[i].class !== undefined && bindings[i].class.value !== undefined) {
-                  self.requestClassLabel(newClassId, currentClassURI);
+                  if (bindings[i].class !== undefined && bindings[i].class.value !== undefined) {
+                    self.requestClassLabel(newClassId, currentClassURI);
+                  }
                 }
               }
+
+              deferred.resolve(newClassIds);
+            } else {
+              self.$log.debug('[Classes] No further classes found!');
+              deferred.resolve([]);
             }
-
-            deferred.resolve(newClassIds);
           } else {
-            self.$log.debug('[Classes] No further classes found!');
-            deferred.resolve([]);
+            self.$log.error(response);
+            if (!lastTry) {
+              // switch sparql format and try again
+              self.$log.warn('[Classes] Okay please, just let me try one more time!');
+              self.reqConfig.switchFormat();
+              doQuery(true);
+            } else {
+              // switch back and surrender
+              self.reqConfig.switchFormat();
+              self.$log.error('[Classes] Okay, I surrender...');
+              deferred.resolve([]);
+            }
           }
-        } else {
-          self.$log.error(response);
-        }
-      }, function (err) {
-        self.$log.error(err);
-        deferred.reject([]);
-      });
+        }, function (err) {
+          self.$log.error(err);
+          deferred.reject([]);
+        });
+    }
 
-      return deferred.promise;
+    doQuery(false);
+
+    return deferred.promise;
   }
 
   requestClassLabel (classId, classURI) {

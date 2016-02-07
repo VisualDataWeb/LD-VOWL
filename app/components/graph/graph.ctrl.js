@@ -101,6 +101,8 @@ module.exports = function ($scope, $q, $log, Filters, ClassExtractor, RelationEx
   vm.startLoading = function () {
     ClassExtractor.requestClasses().then(function (newClasses) {
 
+      $log.debug('[Graph] Now the classes should be loaded!');
+
       // merge existing and new classes
       if (newClasses.length === 0) {
         $log.debug("[Graph] No new classes!");

@@ -48,7 +48,17 @@ module.exports = function ($log, $location, Nodes, Properties, Requests, Request
     "http://trulla.visus.uni-stuttgart.de:8081/dblp/sparql",
     "http://trulla.visus.uni-stuttgart.de:8081/ciawfb/sparql",
     "http://trulla.visus.uni-stuttgart.de:8081/stackexchange/sparql",
-    "http://dblp.l3s.de/d2r/sparql"];
+    "http://dblp.l3s.de/d2r/sparql",
+    "http://visualdataweb.infor.uva.es/sparql", // spanish census 2001
+    "http://sparql.jesandco.org:8890/sparql", // learning ressources, ASN:US
+    "http://modip.aueb.gr/d2rq/sparql", // AUEB Linked Open Data
+    "http://vocabulary.semantic-web.at/PoolParty/sparql/AustrianSkiTeam", // austrian ski team
+    "http://opendata.aragon.es/sparql",
+    "http://data.archiveshub.ac.uk/sparql",
+    "http://lab.environment.data.gov.au/sparql", // Australian climate observation reference network (only via proxy)
+    "http://lod.b3kat.de/sparql"
+
+  ];
 
   start.endpoint = RequestConfig.getEndpointURL();
 

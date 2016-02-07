@@ -9,7 +9,7 @@ module.exports = function ($cookies) {
   var sparqlTimeout = 30000;
   var debug = 'on';
   var labelLanguage = 'en';
-  var format = 'json';
+  var format = 'application/sparql-results+json';
 
   var propertiesOrdered = true;
 
@@ -92,6 +92,14 @@ module.exports = function ($cookies) {
 
   self.setPropertiesOrdered = function (ordered) {
     propertiesOrdered = ordered;
+  };
+
+  self.switchFormat = function () {
+    if (format === 'application/sparql-results+json') {
+      format = 'json';
+    } else {
+      format = 'application/sparql-results+json';
+    }
   };
 
   /**

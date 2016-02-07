@@ -185,7 +185,7 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
         var name = '';
 
         // start will full name from object or its URI
-        if (obj !== undefined && obj.hasOwnProperty('name') && obj.name.length > 0) {
+        if (obj !== undefined && obj.name !== undefined && obj.name.length > 0) {
           name = obj.name;
         } else {
           name = Utils.labelFromURI(obj.uri);
