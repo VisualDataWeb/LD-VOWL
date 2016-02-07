@@ -128,7 +128,6 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
 
       scope.$on('ccEdgeLength-changed', function (event, newPropDistance) {
         scope.propDistance = newPropDistance;
-        console.error(scope.propDistance);
         if (scope.force !== undefined) {
           scope.force.start();
         }
@@ -136,7 +135,6 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
 
       scope.$on('ctEdgeLength-changed', function (event, newDtPropDistance) {
         scope.dtPropDistance = newDtPropDistance;
-        console.error(scope.dtPropDistance);
         if (scope.force !== undefined) {
           scope.force.start();
         }

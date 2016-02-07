@@ -49,8 +49,9 @@
     "webpack-dev-server": "^1.14.0"
   },
   "scripts": {
-    "start": "webpack-dev-server --content-base app --inline --hot",
+    "start": "webpack-dev-server --content-base app --inline --hot & npm run proxy",
     "host": "webpack-dev-server --host 0.0.0.0 --content-base app --inline --hot",
+    "proxy": "node ../anti-cors-proxy/index.js",
     "test": "karma start"
   },
   "keywords": [

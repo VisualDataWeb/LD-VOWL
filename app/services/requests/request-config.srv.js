@@ -3,8 +3,10 @@
 module.exports = function ($cookies) {
 
   var cookiePrefix = "ldvowl_";
+  var localProxyURL = 'http://localhost:8080/sparql';
+
   var endpointURL = $cookies.get(cookiePrefix + 'endpoint') || 'http://dbpedia.org/sparql';
-  var useLocalProxy = false;
+  var useLocalProxy = $cookies.get(cookiePrefix + 'proxy') || 'false';
   var limit = 10;
   var sparqlTimeout = 30000;
   var debug = 'on';
@@ -17,6 +19,7 @@ module.exports = function ($cookies) {
 
   self.init = function () {
     $cookies.put(cookiePrefix + 'endpoint', endpointURL);
+    $cookies.put(cookiePrefix + 'proxy', useLocalProxy);
   };
 
   /**
@@ -28,8 +31,8 @@ module.exports = function ($cookies) {
   self.getRequestURL = function () {
     var url;
 
-    if (useLocalProxy) {
-      url = 'http://localhost:8080/sparql';
+    if (self.getUseLocalProxy()) {
+      url = localProxyURL;
     } else {
       endpointURL = $cookies.get(cookiePrefix + 'endpoint');
       url = endpointURL;
@@ -48,12 +51,24 @@ module.exports = function ($cookies) {
     $cookies.put(cookiePrefix + 'endpoint', newEndpoint);
   };
 
+  /**
+   * Returns true if a local proxy should be used for data retrieval, false otherwise.
+   *
+   * @returns {boolean}
+   */
   self.getUseLocalProxy = function () {
-    return useLocalProxy;
+    useLocalProxy = $cookies.get(cookiePrefix + 'proxy');
+    return (useLocalProxy === 'true');
   };
 
+  /**
+   * Set the flag whether a local proxy should be used or not and saves the flag into a cookie.
+   *
+   * @param useProxy - true if proxy should be used, false otherwise
+   */
   self.setUseLocalProxy = function (useProxy) {
-    useLocalProxy = useProxy;
+    useLocalProxy = (useProxy) ? 'true' : 'false';
+    $cookies.put(cookiePrefix + 'proxy', useLocalProxy);
   };
 
   self.getLimit = function () {
@@ -100,6 +115,7 @@ module.exports = function ($cookies) {
     } else {
       format = 'application/sparql-results+json';
     }
+    // another option would be 'srj' being used here: https://data.ox.ac.uk/sparql/
   };
 
   /**

@@ -65,7 +65,7 @@ module.exports = function () {
         offset = (typeof offset === 'number' && offset >= 0) ? offset :defaultOffset;
 
         var query = prefixes() +
-          "SELECT ?class (sample(?lbl) AS ?label) (count(DISTINCT ?subClass) AS ?count) " +
+          "SELECT ?class (SAMPLE (?lbl) AS ?label) (count(DISTINCT ?subClass) AS ?count) " +
           "WHERE { " +
             "?class rdfs:subClassOf+ <" + baseClass + ">. " +
             "?subClass rdfs:subClassOf+ ?class. " +
@@ -79,7 +79,7 @@ module.exports = function () {
 
       getSuperClassQuery: function (childClassURI, labelLang) {
         var query = prefixes() +
-          "SELECT ?superClass (sample(?lbl) AS ?superClassLabel) " +
+          "SELECT ?superClass (SAMPLE (?lbl) AS ?superClassLabel) " +
           "WHERE { " +
             "<" + childClassURI + "> rdfs:subClassOf  ?superClass. " +
             "?superClass rdfs:label ?lbl . " +
@@ -93,7 +93,7 @@ module.exports = function () {
 
       getLabelQuery: function (uri, labelLang) {
         var query = prefixes() +
-        "SELECT (sample(?lbl) AS ?label) " +
+        "SELECT (SAMPLE (?lbl) AS ?label) " +
         "WHERE { " +
           "<" + uri + "> rdfs:label ?lbl. " +
           "FILTER (langMatches(lang(?lbl), '" + labelLang + "'))" +
@@ -121,7 +121,7 @@ module.exports = function () {
           "SELECT ?valType (COUNT(?valType) AS ?count) " +
           "WHERE { " +
             "<" + classURI + "> ?prop ?val . " +
-            "BIND(datatype(?val) AS ?valType) . " +
+            "BIND (datatype(?val) AS ?valType) . " +
           "} " +
           "GROUP BY ?valType " +
           "ORDER BY ?count " +
@@ -138,7 +138,7 @@ module.exports = function () {
           "WHERE { " +
             "?instance a <" + classURI + "> . " +
             "?instance ?prop ?val . " +
-            "BIND(datatype(?val) AS ?valType) . " +
+            "BIND (datatype(?val) AS ?valType) . " +
           "} " +
           "GROUP BY ?valType " +
           "LIMIT " + limit;
@@ -147,7 +147,7 @@ module.exports = function () {
 
       getPropertyQuery: function (propertyType, domainClass, labelLang, limit) {
         var query = prefixes() +
-          "SELECT ?property (sample(?lbl) AS ?label ) " +
+          "SELECT ?property (SAMPLE (?lbl) AS ?label ) " +
           "WHERE { ?property a owl:" +  propertyType + ". " +
             "?property rdfs:domain " + domainClass + ". " +
             "?property rdfs:label ?lbl. " +
@@ -294,7 +294,7 @@ module.exports = function () {
 
       getNumberOfCommonInstancesQuery: function (classURI1, classURI2) {
         var query = prefixes() +
-          'SELECT (count(?commonInstance) AS ?commonInstanceCount)' +
+          'SELECT (count(?commonInstance) AS ?commonInstanceCount) ' +
           'WHERE { ' +
             '?commonInstance a <' + classURI1 + '>. ' +
             '?commonInstance a <' + classURI2 + '>. ' +

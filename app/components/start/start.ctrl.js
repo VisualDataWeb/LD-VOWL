@@ -20,8 +20,9 @@ module.exports = function ($log, $location, Nodes, Properties, Requests, Request
     "http://lod.springer.com/sparql",
     "http://linkedlifedata.com/sparql",
     "http://transparency.270a.info/sparql",
-    "http://bfs.270a.info/sparql",
-    "http://dutchshipsandsailors.nl/data/sparql/",
+    "http://bfs.270a.info/sparql", // swiss statistics, many subclass relations
+    "http://dutchshipsandsailors.nl/data/sparql/", // no relations anymore (no errors), fast
+    "http://semanticweb.cs.vu.nl/dss/sparql/", // dutch ships and sailors, with few edges
     "http://data.allie.dbcls.jp/sparql",
     "http://affymetrix.bio2rdf.org/sparql",
     "http://drugbank.bio2rdf.org/sparql",
@@ -34,13 +35,11 @@ module.exports = function ($log, $location, Nodes, Properties, Requests, Request
     "https://www.ebi.ac.uk/rdf/services/biosamples/sparql",
     "https://www.ebi.ac.uk/rdf/services/biosamples/sparql",
     "https://www.ebi.ac.uk/rdf/services/chembl/sparql",
-    "http://datos.bcn.cl/sparql",
-    "http://enipedia.tudelft.nl/sparql",
-    "http://environment.data.gov.uk/sparql/bwq/query",
-    "http://lod.euscreen.eu/sparql",
+    "http://datos.bcn.cl/sparql", // about norms, with and without proxy, fast
+    "http://lod.euscreen.eu/sparql", // about television, slow
     "http://enipedia.tudelft.nl/sparql",                      // quite fast
     "http://environment.data.gov.uk/sparql/bwq/query",
-    "http://foodpedia.tk/sparql",                             // fast one
+    "http://foodpedia.tk/sparql",                          // about food, fast but types don't work
     "http://data.linkedu.eu/forge/query",                     // fast
     "http://healthdata.tw.rpi.edu/sparql",
     "http://lod.ac/bdls/sparql",
@@ -56,17 +55,28 @@ module.exports = function ($log, $location, Nodes, Properties, Requests, Request
     "http://opendata.aragon.es/sparql",
     "http://data.archiveshub.ac.uk/sparql",
     "http://lab.environment.data.gov.au/sparql", // Australian climate observation reference network (only via proxy)
-    "http://lod.b3kat.de/sparql"
+    "http://lod.b3kat.de/sparql", // library union catalogues of Bavaria, Berlin and Brandenburg
+    "http://dati.camera.it/sparql", // italian chamber of deputies
+    "http://babelnet.org/sparql/", // babel, works via proxy but slow
+    "http://www.ebi.ac.uk/rdf/services/biomodels/sparql", // slow, also available via https
 
+    // has subclass relations, slow class-class relations and types
+    "http://www.ebi.ac.uk/rdf/services/biosamples/sparql",
+    "http://data.colinda.org/endpoint.php", // small dataset with two classes, only via proxy
+
+    // Consorcio Regional de Transportes de Madrid proxy only, fast, no relations or types
+    "http://crtm.linkeddata.es/sparql",
+
+    "http://vocabulary.wolterskluwer.de/PoolParty/sparql/court", // very fast, infos about courts
+    "http://rdf.disgenet.org/sparql/", // genetic diseases, properties have no meaningful names
+    "http://linkeddata.finki.ukim.mk/sparql", // Drug Data from the Health Insurance Fund of Macedonia
+    "http://fintrans.publicdata.eu/sparql",
+    "http://www.ida.liu.se/projects/semtech/openrdf-sesame/repositories/energy" // about energy reduction, fast
   ];
 
   start.endpoint = RequestConfig.getEndpointURL();
 
   start.useLocalProxy = RequestConfig.getUseLocalProxy();
-
-  start.updateUseLocalProxy = function () {
-    RequestConfig.setUseLocalProxy(start.useLocalProxy);
-  };
 
   /**
    * Shows the graph for the current endpoint and clears all data if endpoint has changed.
@@ -87,6 +97,8 @@ module.exports = function ($log, $location, Nodes, Properties, Requests, Request
         // change endpoint
         RequestConfig.setEndpointURL(start.endpoint);
       }
+
+      RequestConfig.setUseLocalProxy(start.useLocalProxy);
 
       if (start.endpoint !== undefined && start.endpoint.length > 0) {
 
