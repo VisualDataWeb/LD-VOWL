@@ -49,7 +49,7 @@ class ClassExtractor extends Extractor {
     var deferred = this.$q.defer();
 
     // do not request further classes
-    if (!this.nodes.isEmpty()) {
+    if (this.nodes.hasClassNodes()) {
       self.$log.debug("[Classes] Skip loading further classes...");
       deferred.resolve([]);
       return deferred.promise;

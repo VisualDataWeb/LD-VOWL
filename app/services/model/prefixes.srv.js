@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function ($rootScope) {
+module.exports = function ($rootScope, $log) {
 
   var prefixes = [];
 
@@ -19,7 +19,7 @@ module.exports = function ($rootScope) {
     if (typeof pre === 'object' && pre.prefix !== undefined) {
 
       if (pre.prefix.length < 8) {
-        console.error('[Prefixes] Prefix is to short!');
+        $log.error('[Prefixes] Prefix is to short!');
         return;
       }
 

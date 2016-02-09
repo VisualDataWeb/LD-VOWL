@@ -2,7 +2,7 @@ require('./utilities/q-all-settled');
 
 var app = angular.module('ldVOWLApp', ['ngRoute', 'ngAnimate', 'ui.bootstrap', 'ngCookies', 'qAllSettled']);
 
-var nodeLinkGraph = require('./directives/nodelink-graph.drv');
+var nodeLinkGraph = require('./components/graph/nodelink-graph.drv.js');
 var Slider = require('./directives/slider.drv');
 
 // Controllers
@@ -28,6 +28,8 @@ var Types = require('./services/model/types.srv'); // TODO unused?
 var Properties = require('./services/model/properties.srv');
 var Utils = require('./services/utils.srv');
 var Filters = require('./services/model/extraction-filters.srv');
+
+var Geometry = require('./services/math/geometry.srv');
 
 // accordion group directives
 var EndpointGroup = require('./directives/accordion-groups/endpoint-group.drv');
@@ -69,7 +71,7 @@ app.filter('httpLess', HttpLessFilter);
 
 // register directives
 
-app.directive('nodeLinkGraph', ['$window', '$log', 'Properties', 'Nodes', 'Prefixes', 'Filters', 'Utils',
+app.directive('nodeLinkGraph', ['$window', '$log', 'Properties', 'Nodes', 'Prefixes', 'Filters', 'Geometry', 'Utils',
               nodeLinkGraph]);
 app.directive('slider', Slider);
 
@@ -92,12 +94,12 @@ app.service('RequestConfig', ['$cookies', RequestConfig]);
 app.factory('QueryFactory', QueryFactory);
 app.factory('RequestCounter', ['$q', 'Requests', RequestCounter]);
 
-app.service('Prefixes', ['$rootScope', Prefixes]);
+app.service('Prefixes', ['$rootScope', '$log', Prefixes]);
 app.service('Nodes', ['$log', 'Properties', 'Prefixes', Nodes]);
 app.service('Properties', ['$interval', '$log', Properties]);
 app.service('Types', Types);
 app.service('Requests', ['$rootScope', Requests]);
-app.factory('Utils', Utils);
+app.service('Utils', Utils);
 app.service('Filters', ['$cookies', '$log', Filters]);
 
 app.service('ClassExtractor', ['$http', '$q', '$log', 'PREFIX', 'CLASS_BLACKLIST', 'RequestConfig',
@@ -107,6 +109,8 @@ app.service('RelationExtractor', ['$http', '$q', '$log', 'PREFIX', 'PROPERTY_BLA
 app.service('TypeExtractor', ['$http', '$log', 'RequestConfig', 'QueryFactory', 'Nodes', 'Properties',
   'RelationExtractor', TypeExtractor]);
 app.service('DetailExtractor', ['$http', '$log', 'QueryFactory', 'RequestConfig', 'Nodes', DetailExtractor]);
+
+app.service('Geometry', ['Utils', Geometry]);
 
 // register controllers
 

@@ -9,7 +9,7 @@ module.exports = function ($scope, $q, $log, Filters, ClassExtractor, RelationEx
 
   vm.extractTypes = Filters.getIncludeLiterals();
   vm.includeLoops = Filters.getIncludeLoops();
-  vm.showDisjunctNode = false;
+  vm.includeDisjunctNode = Filters.getIncludeDisjunctNode();
   vm.differentColors = Prefixes.getDifferentColors();
 
   vm.endpointURL = RequestConfig.getEndpointURL();
@@ -76,7 +76,7 @@ module.exports = function ($scope, $q, $log, Filters, ClassExtractor, RelationEx
   };
 
   vm.toggleDisjunctNode = function () {
-    //TODO not implemented yet!
+    vm.includeDisjunctNode = Filters.toggleDisjunctNode();
   };
 
   vm.toggleDifferentColors = function () {

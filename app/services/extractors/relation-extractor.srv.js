@@ -318,6 +318,10 @@ class RelationExtractor extends Extractor {
                 self.props.addSubClassProperty(classId2, subClassPropNodeId, classId1);
                 deferred.reject("subclass");
               } else {
+                var disjunctNodeId = self.nodes.getDisjunctNodeId();
+
+                // TODO check against all connected classes
+                self.props.addDisjunctProp(classId1, disjunctNodeId);
                 self.$log.debug("[Relations] No Relation between '" + classURI1 + "' and '" + classURI2 +
                   "' was found via instance count.");
                 deferred.reject("no relation");

@@ -43,6 +43,11 @@ circle {
   fill: #acf;
 }
 
+.node circle.symbol {
+  fill: #69c;
+  stroke: #000;
+}
+
 .datatypeProperty rect {
   fill: #9c6;
 }

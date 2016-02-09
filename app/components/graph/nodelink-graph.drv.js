@@ -11,11 +11,12 @@ var d3 = require('d3');
  * @param Nodes
  * @param Prefixes
  * @param Filters
+ * @param Geometry
  * @param Utils
  *
  * @returns {{restrict: string, scope: {data: string, onClick: string}, link: link}}
  */
-module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, Utils) {
+module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, Geometry, Utils) {
   return {
     restrict: 'EA',
     scope: {
@@ -29,8 +30,6 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
       var colorRange = [d3.rgb("#3366CC"), d3.rgb('#EE2867')];
 
       var defaultRadius = 20;
-
-      var maxNameLength = 15;
 
       var defaultPropHeight = 20;
       var ringWidth = 4;
@@ -53,11 +52,16 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
 
       scope.propDistance = 80;
       scope.dtPropDistance = 20;
+      scope.disjunctPropDistance = 200;
 
-      scope.nodes = {};
+      scope.disjunctNodeWidth = 60;
+      scope.disjunctNodeHeight = 30;
+
+      scope.node = {};
       scope.force = {};
       scope.cardinalSpline = {};
       scope.loopSpline = {};
+      scope.linearLine = {};
 
       scope.color = d3.scale.linear().domain([1, Prefixes.size()])
         .interpolate(d3.interpolateHsl)
@@ -68,7 +72,8 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
         'properties': Properties.getProperties(),
         'prefixes': Prefixes.getPrefixes(),
         'showTypes': Filters.getIncludeLiterals(),
-        'showLoops': Filters.getIncludeLoops()
+        'showLoops': Filters.getIncludeLoops(),
+        'showDisjunctNode': Filters.getIncludeDisjunctNode()
       };
 
       scope.$watch(function () {
@@ -95,6 +100,14 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
         },
         function (newVal) {
           scope.data.showLoops = newVal;
+          return scope.render(scope.data);
+        });
+
+      scope.$watch(function () {
+          return Filters.getIncludeDisjunctNode();
+        },
+        function (newVal) {
+          scope.data.showDisjunctNode = newVal;
           return scope.render(scope.data);
         });
 
@@ -150,56 +163,6 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
                           .domain([5, 6, 7, 8, 9])
                           .range(['#777', '#666', '#555', '#333', '#000']);
 
-      scope.getName = function (obj, values, clip) {
-        var name = '';
-        clip =  (clip !== undefined) ? clip : false;
-
-        if (obj.name !== undefined && obj.name !== '') {
-          name = obj.name;
-        } else {
-          name = Utils.labelFromURI(obj.uri);
-        }
-
-        if (clip && name.length > maxNameLength) {
-          name = name.substr(0, maxNameLength-2) + '...';
-        }
-
-        if (values && obj.value !== undefined && obj.value > 1) {
-          name += ' [' + obj.value + ']';
-        }
-
-        return name;
-      };
-
-      /**
-       * Returns the name which should be displayed for a given object if the width is restricted to a given amount of
-       * pixels.
-       *
-       * @param obj - the object which name should be displayed, must have a name or uri attribute
-       * @param maxWidth - the maximum amount of space available (in pixels)
-       * @returns {string}
-       */
-      scope.getNameForSpace = function (obj, maxWidth) {
-        var name = '';
-
-        // start will full name from object or its URI
-        if (obj !== undefined && obj.name !== undefined && obj.name.length > 0) {
-          name = obj.name;
-        } else {
-          name = Utils.labelFromURI(obj.uri);
-        }
-
-        // estimate for how many chars there will be space
-        var chars = Math.floor(maxWidth / 7);
-
-        // cut name and add ellipsis
-        if (chars < name.length) {
-          name = name.substr(0, chars - 3) + '...';
-        }
-
-        return name;
-      };
-
       scope.getArrowHeads = function () {
         var arrowHeads = [];
 
@@ -229,7 +192,7 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
       };
 
       scope.calcPropBoxWidth = function (d) {
-        return (scope.getName(d, true, true).length * 8);
+        return (Utils.getName(d, true, true).length * 8);
       };
 
       scope.calcPropBoxOffset = function (d) {
@@ -306,85 +269,6 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
 
       // TODO move geo functions into another module
 
-      scope.getCircleOutlinePoint = function (d) {
-        var deltaX = d.target.x - d.intermediate.x;
-        var deltaY = d.target.y - d.intermediate.y;
-
-        // Pythagoras rule
-        var totalLength = Math.sqrt((deltaX * deltaX) + (deltaY * deltaY));
-
-        var radius = d.target.radius;
-        var offsetX = (deltaX * (radius)) / totalLength;
-        var offsetY = (deltaY * (radius)) / totalLength;
-
-        return {x: (d.target.x - offsetX), y: (d.target.y - offsetY)};
-      };
-
-      scope.getAnotherCircleOutlinePoint = function (d, a) {
-        var deltaX = (d.intermediate.x - d.source.x);
-        var deltaY = (d.intermediate.y - d.source.y);
-
-        // the angle of direct connection towards intermediate node
-        var angleToLabel = Math.atan2(deltaY, deltaX);
-
-        // calculate new angle
-        var deltaAngle = (a * (Math.PI / 6));
-        var angle = angleToLabel + deltaAngle;
-
-        var radius = d.target.radius;
-
-        // calculate coordinates on circumference
-        var x = d.target.x + (radius * Math.cos(angle));
-        var y = d.target.y + (radius * Math.sin(angle));
-
-        // return the point on the circle circumference
-        return {x: x, y: y};
-      };
-
-      scope.getRectOutlinePoint = function (d) {
-        var m = (d.target.y - d.intermediate.y) / (d.target.x - d.intermediate.x);
-
-        var boxWidth = scope.calcPropBoxWidth(d.target);
-
-        var minX = d.target.x - (boxWidth / 2);
-        var maxX = d.target.x + (boxWidth / 2);
-
-        var minY = d.target.y - (defaultPropHeight / 2);
-        var maxY = d.target.y + (defaultPropHeight / 2);
-
-        // left side
-        if (d.intermediate.x < d.target.x) {
-          var minXy = m * (minX - d.intermediate.x) + d.intermediate.y;
-          if (minY < minXy && minXy < maxY) {
-            return {x: minX, y: minXy};
-          }
-        }
-
-        // right side
-        if (d.intermediate.x >= d.target.x) {
-          var maxXy = m * (maxX - d.intermediate.x) + d.intermediate.y;
-          if (minY < maxXy && maxXy < maxY) {
-            return {x: maxX, y: maxXy};
-          }
-        }
-
-        // top side
-        if (d.intermediate.y < d.target.y) {
-          var minYx = (minY - d.intermediate.y) / m + d.intermediate.x;
-          if (minX < minYx && minYx < maxX) {
-            return {x: minYx, y: minY};
-          }
-        }
-
-        // bottom side
-        if (d.intermediate.y >= d.target.y) {
-          var maxYx = (maxY - d.intermediate.y) / m + d.intermediate.x;
-          if (minX < maxYx && maxYx < maxX) {
-            return {x: maxYx, y: maxY};
-          }
-        }
-      };
-
       /**
        * Creates the arrowheads in the given linkContainer.
        *
@@ -451,6 +335,7 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
           .classed('external', function (d) {
             return (d.type === 'class' || d.type === 'property') && !(Prefixes.isInternal(d.uri));
           })
+          .classed('disjunctNode', function (d) { return d.type === 'disjunctNode'; })
           .call(scope.force.drag);
 
         scope.cardinalSpline = d3.svg.line()
@@ -463,6 +348,11 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
           .y(function (d) { return d.y; })
           .interpolate("cardinal")
           .tension(0);
+
+        scope.linearLine = d3.svg.line()
+          .x(function (d) { return d.x; })
+          .y(function (d) { return d.y; })
+          .interpolate("linear");
 
         // draw a ring for equivalent classes
         nodeContainer.selectAll('.equivalent')
@@ -499,7 +389,7 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
           .attr('height', defaultPropHeight)
           .on('click', scope.updateActive)
           .append('title')
-          .text(function(d) { return scope.getName(d, false, false); });
+          .text(function(d) { return Utils.getName(d, false, false); });
 
         nodeContainer.selectAll('.external rect')
           .style('fill', function (d) { return scope.color(Prefixes.getColor(d.uri)); })
@@ -515,7 +405,7 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
           .attr('height', defaultPropHeight)
           .on('click', scope.updateActive)
           .append('title')
-          .text(function(d) { return scope.getName(d, false, false); });
+          .text(function(d) { return Utils.getName(d, false, false); });
 
         nodeContainer.selectAll('.subClassProperty')
           .append('rect')
@@ -525,7 +415,7 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
           .attr('height', defaultPropHeight)
           .on('click', scope.updateActive)
           .append('title')
-          .text(function(d) { return scope.getName(d, false, false); });
+          .text(function(d) { return Utils.getName(d, false, false); });
 
         nodeContainer.selectAll('.type')
           .append('rect')
@@ -535,7 +425,9 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
           .attr('height', defaultPropHeight)
           .on('click', scope.updateActive)
           .append('title')
-          .text(function(d) { return scope.getName(d, false, false); });
+          .text(function(d) { return Utils.getName(d, false, false); });
+
+        scope.setUpDisjunctNode(nodeContainer);
 
         // for classes, properties, datatype properties and types
         scope.node.append('text')
@@ -544,9 +436,9 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
           .attr('text-anchor', 'middle')
           .text(function(d) {
             if (d.type === 'class' && d.radius !== undefined) {
-              return scope.getNameForSpace(d, d.radius*2);
+              return Utils.getNameForSpace(d, d.radius*2);
             } else {
-              return scope.getName(d, (d.type === 'property'), true);
+              return Utils.getName(d, (d.type === 'property'), true);
             }
           });
 
@@ -554,6 +446,32 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
         nodeContainer.selectAll('.external text')
           .style('fill', 'white');
       }; // end of setUpNodes()
+
+      scope.setUpDisjunctNode = function (nodeContainer) {
+
+        // draw the box for the disjunct node
+        nodeContainer.selectAll('.disjunctNode')
+          .append('rect')
+          .attr('x', -1 * (scope.disjunctNodeWidth / 2))
+          .attr('y', -1 * (scope.disjunctNodeHeight / 2))
+          .attr('width', scope.disjunctNodeWidth)
+          .attr('height', scope.disjunctNodeHeight)
+          .style('fill', '#acf');
+
+        // first circle
+        nodeContainer.selectAll('.disjunctNode')
+          .append('circle')
+          .classed('symbol', true)
+          .attr('cx', -15)
+          .attr('r', 10);
+
+        // second circle
+        nodeContainer.selectAll('.disjunctNode')
+          .append('circle')
+          .classed('symbol', true)
+          .attr('cx', 15)
+          .attr('r', 10);
+      }; // end of setUpDisjunctNode()
 
       scope.setUpLinks = function(bilinks) {
         var linkContainer = root.append('g')
@@ -594,6 +512,23 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
           .style('stroke-dasharray', '5, 5');
       };
 
+      scope.setUpDirectLinks = function (directLinks) {
+        var linkContainer = root.select('.linkContainer');
+
+        scope.directLink = linkContainer.selectAll('.direct-link')
+                      .data(directLinks)
+                      .enter()
+                      .append("g")
+                      .style('stroke', '#000')
+                      .append("path")
+                      .style('stroke-width', 1)
+                      .classed('disjunctProperty', function (d) { return d.type === 'disjunctProperty'; });
+
+        linkContainer.selectAll('.disjunctProperty')
+          .attr("marker-end", 'none')
+          .style('stroke-dasharray', '5, 5');
+      };
+
       scope.recalculateLines = function(d) {
         var line = {};
 
@@ -603,11 +538,11 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
           var loopData = [];
 
           // for the loops
-          loopData.push(scope.getAnotherCircleOutlinePoint(d, -1));
+          loopData.push(Geometry.getAnotherCircleOutlinePoint(d, -1));
           loopData.push({x: d.intermediate.x, y: d.intermediate.y});
 
           // loops are always towards classes
-          loopData.push(scope.getAnotherCircleOutlinePoint(d, 1));
+          loopData.push(Geometry.getAnotherCircleOutlinePoint(d, 1));
 
           line = scope.loopSpline(loopData);
         } else {
@@ -622,9 +557,9 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
 
           // position depends on node type
           if (d.target.type === 'class') {
-            lineData.push(scope.getCircleOutlinePoint(d));
+            lineData.push(Geometry.getCircleOutlinePoint(d));
           } else {
-            lineData.push(scope.getRectOutlinePoint(d));
+            lineData.push(Geometry.getRectOutlinePoint(d));
           }
 
           line = scope.cardinalSpline(lineData);
@@ -633,14 +568,40 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
         return line;
       }; // end of recalculateLines()
 
-      scope.updateDistances = function () {
 
+      scope.recalculateDirectLines = function (d) {
+        var lineData = [];
+
+        if (d.source !== undefined && d.target !== undefined) {
+          lineData.push({x: d.source.x, y: d.source.y});
+          lineData.push({x: d.target.x, y: d.target.y});
+        }
+
+        return scope.linearLine(lineData);
       };
 
+      scope.findNode = function (nodeId) {
+        var node = {};
+
+        for (var i = 0; i < scope.nodesToDraw.length; i++) {
+          var currentNode = scope.nodesToDraw[i];
+          if (currentNode.id !== undefined && currentNode.id === nodeId) {
+            node = currentNode;
+            break;
+          }
+        }
+
+        return node;
+      };
+
+      /**
+       * Function which creates the graph.
+       *
+       * @param data
+       */
       scope.render = function (data) {
 
-        //scope.data.prefixes = Prefixes.getPrefixes();
-
+        // stop force layout if already created
         if (scope.force.stop !== undefined) {
           scope.force.stop();
         }
@@ -660,9 +621,11 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
 
         scope.maxValue = 0;
 
-        var nodes = [];
+        scope.nodesToDraw = [];
         var links = [];
         var bilinks = [];
+        var directLinks = [];
+
 
         for (var n of data.nodes.values()) {
           var currentValue = n.value;
@@ -675,51 +638,67 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
 
             // only add if loops should be shown
             if (data.showLoops) {
-              nodes.push(n);
+              scope.nodesToDraw.push(n);
             }
           } else if (n.type === 'type' || n.type === 'datatypeProperty') {
 
             // only add if types should be shown
             if (data.showTypes) {
-              nodes.push(n);
+              scope.nodesToDraw.push(n);
+            }
+          } else if (n.type === 'disjunctNode') {
+            if (data.showDisjunctNode) {
+              scope.nodesToDraw.push(n);
             }
           } else {
-            nodes.push(n);
+            scope.nodesToDraw.push(n);
           }
         } // end of for all nodes
 
         if (data.properties !== undefined) {
           data.properties.forEach(function (link) {
 
-            if (link.source === link.target && !data.showLoops) {
+            // do not add filtered elements
+            if ((link.source === link.target && !data.showLoops) ||
+               (link.type === 'disjunctProperty' && !data.showDisjunctNode)) {
               return;
             }
 
-            var s = data.nodes.get(link.source);
-            var i = data.nodes.get(link.intermediate);
-            var t = data.nodes.get(link.target);
+            var s = scope.findNode(link.source);
+            var t = scope.findNode(link.target);
 
-            if (s !== undefined && i !== undefined && t !== undefined) {
+            if (link.type !== 'disjunctProperty') {
+              var i = scope.findNode(link.intermediate);
 
-              // get direct class links
-              if (s.type !== 'property' && t.type !== 'property') {
+              if (s !== undefined && i !== undefined && t !== undefined) {
 
-                var linktype = 'property';
+                // get direct class links
+                if (s.type !== 'property' && t.type !== 'property') {
 
-                if (t.type === 'type') {
-                  if (data.showTypes) {
-                    linktype = 'datatypeProperty';
-                  } else {
-                    return;
+                  var linktype = 'property';
+
+                  if (t.type === 'type') {
+                    if (data.showTypes) {
+                      linktype = 'datatypeProperty';
+                    } else {
+                      return;
+                    }
                   }
+
+                  i.value = link.value;
+
+                  // create two links
+                  links.push({source: s, target: i, type: linktype});
+                  links.push({source: i, target: t, type: linktype});
+                  bilinks.push({source: s, intermediate: i, target: t, value: link.value, type: link.type});
                 }
+              }
+            } else {
 
-                i.value = link.value;
-
-                // create two links
-                links.push({source: s, target: i, type: linktype });
-                links.push({source: i, target: t, type: linktype });
-                bilinks.push({source: s, intermediate: i, target: t, value: link.value, type: link.type});
+              // for disjunct properties
+              if (s !== undefined && t !== undefined) {
+                links.push({source: s, target: t, type: link.type});
+                directLinks.push({source: s, target: t, value: link.value, type: link.type});
               }
             }
           }); // end of forEach()
@@ -728,11 +707,29 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
         // set up dimensions
         var width = d3.select(element[0]).node().offsetWidth - margin;
 
+        // create force layout
         scope.force = d3.layout.force()
-          .charge(-800)
+          .charge(-500)
+          .linkStrength(1.0)
           .linkDistance(function (d) {
+            var distance = scope.propDistance;
+
             // datatype properties should have lower distance then normal properties
-            return (d.type === 'datatypeProperty') ? scope.dtPropDistance : scope.propDistance;
+            if (d.type === 'datatypeProperty') {
+              distance = scope.dtPropDistance;
+            } else if (d.type === 'disjunctProperty') {
+              distance = scope.disjunctPropDistance;
+            }
+
+            if (d.source !== undefined && d.source.radius !== undefined) {
+              distance += d.source.radius;
+            }
+
+            if (d.target !== undefined && d.target.radius !== undefined) {
+              distance += d.target.radius;
+            }
+
+            return distance;
           })
           .gravity(0.05)
           .size([width, height]);
@@ -746,20 +743,23 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
         svg.attr('width', width)
           .attr('height', height - 60);
 
-        nodes.forEach(function (node) {
+        scope.nodesToDraw.forEach(function (node) {
           node.radius = scope.calcRadius(node);
         });
 
-        scope.force.nodes(nodes)
-          .links(links)
-          .start();
+        scope.force.nodes(scope.nodesToDraw)
+          .links(links);
 
         scope.setUpLinks(bilinks);
 
-        scope.setUpNodes(root, data, nodes);
+        scope.setUpDirectLinks(directLinks);
+        scope.setUpNodes(root, data, scope.nodesToDraw);
+
+        scope.force.start();
 
         scope.force.on('tick', function() {
           scope.link.attr('d', scope.recalculateLines);
+          scope.directLink.attr('d', scope.recalculateDirectLines);
           scope.node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
         });
       }; // end of scope.render()

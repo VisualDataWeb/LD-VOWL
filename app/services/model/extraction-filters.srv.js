@@ -17,6 +17,10 @@ module.exports = function ($cookies, $log) {
     var literalCookie = cookiePrefix + "include_literals";
     var includeLiterals = self.getIncludeLiterals() || true;
     $cookies.put(literalCookie, includeLiterals);
+
+    var disjunctNodeCookie = cookiePrefix + "include_disjunct_node";
+    var includeDisjunctNode = self.getIncludeDisjunctNode() || false;
+    $cookies.put(disjunctNodeCookie, includeDisjunctNode);
   };
 
   self.getIncludeLoops = function () {
@@ -49,6 +53,23 @@ module.exports = function ($cookies, $log) {
     } else {
       $cookies.put(cookieName, "true");
       $log.debug("[Filters] Enable Literals");
+      return true;
+    }
+  };
+
+  self.getIncludeDisjunctNode = function () {
+    return ($cookies.get(cookiePrefix + "include_disjunct_node") === 'true');
+  };
+
+  self.toggleDisjunctNode = function () {
+    var cookieName = cookiePrefix + "include_disjunct_node";
+    if (self.getIncludeDisjunctNode()) {
+      $log.debug("[Filters] Disable disjunct node.");
+      $cookies.put(cookieName, "false");
+      return false;
+    } else {
+      $log.debug("[Filters] Enable disjunct node.");
+      $cookies.put(cookieName, "true");
       return true;
     }
   };

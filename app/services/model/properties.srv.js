@@ -5,6 +5,7 @@ module.exports = function ($interval, $log) {
   var self = this;
 
   self.SUBCLASS_URI = "http://my-own-sub-class";
+  self.DISJUNCT_PROP_URI ="http://my-own-disjunct-prop";
 
   self.properties = [];
   self.needsUpdate = false;
@@ -145,6 +146,22 @@ module.exports = function ($interval, $log) {
     self.properties.push(newSubClassProp);
 
     self.needsUpdate = true;
+  };
+
+  self.addDisjunctProp = function (source, target) {
+    if (!self.existsBetween(source, target)) {
+      var disjunctProp = {};
+
+      disjunctProp.source = source;
+      disjunctProp.target = target;
+      disjunctProp.value = 1;
+      disjunctProp.uri = self.DISJUNCT_PROP_URI;
+      disjunctProp.type = "disjunctProperty";
+
+      self.properties.push(disjunctProp);
+
+      self.needsUpdate = true;
+    }
   };
 
   self.getProperties = function () {

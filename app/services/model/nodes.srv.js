@@ -7,6 +7,7 @@ module.exports = function ($log, Properties, Prefixes) {
   var nodes = new Map();
 
   var that = this;
+  that.DISJUNCT_NODE_URI = 'http://my-own-disjunct-node';
 
   that.suffixRegEx = /(#?[^\/#]*)\/?$/;
 
@@ -17,21 +18,46 @@ module.exports = function ($log, Properties, Prefixes) {
       if (sessionNodes !== undefined && sessionNodes !== null) {
         $log.debug("[Nodes] Use nodes from session storage!");
         nodes = new Map(JSON.parse(sessionNodes));
+
+        // rebuild the class uri map
+        for (var node of nodes.values()) {
+          if (node.type === 'class' || node.type === 'disjunctNode') {
+            classUriIdMap.set(node.uri, node.id);
+          }
+        }
+
         $log.debug("[Nodes] Build prefix map for nodes from session storage!");
         that.buildPrefixMap();
       }
     } else {
       $log.error("[Nodes] No Session Storage, caching disabled!");
     }
+
+    that.insertDisjunctNode();
+  };
+
+  that.insertDisjunctNode = function () {
+    var disjunctNode = {
+      uri: that.DISJUNCT_NODE_URI,
+      type: 'disjunctNode',
+      name: ' ',
+      value: 1.0,
+      x: 0.0,
+      y: 0.0,
+      px: 0.0,
+      py: 0.0,
+      weight: 1
+    };
+    that.addNode(disjunctNode);
   };
 
   that.buildPrefixMap = function () {
     Prefixes.clear();
 
     for (var node of nodes.values()) {
-      if (node.uri !== undefined && node.uri.length > 0 && node.uri !== Properties.SUBCLASS_URI) {
+      if (node.uri !== undefined && node.uri.length > 0 &&
+          (node.uri !== Properties.SUBCLASS_URI || node.uri !== that.DISJUNCT_NODE_URI)) {
         var pre = node.uri.replace(that.suffixRegEx, '');
-
         Prefixes.addPrefix({"prefix": pre});
       }
     }
@@ -49,8 +75,7 @@ module.exports = function ($log, Properties, Prefixes) {
   that.addNode = function (newNode) {
     var newId = "";
     if (typeof newNode === 'object' && newNode.hasOwnProperty('uri') && newNode.hasOwnProperty('type')) {
-
-      if (newNode.type === 'class') {
+      if (newNode.type === 'class' || newNode.type === 'disjunctNode') {
         var idByUri = classUriIdMap.get(newNode.uri);
 
         // check whether this class already exists
@@ -62,10 +87,11 @@ module.exports = function ($log, Properties, Prefixes) {
           nodes.set(newId, newNode);
           classUriIdMap.set(newNode.uri, newId);
 
-          var pre = newNode.uri.replace(that.suffixRegEx, '');
-          $log.debug("[Nodes] Prefix for new node is '" + pre + "'!");
-
-          Prefixes.addPrefix({"prefix": pre});
+          if (newNode.uri !== that.DISJUNCT_NODE_URI) {
+            var pre = newNode.uri.replace(that.suffixRegEx, '');
+            $log.debug("[Nodes] Prefix for new node is '" + pre + "'!");
+            Prefixes.addPrefix({"prefix": pre});
+          }
         }
       } else {
         newId = newNode.type + nodes.size;
@@ -251,6 +277,14 @@ module.exports = function ($log, Properties, Prefixes) {
     return (nodes.size === 0);
   };
 
+  that.hasClassNodes = function () {
+    return (classUriIdMap.size > 1);
+  };
+
+  that.getDisjunctNodeId = function () {
+    return classUriIdMap.get(that.DISJUNCT_NODE_URI);
+  };
+
   /**
    * Removes all nodes from the graph.
    */
@@ -258,6 +292,7 @@ module.exports = function ($log, Properties, Prefixes) {
     classUriIdMap = new Map();
     nodes = new Map();
     Prefixes.clear();
+    that.insertDisjunctNode();
   };
 
   that.initMap();
