@@ -3,7 +3,6 @@
 module.exports = function ($log, Properties, Prefixes) {
 
   var classUriIdMap = new Map();
-
   var nodes = new Map();
 
   var that = this;
@@ -32,23 +31,6 @@ module.exports = function ($log, Properties, Prefixes) {
     } else {
       $log.error("[Nodes] No Session Storage, caching disabled!");
     }
-
-    that.insertDisjunctNode();
-  };
-
-  that.insertDisjunctNode = function () {
-    var disjunctNode = {
-      uri: that.DISJUNCT_NODE_URI,
-      type: 'disjunctNode',
-      name: ' ',
-      value: 1.0,
-      x: 0.0,
-      y: 0.0,
-      px: 0.0,
-      py: 0.0,
-      weight: 1
-    };
-    that.addNode(disjunctNode);
   };
 
   that.buildPrefixMap = function () {
@@ -75,7 +57,7 @@ module.exports = function ($log, Properties, Prefixes) {
   that.addNode = function (newNode) {
     var newId = "";
     if (typeof newNode === 'object' && newNode.hasOwnProperty('uri') && newNode.hasOwnProperty('type')) {
-      if (newNode.type === 'class' || newNode.type === 'disjunctNode') {
+      if (newNode.type === 'class') {
         var idByUri = classUriIdMap.get(newNode.uri);
 
         // check whether this class already exists
@@ -258,6 +240,14 @@ module.exports = function ($log, Properties, Prefixes) {
     }
   };
 
+  that.removeNodes = function (nodeArr) {
+    if (nodeArr !== undefined && nodeArr.length > 0) {
+      for (var i = 0; i < nodeArr.length; i++) {
+        nodes.delete(nodeArr[i]);
+      }
+    }
+  };
+
   that.incValueOfId = function (id) {
     var searchedItem = nodes.get(id);
 
@@ -281,10 +271,6 @@ module.exports = function ($log, Properties, Prefixes) {
     return (classUriIdMap.size > 1);
   };
 
-  that.getDisjunctNodeId = function () {
-    return classUriIdMap.get(that.DISJUNCT_NODE_URI);
-  };
-
   /**
    * Removes all nodes from the graph.
    */
@@ -292,7 +278,6 @@ module.exports = function ($log, Properties, Prefixes) {
     classUriIdMap = new Map();
     nodes = new Map();
     Prefixes.clear();
-    that.insertDisjunctNode();
   };
 
   that.initMap();

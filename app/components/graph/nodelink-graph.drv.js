@@ -52,7 +52,7 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
 
       scope.propDistance = 80;
       scope.dtPropDistance = 20;
-      scope.disjunctPropDistance = 200;
+      scope.disjunctPropDistance = 100;
 
       scope.disjunctNodeWidth = 60;
       scope.disjunctNodeHeight = 30;

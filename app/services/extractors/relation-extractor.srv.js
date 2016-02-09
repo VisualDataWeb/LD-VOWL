@@ -275,7 +275,13 @@ class RelationExtractor extends Extractor {
 
               if ((commonCount === count1) && (commonCount === count2)) {
                 self.$log.debug("[Relations] Merge class '" + classId1 + "' and ' " + classId2 + "'...");
-                //  first change all existing relations between the two classes
+
+                // remove disjoint properties to avoid duplicates
+                var nodesToRemove = self.props.removeDisjointProperties(classId2);
+
+                self.nodes.removeNodes(nodesToRemove);
+
+                //  then change all existing relations between the two classes
                 self.props.mergePropertiesBetween(classId1, classId2);
 
                 // classes are equivalent, merge them
@@ -317,11 +323,31 @@ class RelationExtractor extends Extractor {
                 // create a property
                 self.props.addSubClassProperty(classId2, subClassPropNodeId, classId1);
                 deferred.reject("subclass");
-              } else {
-                var disjunctNodeId = self.nodes.getDisjunctNodeId();
+              } else if (commonCount === 0) {
+
+                self.$log.debug('[Relations] ' + classId1 + ' and ' + classId2 + ' are disjoint.');
+
+                var newDNode = {
+                  uri: self.nodes.DISJUNCT_NODE_URI,
+                  type: 'disjunctNode',
+                  name: ' ',
+                  value: 1.0,
+                  classes: []
+                };
+
+                newDNode.classes.push(classId1);
+                newDNode.classes.push(classId2);
+
+                var disjunctNodeId = self.nodes.addNode(newDNode);
 
                 // TODO check against all connected classes
                 self.props.addDisjunctProp(classId1, disjunctNodeId);
+                self.props.addDisjunctProp(classId2, disjunctNodeId);
+
+                deferred.reject('disjunct');
+              } else {
+                console.error(commonCount);
+
                 self.$log.debug("[Relations] No Relation between '" + classURI1 + "' and '" + classURI2 +
                   "' was found via instance count.");
                 deferred.reject("no relation");

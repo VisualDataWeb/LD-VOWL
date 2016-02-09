@@ -164,6 +164,34 @@ module.exports = function ($interval, $log) {
     }
   };
 
+  self.removeDisjointProperties = function (classId) {
+    var i = 0;
+    var nodesToRemove = [];
+
+    while (i < self.properties.length) {
+      var currentProp = self.properties[i];
+      if (currentProp.source === classId && currentProp.type === "disjunctProperty") {
+        nodesToRemove.push(currentProp.target);
+        self.properties.splice(i, 1);
+      } else {
+        i++;
+      }
+    }
+
+    i = 0;
+
+    while (i < self.properties.length) {
+      var currentProp = self.properties[i];
+      if (currentProp.type === "disjunctProperty" && nodesToRemove.indexOf(currentProp.target) !== -1) {
+        self.properties.splice(i, 1);
+      } else {
+        i++;
+      }
+    }
+
+    return nodesToRemove;
+  };
+
   self.getProperties = function () {
     return self.properties;
   };
