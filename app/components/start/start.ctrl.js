@@ -17,15 +17,15 @@ module.exports = function ($log, $location, Nodes, Properties, Requests, Request
   // SPARQL Endpoints taken from http://sparqles.ai.wu.ac.at/
   // TODO move this data into a constant
   start.endpoints = ["http://dbpedia.org/sparql",
-    "http://lod.springer.com/sparql",
-    "http://linkedlifedata.com/sparql",
+    "http://lod.springer.com/sparql", // scientific publications @ springer
+    "http://linkedlifedata.com/sparql", // slow
     "http://transparency.270a.info/sparql",
     "http://bfs.270a.info/sparql", // swiss statistics, many subclass relations
     "http://dutchshipsandsailors.nl/data/sparql/", // no relations anymore (no errors), fast
     "http://semanticweb.cs.vu.nl/dss/sparql/", // dutch ships and sailors, with few edges
-    "http://data.allie.dbcls.jp/sparql",
-    "http://affymetrix.bio2rdf.org/sparql",
-    "http://drugbank.bio2rdf.org/sparql",
+    "http://data.allie.dbcls.jp/sparql", // database center for life science
+    "http://affymetrix.bio2rdf.org/sparql", // empty?
+    "http://drugbank.bio2rdf.org/sparql", // empty ?
     "http://lsr.bio2rdf.org/sparql",
     "http://mesh.bio2rdf.org/sparql",
     "http://mgi.bio2rdf.org/sparql",

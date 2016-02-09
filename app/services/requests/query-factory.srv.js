@@ -101,6 +101,17 @@ module.exports = function () {
         return query;
       },
 
+      getPreferredLabelQuery: function (uri, labelLang) {
+        var query = prefixes() +
+            "PREFIX skos: <http://www.w3.org/2004/02/skos/core#> " +
+            "SELECT ?label " +
+            "WHERE { " +
+              "<" + uri + "> skos:prefLabel ?label . " +
+              "FILTER (langMatches(lang(?label), '" + labelLang + "')) " +
+            "}";
+        return query;
+      },
+
       // TODO improve and use this one!
       getTopProperties: function (classURI) {
         var query = prefixes() +

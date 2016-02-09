@@ -147,11 +147,44 @@ class ClassExtractor extends Extractor {
           self.$log.debug("[Class Label] Found '" + label + "' for '" + classURI + "'.");
         } else {
           self.$log.debug("[Class Label] Found None for '" + classURI + "'.");
+          self.requestClassSkosLabel(classId, classURI);
         }
       },function (err) {
         self.$log.error(err);
       });
   } // end of requestClassLabel()
+
+  /**
+   * If rdfs label can not be found, maybe there is an skos:prefLabel.
+   *
+   * @param classId - the id of the class which label should be found
+   * @param classURI - the URI of this class
+   */
+  requestClassSkosLabel (classId, classURI) {
+    var self = this;
+
+    var labelLang = this.reqConfig.getLabelLanguage();
+    var skosLabelQuery = this.queryFactory.getPreferredLabelQuery(classURI, labelLang);
+    var requestURL = this.reqConfig.getRequestURL();
+
+    self.$log.debug("[Class Label] Send request for '" + classURI + "' skos preferred label...");
+
+    this.$http.get(requestURL, this.reqConfig.forQuery(skosLabelQuery))
+      .then(function (response) {
+        var bindings = response.data.results.bindings;
+
+        if (bindings !== undefined && bindings.length > 0 && bindings.label !== undefined &&
+            bindings[0].label.value !== '') {
+          var label = bindings[0].label.value;
+          self.nodes.insertLabel(classId, label);
+          self.$log.debug("[Class Label] Found skos preferred label '" + label + "' for '" + classURI + "'.");
+        } else {
+          self.$log.debug("[Class Label] Found no skos preferred label for '" + classURI + "'.");
+        }
+    }, function (err) {
+      self.$log.error(err);
+    });
+  }
 
 } // end of class 'ClassExtractor'
 

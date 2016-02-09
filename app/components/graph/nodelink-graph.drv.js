@@ -321,8 +321,10 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
           .attr('class', 'nodeContainer');
 
         scope.node = nodeContainer.selectAll('.node')
-          .data(nodes)
-          .enter().append('g')
+          .data(nodes);
+
+        scope.node.enter()
+          .append('g')
           .classed('node', true)
           .classed('class', function (d) { return d.type === 'class'; })
           .classed('equivalent', function (d) {return d.equivalentURI !== undefined; })
@@ -338,9 +340,11 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
           .classed('disjunctNode', function (d) { return d.type === 'disjunctNode'; })
           .call(scope.force.drag);
 
+        scope.node.exit().remove();
+
         scope.cardinalSpline = d3.svg.line()
-          .x(function (d) { return d.x; })
-          .y(function(d) { return d.y; })
+          .x(function (d) { return (d !== undefined) ? d.x : 0; })
+          .y(function(d) { return (d !== undefined) ? d.y : 0; })
           .interpolate("cardinal");
 
         scope.loopSpline = d3.svg.line()
@@ -479,15 +483,19 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
 
         scope.createArrowHeads(linkContainer);
 
-        scope.link = linkContainer.selectAll(".link")
-          .data(bilinks)
-          .enter()
+        var links1 = scope.link = linkContainer.selectAll("g.link")
+          .data(bilinks);
+
+        var linksG = links1.enter()
           .append("g")
           .attr("class", "link")
-          .style("stroke", function (d) { return scope.lineColor(d.value); })
-          .append("path")
+          .style("stroke", function (d) { return scope.lineColor(d.value); });
+
+        scope.link = linksG.append("path")
           .attr("class", "link-line")
           .classed('subClassProperty', function (d) { return d.type === 'subClassProperty'; });
+
+        links1.exit().remove();
 
         linkContainer.selectAll('.link-line')
           .attr("marker-end", function(d) { return scope.getMarkerEnd('', d.value); })
@@ -581,7 +589,7 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
       };
 
       scope.findNode = function (nodeId) {
-        var node = {};
+        var node;
 
         for (var i = 0; i < scope.nodesToDraw.length; i++) {
           var currentNode = scope.nodesToDraw[i];
@@ -747,7 +755,8 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
           node.radius = scope.calcRadius(node);
         });
 
-        scope.force.nodes(scope.nodesToDraw)
+        scope.force
+          .nodes(scope.nodesToDraw)
           .links(links);
 
         scope.setUpLinks(bilinks);

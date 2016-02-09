@@ -346,8 +346,6 @@ class RelationExtractor extends Extractor {
 
                 deferred.reject('disjunct');
               } else {
-                console.error(commonCount);
-
                 self.$log.debug("[Relations] No Relation between '" + classURI1 + "' and '" + classURI2 +
                   "' was found via instance count.");
                 deferred.reject("no relation");
