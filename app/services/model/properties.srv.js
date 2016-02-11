@@ -169,9 +169,9 @@ module.exports = function ($interval, $log) {
     var nodesToRemove = [];
 
     while (i < self.properties.length) {
-      var currentProp = self.properties[i];
-      if (currentProp.source === classId && currentProp.type === "disjointProperty") {
-        nodesToRemove.push(currentProp.target);
+      var adjacentProp = self.properties[i];
+      if (adjacentProp.source === classId && adjacentProp.type === "disjointProperty") {
+        nodesToRemove.push(adjacentProp.target);
         self.properties.splice(i, 1);
       } else {
         i++;
@@ -179,10 +179,9 @@ module.exports = function ($interval, $log) {
     }
 
     i = 0;
-
     while (i < self.properties.length) {
-      var currentProp = self.properties[i];
-      if (currentProp.type === "disjointProperty" && nodesToRemove.indexOf(currentProp.target) !== -1) {
+      var otherProp = self.properties[i];
+      if (otherProp.type === "disjointProperty" && nodesToRemove.indexOf(otherProp.target) !== -1) {
         self.properties.splice(i, 1);
       } else {
         i++;
