@@ -5,7 +5,7 @@ module.exports = function ($interval, $log) {
   var self = this;
 
   self.SUBCLASS_URI = "http://my-own-sub-class";
-  self.DISJUNCT_PROP_URI ="http://my-own-disjunct-prop";
+  self.DISJOINT_PROP_URI ="http://my-own-disjoint-prop";
 
   self.properties = [];
   self.needsUpdate = false;
@@ -148,17 +148,17 @@ module.exports = function ($interval, $log) {
     self.needsUpdate = true;
   };
 
-  self.addDisjunctProp = function (source, target) {
+  self.addDisjointProp = function (source, target) {
     if (!self.existsBetween(source, target)) {
-      var disjunctProp = {};
+      var disjointProp = {};
 
-      disjunctProp.source = source;
-      disjunctProp.target = target;
-      disjunctProp.value = 1;
-      disjunctProp.uri = self.DISJUNCT_PROP_URI;
-      disjunctProp.type = "disjunctProperty";
+      disjointProp.source = source;
+      disjointProp.target = target;
+      disjointProp.value = 1;
+      disjointProp.uri = self.DISJOINT_PROP_URI;
+      disjointProp.type = "disjointProperty";
 
-      self.properties.push(disjunctProp);
+      self.properties.push(disjointProp);
 
       self.needsUpdate = true;
     }
@@ -170,7 +170,7 @@ module.exports = function ($interval, $log) {
 
     while (i < self.properties.length) {
       var currentProp = self.properties[i];
-      if (currentProp.source === classId && currentProp.type === "disjunctProperty") {
+      if (currentProp.source === classId && currentProp.type === "disjointProperty") {
         nodesToRemove.push(currentProp.target);
         self.properties.splice(i, 1);
       } else {
@@ -182,7 +182,7 @@ module.exports = function ($interval, $log) {
 
     while (i < self.properties.length) {
       var currentProp = self.properties[i];
-      if (currentProp.type === "disjunctProperty" && nodesToRemove.indexOf(currentProp.target) !== -1) {
+      if (currentProp.type === "disjointProperty" && nodesToRemove.indexOf(currentProp.target) !== -1) {
         self.properties.splice(i, 1);
       } else {
         i++;

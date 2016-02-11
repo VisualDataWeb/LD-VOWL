@@ -52,10 +52,10 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
 
       scope.propDistance = 80;
       scope.dtPropDistance = 20;
-      scope.disjunctPropDistance = 100;
+      scope.disjointPropDistance = 100;
 
-      scope.disjunctNodeWidth = 60;
-      scope.disjunctNodeHeight = 30;
+      scope.disjointNodeWidth = 60;
+      scope.disjointNodeHeight = 30;
 
       scope.node = {};
       scope.force = {};
@@ -73,7 +73,7 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
         'prefixes': Prefixes.getPrefixes(),
         'showTypes': Filters.getIncludeLiterals(),
         'showLoops': Filters.getIncludeLoops(),
-        'showDisjunctNode': Filters.getIncludeDisjunctNode()
+        "showDisjointNode": Filters.getIncludeDisjointNode()
       };
 
       scope.$watch(function () {
@@ -104,10 +104,10 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
         });
 
       scope.$watch(function () {
-          return Filters.getIncludeDisjunctNode();
+          return Filters.getIncludeDisjointNode();
         },
         function (newVal) {
-          scope.data.showDisjunctNode = newVal;
+          scope.data.showDisjointNode = newVal;
           return scope.render(scope.data);
         });
 
@@ -337,7 +337,7 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
           .classed('external', function (d) {
             return (d.type === 'class' || d.type === 'property') && !(Prefixes.isInternal(d.uri));
           })
-          .classed('disjunctNode', function (d) { return d.type === 'disjunctNode'; })
+          .classed('disjointNode', function (d) { return d.type === 'disjointNode'; })
           .call(scope.force.drag);
 
         scope.node.exit().remove();
@@ -431,7 +431,7 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
           .append('title')
           .text(function(d) { return Utils.getName(d, false, false); });
 
-        scope.setUpDisjunctNode(nodeContainer);
+        scope.setUpDisjointNode(nodeContainer);
 
         // for classes, properties, datatype properties and types
         scope.node.append('text')
@@ -451,31 +451,31 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
           .style('fill', 'white');
       }; // end of setUpNodes()
 
-      scope.setUpDisjunctNode = function (nodeContainer) {
+      scope.setUpDisjointNode = function (nodeContainer) {
 
-        // draw the box for the disjunct node
-        nodeContainer.selectAll('.disjunctNode')
+        // draw the box for the disjoint node
+        nodeContainer.selectAll('.disjointNode')
           .append('rect')
-          .attr('x', -1 * (scope.disjunctNodeWidth / 2))
-          .attr('y', -1 * (scope.disjunctNodeHeight / 2))
-          .attr('width', scope.disjunctNodeWidth)
-          .attr('height', scope.disjunctNodeHeight)
+          .attr('x', -1 * (scope.disjointNodeWidth / 2))
+          .attr('y', -1 * (scope.disjointNodeHeight / 2))
+          .attr('width', scope.disjointNodeWidth)
+          .attr('height', scope.disjointNodeHeight)
           .style('fill', '#acf');
 
         // first circle
-        nodeContainer.selectAll('.disjunctNode')
+        nodeContainer.selectAll('.disjointNode')
           .append('circle')
           .classed('symbol', true)
           .attr('cx', -15)
           .attr('r', 10);
 
         // second circle
-        nodeContainer.selectAll('.disjunctNode')
+        nodeContainer.selectAll('.disjointNode')
           .append('circle')
           .classed('symbol', true)
           .attr('cx', 15)
           .attr('r', 10);
-      }; // end of setUpDisjunctNode()
+      }; // end of setUpDisjointNode()
 
       scope.setUpLinks = function(bilinks) {
         var linkContainer = root.append('g')
@@ -530,9 +530,9 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
                       .style('stroke', '#000')
                       .append("path")
                       .style('stroke-width', 1)
-                      .classed('disjunctProperty', function (d) { return d.type === 'disjunctProperty'; });
+                      .classed('disjointProperty', function (d) { return d.type === 'disjointProperty'; });
 
-        linkContainer.selectAll('.disjunctProperty')
+        linkContainer.selectAll('.disjointProperty')
           .attr("marker-end", 'none')
           .style('stroke-dasharray', '5, 5');
       };
@@ -654,8 +654,8 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
             if (data.showTypes) {
               scope.nodesToDraw.push(n);
             }
-          } else if (n.type === 'disjunctNode') {
-            if (data.showDisjunctNode) {
+          } else if (n.type === 'disjointNode') {
+            if (data.showDisjointNode) {
               scope.nodesToDraw.push(n);
             }
           } else {
@@ -668,14 +668,14 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
 
             // do not add filtered elements
             if ((link.source === link.target && !data.showLoops) ||
-               (link.type === 'disjunctProperty' && !data.showDisjunctNode)) {
+               (link.type === 'disjointProperty' && !data.showDisjointNode)) {
               return;
             }
 
             var s = scope.findNode(link.source);
             var t = scope.findNode(link.target);
 
-            if (link.type !== 'disjunctProperty') {
+            if (link.type !== 'disjointProperty') {
               var i = scope.findNode(link.intermediate);
 
               if (s !== undefined && i !== undefined && t !== undefined) {
@@ -703,7 +703,7 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
               }
             } else {
 
-              // for disjunct properties
+              // for disjoint properties
               if (s !== undefined && t !== undefined) {
                 links.push({source: s, target: t, type: link.type});
                 directLinks.push({source: s, target: t, value: link.value, type: link.type});
@@ -725,8 +725,8 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
             // datatype properties should have lower distance then normal properties
             if (d.type === 'datatypeProperty') {
               distance = scope.dtPropDistance;
-            } else if (d.type === 'disjunctProperty') {
-              distance = scope.disjunctPropDistance;
+            } else if (d.type === 'disjointProperty') {
+              distance = scope.disjointPropDistance;
             }
 
             if (d.source !== undefined && d.source.radius !== undefined) {

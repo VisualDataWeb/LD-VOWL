@@ -49,7 +49,8 @@ module.exports = function () {
           "} " +
           "GROUP BY ?class " +
           "ORDER BY DESC(?instanceCount) " +
-          "LIMIT " + limit + " OFFSET " + offset;
+          "LIMIT " + limit + " " +
+          "OFFSET " + offset;
         return query;
       },
 
@@ -100,12 +101,12 @@ module.exports = function () {
         var query = prefixes() +
             "SELECT (count(?originInstance) as ?count) ?prop " +
             "WHERE { " +
-              "?originInstance a <" + originClass + "> ." +
-              "?targetInstance a <" + targetClass + "> ." +
+              "?originInstance a <" + originClass + "> . " +
+              "?targetInstance a <" + targetClass + "> . " +
               "?originInstance ?prop ?targetInstance . " +
             "} " +
             "GROUP BY ?prop " +
-            "ORDER BY DESC(?count)" +
+            "ORDER BY DESC(?count) " +
             "LIMIT " + limit + " " +
             "OFFSET " + offset;
         return query;

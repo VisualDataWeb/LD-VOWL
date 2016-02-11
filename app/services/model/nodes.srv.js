@@ -6,7 +6,7 @@ module.exports = function ($log, Properties, Prefixes) {
   var nodes = new Map();
 
   var that = this;
-  that.DISJUNCT_NODE_URI = 'http://my-own-disjunct-node';
+  that.DISJOINT_NODE_URI = 'http://my-own-disjoint-node';
 
   that.suffixRegEx = /(#?[^\/#]*)\/?$/;
 
@@ -20,7 +20,7 @@ module.exports = function ($log, Properties, Prefixes) {
 
         // rebuild the class uri map
         for (var node of nodes.values()) {
-          if (node.type === 'class' || node.type === 'disjunctNode') {
+          if (node.type === 'class' || node.type === 'disjointNode') {
             classUriIdMap.set(node.uri, node.id);
           }
         }
@@ -38,7 +38,7 @@ module.exports = function ($log, Properties, Prefixes) {
 
     for (var node of nodes.values()) {
       if (node.uri !== undefined && node.uri.length > 0 &&
-          (node.uri !== Properties.SUBCLASS_URI || node.uri !== that.DISJUNCT_NODE_URI)) {
+          (node.uri !== Properties.SUBCLASS_URI || node.uri !== that.DISJOINT_NODE_URI)) {
         var pre = node.uri.replace(that.suffixRegEx, '');
         Prefixes.addPrefix({"prefix": pre});
       }
@@ -69,7 +69,7 @@ module.exports = function ($log, Properties, Prefixes) {
           nodes.set(newId, newNode);
           classUriIdMap.set(newNode.uri, newId);
 
-          if (newNode.uri !== that.DISJUNCT_NODE_URI) {
+          if (newNode.uri !== that.DISJOINT_NODE_URI) {
             var pre = newNode.uri.replace(that.suffixRegEx, '');
             $log.debug("[Nodes] Prefix for new node is '" + pre + "'!");
             Prefixes.addPrefix({"prefix": pre});

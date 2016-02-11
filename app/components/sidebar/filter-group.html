@@ -1,4 +1,5 @@
 <form class="form-horizontal">
+
   <div class="checkbox">
     <label for="showLiterals">
       <input id="showLiterals" type="checkbox" ng-model="vm.extractTypes" ng-change="vm.toggleTypes()">
@@ -14,10 +15,11 @@
   </div>
 
   <div class="checkbox">
-    <label for="includeDisjunctNode">
-      <input id="includeDisjunctNode" type="checkbox" ng-model="vm.includeDisjunctNode"
-             ng-change="vm.toggleDisjunctNode()">
-      Show disjunct classes
+    <label for="includeDisjointNode">
+      <input id="includeDisjointNode" type="checkbox" ng-model="vm.includeDisjointNode"
+             ng-change="vm.toggleDisjointNode()">
+      Show disjoint classes
     </label>
   </div>
+
 </form><!-- end of .form-horizontal -->

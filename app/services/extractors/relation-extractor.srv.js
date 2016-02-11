@@ -328,8 +328,8 @@ class RelationExtractor extends Extractor {
                 self.$log.debug('[Relations] ' + classId1 + ' and ' + classId2 + ' are disjoint.');
 
                 var newDNode = {
-                  uri: self.nodes.DISJUNCT_NODE_URI,
-                  type: 'disjunctNode',
+                  uri: self.nodes.DISJOINT_NODE_URI,
+                  type: 'disjointNode',
                   name: ' ',
                   value: 1.0,
                   classes: []
@@ -338,13 +338,13 @@ class RelationExtractor extends Extractor {
                 newDNode.classes.push(classId1);
                 newDNode.classes.push(classId2);
 
-                var disjunctNodeId = self.nodes.addNode(newDNode);
+                var disjointNodeId = self.nodes.addNode(newDNode);
 
                 // TODO check against all connected classes
-                self.props.addDisjunctProp(classId1, disjunctNodeId);
-                self.props.addDisjunctProp(classId2, disjunctNodeId);
+                self.props.addDisjointProp(classId1, disjointNodeId);
+                self.props.addDisjointProp(classId2, disjointNodeId);
 
-                deferred.reject('disjunct');
+                deferred.reject('disjoint');
               } else {
                 self.$log.debug("[Relations] No Relation between '" + classURI1 + "' and '" + classURI2 +
                   "' was found via instance count.");

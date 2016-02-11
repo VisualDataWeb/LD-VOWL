@@ -18,9 +18,9 @@ module.exports = function ($cookies, $log) {
     var includeLiterals = self.getIncludeLiterals() || true;
     $cookies.put(literalCookie, includeLiterals);
 
-    var disjunctNodeCookie = cookiePrefix + "include_disjunct_node";
-    var includeDisjunctNode = self.getIncludeDisjunctNode() || false;
-    $cookies.put(disjunctNodeCookie, includeDisjunctNode);
+    var disjointNodeCookie = cookiePrefix + "include_disjoint_node";
+    var includeDisjointNode = self.getIncludeDisjointNode() || false;
+    $cookies.put(disjointNodeCookie, includeDisjointNode);
   };
 
   self.getIncludeLoops = function () {
@@ -57,18 +57,18 @@ module.exports = function ($cookies, $log) {
     }
   };
 
-  self.getIncludeDisjunctNode = function () {
-    return ($cookies.get(cookiePrefix + "include_disjunct_node") === 'true');
+  self.getIncludeDisjointNode = function () {
+    return ($cookies.get(cookiePrefix + "include_disjoint_node") === 'true');
   };
 
-  self.toggleDisjunctNode = function () {
-    var cookieName = cookiePrefix + "include_disjunct_node";
-    if (self.getIncludeDisjunctNode()) {
-      $log.debug("[Filters] Disable disjunct node.");
+  self.toggleDisjointNode = function () {
+    var cookieName = cookiePrefix + "include_disjoint_node";
+    if (self.getIncludeDisjointNode()) {
+      $log.debug("[Filters] Disable disjoint node.");
       $cookies.put(cookieName, "false");
       return false;
     } else {
-      $log.debug("[Filters] Enable disjunct node.");
+      $log.debug("[Filters] Enable disjoint node.");
       $cookies.put(cookieName, "true");
       return true;
     }
