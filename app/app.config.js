@@ -28,4 +28,5 @@ export default function routing($httpProvider, $routeProvider) {
     .otherwise({
       redirectTo: '/'
     });
-}
+
+} // end of export

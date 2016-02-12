@@ -1,6 +1,8 @@
 'use strict';
 
-module.exports = function ($interval, $log) {
+properties.$inject = ['$interval', '$log'];
+
+function properties($interval, $log) {
 
   var self = this;
 
@@ -328,4 +330,6 @@ module.exports = function ($interval, $log) {
 
   self.initProperties();
 
-};
+}
+
+export default properties;

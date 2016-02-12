@@ -1,6 +1,8 @@
 'use strict';
 
-module.exports = function ($cookies) {
+requestConfig.$inject = ['$cookies'];
+
+function requestConfig($cookies) {
 
   var cookiePrefix = "ldvowl_";
   var localProxyURL = 'http://localhost:8080/sparql';
@@ -148,4 +150,6 @@ module.exports = function ($cookies) {
 
   self.init();
 
-};
+}
+
+export default requestConfig;

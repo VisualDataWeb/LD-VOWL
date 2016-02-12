@@ -1,6 +1,8 @@
 'use strict';
 
-module.exports = function ($log, Properties, Prefixes) {
+nodesService.$inject =['$log', 'Properties', 'Prefixes'];
+
+function nodesService($log, Properties, Prefixes) {
 
   var classUriIdMap = new Map();
   var nodes = new Map();
@@ -282,4 +284,6 @@ module.exports = function ($log, Properties, Prefixes) {
 
   that.initMap();
 
-};
+}
+
+export default nodesService;

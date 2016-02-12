@@ -1,10 +1,8 @@
-/**
- * Created by marc on 15.12.15.
- */
-
 require('jquery-ui');
 
-module.exports = function ($rootScope) {
+slider.$inject = ['$rootScope'];
+
+function slider($rootScope) {
 
   return {
     restrict: 'AE',
@@ -33,4 +31,6 @@ module.exports = function ($rootScope) {
     }
   };
 
-};
+}
+
+export default slider;

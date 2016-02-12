@@ -1,5 +1,7 @@
 'use strict';
 
+startCtrl.$inject = ['$log','$location', 'Nodes', 'Properties', 'Requests', 'RequestConfig'];
+
 /**
  * @Name StartCtrl
  *
@@ -10,7 +12,7 @@
  * @param Requests
  * @param RequestConfig
  */
-module.exports = function ($log, $location, Nodes, Properties, Requests, RequestConfig) {
+function startCtrl($log, $location, Nodes, Properties, Requests, RequestConfig) {
 
   var start = this;
 
@@ -111,4 +113,6 @@ module.exports = function ($log, $location, Nodes, Properties, Requests, Request
       }
   }; // end of showGraph()
 
-}; // end of StartCtrl
+} // end of StartCtrl
+
+export default startCtrl;

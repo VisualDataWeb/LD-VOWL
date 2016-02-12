@@ -1,11 +1,11 @@
 'use strict';
 
-module.exports = function ($rootScope, $log) {
+prefixesService.$inject = ['$rootScope', '$log'];
+
+function prefixesService($rootScope, $log) {
 
   var prefixes = [];
-
   var colorNumber = 1;
-
   var differentColors = true;
 
   var that = this;
@@ -160,4 +160,6 @@ module.exports = function ($rootScope, $log) {
     return prefixes.length;
   };
 
-}; // end of module exports
+} // end of PrefixesService
+
+export default prefixesService;

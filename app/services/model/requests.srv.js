@@ -1,6 +1,8 @@
 'use strict';
 
-module.exports = function ($rootScope) {
+requests.$inject = ['$rootScope'];
+
+function requests($rootScope) {
 
   var that = this;
 
@@ -77,4 +79,6 @@ module.exports = function ($rootScope) {
     $rootScope.$broadcast('pending-requests-changed', that.pendingRequests);
   };
   
-}; // end of module.exports
+} // end of export
+
+export default requests;

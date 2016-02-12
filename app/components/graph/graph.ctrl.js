@@ -1,6 +1,9 @@
 'use strict';
 
-module.exports = function ($scope, $q, $log, Filters, ClassExtractor, RelationExtractor, TypeExtractor, DetailExtractor,
+graphCtrl.$inject = ['$scope', '$q', '$log', 'Filters',  'ClassExtractor', 'RelationExtractor', 'TypeExtractor',
+  'DetailExtractor', 'RequestConfig', 'Requests', 'Prefixes'];
+
+function graphCtrl($scope, $q, $log, Filters, ClassExtractor, RelationExtractor, TypeExtractor, DetailExtractor,
                            RequestConfig, Requests, Prefixes) {
 
   var vm = this;
@@ -187,4 +190,6 @@ module.exports = function ($scope, $q, $log, Filters, ClassExtractor, RelationEx
 
   vm.startLoading();
 
-};
+}
+
+export default graphCtrl;

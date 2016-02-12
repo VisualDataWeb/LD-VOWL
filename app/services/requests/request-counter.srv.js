@@ -1,6 +1,9 @@
 'use strict';
 
-module.exports = function ($q, Requests) {
+requestCounter.$inject = ['$q', 'Requests'];
+
+function requestCounter($q, Requests) {
+
   return {
     'request': function (config) {
       Requests.incPendingRequests();
@@ -19,4 +22,7 @@ module.exports = function ($q, Requests) {
       return $q.reject(rejection);
     }
   };
-};
+
+}
+
+export default requestCounter;

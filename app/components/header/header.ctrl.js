@@ -5,7 +5,7 @@
  * @param $scope
  * @param $location
  */
-module.exports =  function ($scope, $location) {
+function HeaderCtrl($scope, $location) {
 
   /**
    * Returns true if the given view location is the current one, false otherwise.
@@ -17,4 +17,8 @@ module.exports =  function ($scope, $location) {
     return viewLocation === $location.path();
   };
 
-};
+}
+
+HeaderCtrl.$inject = ['$scope', '$location'];
+
+export default HeaderCtrl;

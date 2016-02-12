@@ -1,9 +1,13 @@
 'use strict';
 
-var d3 = require('d3');
+import angular from 'angular';
+import d3 from 'd3';
+
+
+NodeLinkGraph.$inject = ['$window', '$log', 'Properties', 'Nodes', 'Prefixes', 'Filters', 'Geometry', 'Utils'];
 
 /**
- * @Name nodeLinkGraph
+ * @Name NodeLinkGraph
  *
  * @param $window
  * @param $log
@@ -16,7 +20,7 @@ var d3 = require('d3');
  *
  * @returns {{restrict: string, scope: {data: string, onClick: string}, link: link}}
  */
-module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, Geometry, Utils) {
+function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geometry, Utils) {
   return {
     restrict: 'EA',
     scope: {
@@ -774,4 +778,6 @@ module.exports = function ($window, $log, Properties, Nodes, Prefixes, Filters, 
       }; // end of scope.render()
     } // end of link()
   }; // end of directive
-}; // end of module.exports
+}
+
+export default NodeLinkGraph;

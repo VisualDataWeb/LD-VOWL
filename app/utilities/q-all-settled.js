@@ -1,4 +1,6 @@
-module.exports = angular.module('qAllSettled', []).config(function($provide) {
+import angular from 'angular';
+
+function configure($provide) {
   $provide.decorator('$q', function($delegate) {
     var $q = $delegate;
 
@@ -17,5 +19,9 @@ module.exports = angular.module('qAllSettled', []).config(function($provide) {
     };
 
     return $q;
-  });
-});
+  }); // end of decorator
+} // end of configure()
+
+export default angular.module('qAllSettled', [])
+                      .config(configure)
+                      .name;

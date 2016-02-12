@@ -1,6 +1,6 @@
 'use strict';
 
-var Extractor = require('./extractor.srv');
+import Extractor from './extractor.srv';
 
 /**
  * @name RelationExtractor
@@ -363,4 +363,7 @@ class RelationExtractor extends Extractor {
   } // end of requestClassEquality()
 } // end of class RelationExtractor
 
-module.exports = RelationExtractor;
+RelationExtractor.$inject = ['$http', '$q', '$log', 'PREFIX', 'PROPERTY_BLACKLIST', 'QueryFactory', 'RequestConfig',
+  'Nodes', 'Properties'];
+
+export default RelationExtractor;

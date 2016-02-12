@@ -1,6 +1,6 @@
 'use strict';
 
-var Extractor = require('./extractor.srv');
+import Extractor from './extractor.srv';
 
 /**
  * @Name ClassExtractor
@@ -188,4 +188,6 @@ class ClassExtractor extends Extractor {
 
 } // end of class 'ClassExtractor'
 
-module.exports = ClassExtractor;
+ClassExtractor.$inject = ['$http', '$q', '$log', 'PREFIX', 'CLASS_BLACKLIST', 'RequestConfig', 'QueryFactory', 'Nodes'];
+
+export default ClassExtractor;

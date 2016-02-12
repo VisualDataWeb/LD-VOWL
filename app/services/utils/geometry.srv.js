@@ -1,26 +1,27 @@
 'use strict';
 
-module.exports = function (Utils) {
+class Geometry {
 
-  var that = this;
+  constructor(utils) {
+    this.utils = utils;
+    this.defaultPropHeight = 20;
+  }
 
-  var defaultPropHeight = 20;
+  getCircleOutlinePoint(d) {
+    var deltaX = d.target.x - d.intermediate.x;
+    var deltaY = d.target.y - d.intermediate.y;
 
-  that.getCircleOutlinePoint = function (d) {
-      var deltaX = d.target.x - d.intermediate.x;
-      var deltaY = d.target.y - d.intermediate.y;
+    // Pythagoras rule
+    var totalLength = Math.sqrt((deltaX * deltaX) + (deltaY * deltaY));
 
-      // Pythagoras rule
-      var totalLength = Math.sqrt((deltaX * deltaX) + (deltaY * deltaY));
+    var radius = d.target.radius;
+    var offsetX = (deltaX * (radius)) / totalLength;
+    var offsetY = (deltaY * (radius)) / totalLength;
 
-      var radius = d.target.radius;
-      var offsetX = (deltaX * (radius)) / totalLength;
-      var offsetY = (deltaY * (radius)) / totalLength;
+    return {x: (d.target.x - offsetX), y: (d.target.y - offsetY)};
+  }
 
-      return {x: (d.target.x - offsetX), y: (d.target.y - offsetY)};
-  };
-
-  that.getAnotherCircleOutlinePoint =  function (d, a) {
+  getAnotherCircleOutlinePoint(d, a) {
     var deltaX = (d.intermediate.x - d.source.x);
     var deltaY = (d.intermediate.y - d.source.y);
 
@@ -39,24 +40,24 @@ module.exports = function (Utils) {
 
     // return the point on the circle circumference
     return {x: x, y: y};
-  };
+  }
 
-  that.calcPropBoxWidth = function (d) {
-    return (Utils.getName(d, true, true).length * 8);
-  };
+  calcPropBoxWidth(d) {
+    return (this.utils.getName(d, true, true).length * 8);
+  }
 
-  that.getRectOutlinePoint = function (d) {
+  getRectOutlinePoint(d) {
     var source = (d.intermediate !== undefined) ? d.intermediate : d.source;
 
     var m = (d.target.y - source.y) / (d.target.x - source.x);
 
-    var boxWidth = that.calcPropBoxWidth(d.target);
+    var boxWidth = this.calcPropBoxWidth(d.target);
 
     var minX = d.target.x - (boxWidth / 2);
     var maxX = d.target.x + (boxWidth / 2);
 
-    var minY = d.target.y - (defaultPropHeight / 2);
-    var maxY = d.target.y + (defaultPropHeight / 2);
+    var minY = d.target.y - (this.defaultPropHeight / 2);
+    var maxY = d.target.y + (this.defaultPropHeight / 2);
 
     // left side
     if (source.x < d.target.x) {
@@ -89,6 +90,10 @@ module.exports = function (Utils) {
         return {x: maxYx, y: maxY};
       }
     }
-  };
+  }
 
-}; // end of module exports
+} // end of Geometry class
+
+Geometry.$inject = ['Utils'];
+
+export default Geometry;

@@ -20,6 +20,7 @@
     "jquery-ui": "^1.10.5",
     "less": "^2.5.3",
     "less-loader": "^2.2.2",
+    "ng-cache-loader": "0.0.15",
     "url-loader": "^0.5.7"
   },
   "devDependencies": {

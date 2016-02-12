@@ -1,6 +1,8 @@
 'use strict';
 
-module.exports = function ($http, $log, RequestConfig, QueryFactory, Nodes, Properties, RelationExtractor) {
+typeExtractor.$inject = ['$http', '$log', 'RequestConfig', 'QueryFactory', 'Nodes', 'Properties', 'RelationExtractor'];
+
+function typeExtractor($http, $log, RequestConfig, QueryFactory, Nodes, Properties, RelationExtractor) {
 
   var that = this;
 
@@ -53,4 +55,6 @@ module.exports = function ($http, $log, RequestConfig, QueryFactory, Nodes, Prop
 
   }; // end of requestReferringTypes()
 
-}; // end of TypeExtractor
+} // end of TypeExtractor
+
+export default typeExtractor;

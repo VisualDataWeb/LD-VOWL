@@ -1,168 +1,170 @@
 'use strict';
 
-module.exports = function () {
+function queryFactory() {
 
-    var namespaces = [
-      'rdfs: <http://www.w3.org/2000/01/rdf-schema#>',
-      'skos: <http://www.w3.org/2004/02/skos/core#>'
-    ];
+  var namespaces = [
+    'rdfs: <http://www.w3.org/2000/01/rdf-schema#>',
+    'skos: <http://www.w3.org/2004/02/skos/core#>'
+  ];
 
-    var defaultLimit = 10;
-    var defaultOffset = 0;
-    var defaultLang = 'en';
+  var defaultLimit = 10;
+  var defaultOffset = 0;
+  var defaultLang = 'en';
 
-    var prefixes = function () {
-      var pre = '';
-      for (var i = 0; i < namespaces.length; i++) {
-        pre += 'PREFIX ';
-        pre += namespaces[i];
-        pre += ' ';
-      }
-      return pre;
-    };
+  var prefixes = function () {
+    var pre = '';
+    for (var i = 0; i < namespaces.length; i++) {
+      pre += 'PREFIX ';
+      pre += namespaces[i];
+      pre += ' ';
+    }
+    return pre;
+  };
 
-    // Public API here
-    return {
+  // Public API here
+  return {
 
-      // NAMESPACES
+    // NAMESPACES
 
-      /**
-       * Returns the prefixes for SPARQL queries, including the used namespaces.
-       */
-      getPrefixes: function () {
-        return prefixes();
-      },
+    /**
+     * Returns the prefixes for SPARQL queries, including the used namespaces.
+     */
+    getPrefixes: function () {
+      return prefixes();
+    },
 
-      // CLASS QUERIES
+    // CLASS QUERIES
 
-      getClassQuery: function (limit, offset) {
+    getClassQuery: function (limit, offset) {
 
-        // check parameters
-        limit = (typeof limit === 'number' && limit > 0) ? limit : defaultLimit;
-        offset = (typeof offset === 'number' && offset >= 0) ? offset : defaultOffset;
+      // check parameters
+      limit = (typeof limit === 'number' && limit > 0) ? limit : defaultLimit;
+      offset = (typeof offset === 'number' && offset >= 0) ? offset : defaultOffset;
 
-        // build query and return it
-        var query = prefixes() +
-          "SELECT DISTINCT ?class (count(?sub) AS ?instanceCount) " +
-          "WHERE { " +
-            "?sub a ?class. " +
-          "} " +
-          "GROUP BY ?class " +
-          "ORDER BY DESC(?instanceCount) " +
-          "LIMIT " + limit + " " +
-          "OFFSET " + offset;
-        return query;
-      },
-
-      // PROPERTY QUERIES
-
-      getLabelQuery: function (uri, labelLang) {
-        labelLang = labelLang || defaultLang;
-
-        var query = prefixes() +
-        "SELECT (SAMPLE (?lbl) AS ?label) " +
+      // build query and return it
+      var query = prefixes() +
+        "SELECT DISTINCT ?class (count(?sub) AS ?instanceCount) " +
         "WHERE { " +
-          "<" + uri + "> rdfs:label ?lbl. " +
-          "FILTER (langMatches(lang(?lbl), '" + labelLang + "'))" +
-        "}";
-        return query;
-      },
+          "?sub a ?class. " +
+        "} " +
+        "GROUP BY ?class " +
+        "ORDER BY DESC(?instanceCount) " +
+        "LIMIT " + limit + " " +
+        "OFFSET " + offset;
+      return query;
+    },
 
-      getPreferredLabelQuery: function (uri, labelLang) {
-        labelLang = labelLang || defaultLang;
+    // PROPERTY QUERIES
 
-        var query = prefixes() +
-            "SELECT ?label " +
-            "WHERE { " +
-              "<" + uri + "> skos:prefLabel ?label . " +
-              "FILTER (langMatches(lang(?label), '" + labelLang + "')) " +
-            "}";
-        return query;
-      },
+    getLabelQuery: function (uri, labelLang) {
+      labelLang = labelLang || defaultLang;
 
-      getInstanceReferringTypesQuery: function (classURI, limit) {
-        limit = (typeof limit === 'number' && limit > 0) ? limit : defaultLimit;
+      var query = prefixes() +
+      "SELECT (SAMPLE (?lbl) AS ?label) " +
+      "WHERE { " +
+        "<" + uri + "> rdfs:label ?lbl. " +
+        "FILTER (langMatches(lang(?lbl), '" + labelLang + "'))" +
+      "}";
+      return query;
+    },
 
-        var typeQuery = prefixes() +
-          "SELECT (COUNT(?val) AS ?valCount) ?valType " +
+    getPreferredLabelQuery: function (uri, labelLang) {
+      labelLang = labelLang || defaultLang;
+
+      var query = prefixes() +
+          "SELECT ?label " +
           "WHERE { " +
-            "?instance a <" + classURI + "> . " +
-            "?instance ?prop ?val . " +
-            "BIND (datatype(?val) AS ?valType) . " +
-          "} " +
-          "GROUP BY ?valType " +
-          "LIMIT " + limit;
-        return typeQuery;
-      },
+            "<" + uri + "> skos:prefLabel ?label . " +
+            "FILTER (langMatches(lang(?label), '" + labelLang + "')) " +
+          "}";
+      return query;
+    },
 
-      // RELATION queries
+    getInstanceReferringTypesQuery: function (classURI, limit) {
+      limit = (typeof limit === 'number' && limit > 0) ? limit : defaultLimit;
 
-      getOrderedClassClassRelationQuery: function (originClass, targetClass, limit, offset) {
-        var query = prefixes() +
-            "SELECT (count(?originInstance) as ?count) ?prop " +
-            "WHERE { " +
-              "?originInstance a <" + originClass + "> . " +
-              "?targetInstance a <" + targetClass + "> . " +
-              "?originInstance ?prop ?targetInstance . " +
-            "} " +
-            "GROUP BY ?prop " +
-            "ORDER BY DESC(?count) " +
-            "LIMIT " + limit + " " +
-            "OFFSET " + offset;
-        return query;
-      },
+      var typeQuery = prefixes() +
+        "SELECT (COUNT(?val) AS ?valCount) ?valType " +
+        "WHERE { " +
+          "?instance a <" + classURI + "> . " +
+          "?instance ?prop ?val . " +
+          "BIND (datatype(?val) AS ?valType) . " +
+        "} " +
+        "GROUP BY ?valType " +
+        "LIMIT " + limit;
+      return typeQuery;
+    },
 
-      //TODO this may be used if number of distinct props is to high
-      getUnorderedClassClassRelationQuery: function (originClass, targetClass, limit, offset) {
-        var query  = prefixes() +
-          "SELECT distinct ?prop " +
+    // RELATION queries
+
+    getOrderedClassClassRelationQuery: function (originClass, targetClass, limit, offset) {
+      var query = prefixes() +
+          "SELECT (count(?originInstance) as ?count) ?prop " +
           "WHERE { " +
             "?originInstance a <" + originClass + "> . " +
             "?targetInstance a <" + targetClass + "> . " +
             "?originInstance ?prop ?targetInstance . " +
           "} " +
+          "GROUP BY ?prop " +
+          "ORDER BY DESC(?count) " +
           "LIMIT " + limit + " " +
           "OFFSET " + offset;
+      return query;
+    },
+
+    //TODO this may be used if number of distinct props is to high
+    getUnorderedClassClassRelationQuery: function (originClass, targetClass, limit, offset) {
+      var query  = prefixes() +
+        "SELECT distinct ?prop " +
+        "WHERE { " +
+          "?originInstance a <" + originClass + "> . " +
+          "?targetInstance a <" + targetClass + "> . " +
+          "?originInstance ?prop ?targetInstance . " +
+        "} " +
+        "LIMIT " + limit + " " +
+        "OFFSET " + offset;
+      return query;
+    },
+
+    getClassTypeRelationQuery: function (classURI, typeURI) {
+      var query = prefixes() +
+        "SELECT DISTINCT ?prop " +
+        "WHERE { " +
+          "?instance a <" + classURI + "> . " +
+          "?instance ?prop ?val . " +
+          "FILTER (datatype(?val) = <" + typeURI + ">) " +
+        "} " +
+        "LIMIT 1"; //TODO increase this for multiple edges
+
         return query;
-      },
+    },
 
-      getClassTypeRelationQuery: function (classURI, typeURI) {
-        var query = prefixes() +
-          "SELECT DISTINCT ?prop " +
-          "WHERE { " +
-            "?instance a <" + classURI + "> . " +
-            "?instance ?prop ?val . " +
-            "FILTER (datatype(?val) = <" + typeURI + ">) " +
-          "} " +
-          "LIMIT 1"; //TODO increase this for multiple edges
+    // INSTANCE QUERIES
 
-          return query;
-      },
+    getNumberOfCommonInstancesQuery: function (classURI1, classURI2) {
+      var query = prefixes() +
+        'SELECT (count(?commonInstance) AS ?commonInstanceCount) ' +
+        'WHERE { ' +
+          '?commonInstance a <' + classURI1 + '>. ' +
+          '?commonInstance a <' + classURI2 + '>. ' +
+        '}';
+      return query;
+    },
 
-      // INSTANCE QUERIES
+    // DETAILS QUERIES
 
-      getNumberOfCommonInstancesQuery: function (classURI1, classURI2) {
-        var query = prefixes() +
-          'SELECT (count(?commonInstance) AS ?commonInstanceCount) ' +
-          'WHERE { ' +
-            '?commonInstance a <' + classURI1 + '>. ' +
-            '?commonInstance a <' + classURI2 + '>. ' +
-          '}';
-        return query;
-      },
+    getCommentQuery: function (uri) {
+      var commentQuery = prefixes() +
+        "SELECT ?comment " +
+        "WHERE { " +
+          "<" + uri + "> rdfs:comment ?comment . " +
+        "} " +
+        "LIMIT 1";
+        return commentQuery;
+    }
 
-      // DETAILS QUERIES
+  }; // end of public API to return
 
-      getCommentQuery: function (uri) {
-        var commentQuery = prefixes() +
-          "SELECT ?comment " +
-          "WHERE { " +
-            "<" + uri + "> rdfs:comment ?comment . " +
-          "} " +
-          "LIMIT 1";
-          return commentQuery;
-      }
+} // end of queryFactory()
 
-    }; // end of public API to return
-
-  }; // end of module.exports
+export default queryFactory;

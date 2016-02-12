@@ -1,7 +1,9 @@
 'use strict';
 
+detailExtractor.$inject = ['$http', '$log', 'QueryFactory', 'RequestConfig', 'Nodes'];
+
 // TODO make this a ES6 class
-module.exports = function ($http, $log, QueryFactory, RequestConfig, Nodes) {
+function detailExtractor($http, $log, QueryFactory, RequestConfig, Nodes) {
 
   var that = this;
 
@@ -33,4 +35,6 @@ module.exports = function ($http, $log, QueryFactory, RequestConfig, Nodes) {
     });
   };
 
-};
+}
+
+export default detailExtractor;

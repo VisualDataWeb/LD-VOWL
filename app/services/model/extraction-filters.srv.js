@@ -1,8 +1,6 @@
-/**
- * Created by marc on 09.12.15.
- */
+filters.$inject = ['$cookies', '$log'];
 
-module.exports = function ($cookies, $log) {
+function filters($cookies, $log) {
 
   // TODO move into constant
   var cookiePrefix = "ldvowl_";
@@ -76,4 +74,6 @@ module.exports = function ($cookies, $log) {
 
   self.init();
 
-};
+}
+
+export default filters;

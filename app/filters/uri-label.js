@@ -1,4 +1,5 @@
-module.exports = function () {
+export default function uriLabelFilter() {
+
   return function (uri) {
     var uriLabel = '';
     if (uri !== undefined && uri !== '') {
@@ -8,4 +9,5 @@ module.exports = function () {
     }
     return uriLabel;
   };
-};
+
+}

@@ -1,6 +1,10 @@
 'use strict';
 
-module.exports = function (PREFIX, PROPERTY_BLACKLIST, CLASS_BLACKLIST, RequestConfig, Nodes, Properties, Requests,
+settingsCtrl.$inject = ['PREFIX', 'PROPERTY_BLACKLIST', 'CLASS_BLACKLIST', 'RequestConfig', 'Nodes', 'Properties',
+  'Requests', 'ClassExtractor', 'RelationExtractor'];
+
+
+function settingsCtrl(PREFIX, PROPERTY_BLACKLIST, CLASS_BLACKLIST, RequestConfig, Nodes, Properties, Requests,
                            ClassExtractor, RelationExtractor) {
 
   var vm = this;
@@ -82,4 +86,6 @@ module.exports = function (PREFIX, PROPERTY_BLACKLIST, CLASS_BLACKLIST, RequestC
 
   vm.initialize();
 
-};
+}
+
+export default settingsCtrl;
