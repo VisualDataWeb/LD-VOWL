@@ -4,10 +4,11 @@ properties.$inject = ['$interval', '$log'];
 
 function properties($interval, $log) {
 
+  /* jshint validthis: true */
   var self = this;
 
-  self.SUBCLASS_URI = "http://my-own-sub-class";
-  self.DISJOINT_PROP_URI ="http://my-own-disjoint-prop";
+  self.SUBCLASS_URI = 'http://my-own-sub-class';
+  self.DISJOINT_PROP_URI ='http://my-own-disjoint-prop';
 
   self.properties = [];
   self.needsUpdate = false;
@@ -20,21 +21,21 @@ function properties($interval, $log) {
    */
   self.initProperties = function () {
     if (sessionStorage !== undefined) {
-      var sessionProperties = sessionStorage.getItem("properties");
+      var sessionProperties = sessionStorage.getItem('properties');
 
       if (sessionProperties !== undefined && sessionProperties !== null) {
         var savedItems = JSON.parse(sessionProperties);
 
         if (savedItems !== undefined && savedItems.length > 0) {
-          $log.debug("[Properties] Re-use " + savedItems.length + " properties from session storage!");
+          $log.debug('[Properties] Re-use ' + savedItems.length + ' properties from session storage!');
           self.properties = savedItems;
         } else {
-          $log.debug("[Properties] No saved properties in session storage!");
+          $log.debug('[Properties] No saved properties in session storage!');
         }
       }
       self.startSessionStorageUpdate();
     } else {
-      $log.error("[Properties] SessionStorage is not available! Properties will not be saved across page reloads!");
+      $log.error('[Properties] SessionStorage is not available! Properties will not be saved across page reloads!');
     }
   };
 
@@ -43,7 +44,7 @@ function properties($interval, $log) {
    */
   self.startSessionStorageUpdate = function () {
 
-    $log.debug("[Properties] Start Session Store upgrade!");
+    $log.debug('[Properties] Start Session Store upgrade!');
     if (self.sessionStorageUpdate !== undefined) {
       return;
     }
@@ -53,7 +54,7 @@ function properties($interval, $log) {
         self.updateSessionStorage();
         self.needsUpdate = false;
       } else {
-        $log.debug("[Properties] No SessionStorage update needed!");
+        $log.debug('[Properties] No SessionStorage update needed!');
         self.unusedRounds++;
         if (self.unusedRounds >= 2) {
           self.endSessionStorageUpdate();
@@ -67,7 +68,7 @@ function properties($interval, $log) {
    */
   self.endSessionStorageUpdate = function () {
     if (self.sessionStorageUpdate !== undefined) {
-      $log.debug("[Properties] End SessionStorage update.");
+      $log.debug('[Properties] End SessionStorage update.');
       $interval.cancel(self.sessionStorageUpdate);
       self.sessionStorageUpdate = undefined;
       self.unusedRounds = 0;
@@ -78,8 +79,8 @@ function properties($interval, $log) {
    * Function which is triggered to update properties in HTML5 SessionStore.
    */
   self.updateSessionStorage = function () {
-    $log.debug("[Properties] Update SessionStorage!");
-    sessionStorage.setItem("properties", JSON.stringify(self.properties));
+    $log.debug('[Properties] Update SessionStorage!');
+    sessionStorage.setItem('properties', JSON.stringify(self.properties));
   };
 
   self.existsBetween = function (sourceId, targetId) {
@@ -121,7 +122,7 @@ function properties($interval, $log) {
         newProperty.props = [];
         newProperty.props.push({'uri': uri, 'value': value});
         newProperty.uri = uri;
-        newProperty.type = "property";
+        newProperty.type = 'property';
         newProperty.ordered = ordered;
 
         self.properties.push(newProperty);
@@ -143,7 +144,7 @@ function properties($interval, $log) {
     newSubClassProp.props = [];
     newSubClassProp.props.push({'uri': self.SUBCLASS_URI});
     newSubClassProp.uri = self.SUBCLASS_URI;
-    newSubClassProp.type = "subClassProperty";
+    newSubClassProp.type = 'subClassProperty';
 
     self.properties.push(newSubClassProp);
 
@@ -158,7 +159,7 @@ function properties($interval, $log) {
       disjointProp.target = target;
       disjointProp.value = 1;
       disjointProp.uri = self.DISJOINT_PROP_URI;
-      disjointProp.type = "disjointProperty";
+      disjointProp.type = 'disjointProperty';
 
       self.properties.push(disjointProp);
 
@@ -172,7 +173,7 @@ function properties($interval, $log) {
 
     while (i < self.properties.length) {
       var adjacentProp = self.properties[i];
-      if (adjacentProp.source === classId && adjacentProp.type === "disjointProperty") {
+      if (adjacentProp.source === classId && adjacentProp.type === 'disjointProperty') {
         nodesToRemove.push(adjacentProp.target);
         self.properties.splice(i, 1);
       } else {
@@ -183,7 +184,7 @@ function properties($interval, $log) {
     i = 0;
     while (i < self.properties.length) {
       var otherProp = self.properties[i];
-      if (otherProp.type === "disjointProperty" && nodesToRemove.indexOf(otherProp.target) !== -1) {
+      if (otherProp.type === 'disjointProperty' && nodesToRemove.indexOf(otherProp.target) !== -1) {
         self.properties.splice(i, 1);
       } else {
         i++;
@@ -242,7 +243,7 @@ function properties($interval, $log) {
    * @returns {string}
    */
   self.getIntermediateId = function (sourceId, targetId) {
-    var intermediateId = "";
+    var intermediateId = '';
     for (var i = 0; i<self.properties.length; i++) {
       var currentProp = self.properties[i];
       if (currentProp.source === sourceId && currentProp.target === targetId) {
@@ -309,8 +310,8 @@ function properties($interval, $log) {
       self.properties[index][key] = value;
       self.needsUpdate = true;
     } else {
-      $log.error("[Properties] " + uri + " was not found!");
-      $log.error("[Properties] There is no property at index " + index + "!");
+      $log.error("[Properties] '" + uri + ' was not found!');
+      $log.error('[Properties] There is no property at index ' + index + '!');
     }
   };
 

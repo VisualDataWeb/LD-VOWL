@@ -7,7 +7,9 @@ function nodesService($log, Properties, Prefixes) {
   var classUriIdMap = new Map();
   var nodes = new Map();
 
+  /* jshint validthis: true */
   var that = this;
+
   that.DISJOINT_NODE_URI = 'http://my-own-disjoint-node';
 
   that.suffixRegEx = /(#?[^\/#]*)\/?$/;
@@ -17,7 +19,7 @@ function nodesService($log, Properties, Prefixes) {
       var sessionNodes = sessionStorage.getItem('nodes');
 
       if (sessionNodes !== undefined && sessionNodes !== null) {
-        $log.debug("[Nodes] Use nodes from session storage!");
+        $log.debug('[Nodes] Use nodes from session storage!');
         nodes = new Map(JSON.parse(sessionNodes));
 
         // rebuild the class uri map
@@ -27,11 +29,11 @@ function nodesService($log, Properties, Prefixes) {
           }
         }
 
-        $log.debug("[Nodes] Build prefix map for nodes from session storage!");
+        $log.debug('[Nodes] Build prefix map for nodes from session storage!');
         that.buildPrefixMap();
       }
     } else {
-      $log.error("[Nodes] No Session Storage, caching disabled!");
+      $log.error('[Nodes] No Session Storage, caching disabled!');
     }
   };
 
@@ -40,15 +42,15 @@ function nodesService($log, Properties, Prefixes) {
 
     for (var node of nodes.values()) {
       if (node.uri !== undefined && node.uri.length > 0 &&
-          (node.uri !== Properties.SUBCLASS_URI || node.uri !== that.DISJOINT_NODE_URI)) {
+          (node.uri !== Properties.SUBCLASS_URI && node.uri !== that.DISJOINT_NODE_URI)) {
         var pre = node.uri.replace(that.suffixRegEx, '');
-        Prefixes.addPrefix({"prefix": pre});
+        Prefixes.addPrefix({'prefix': pre});
       }
     }
   };
 
   that.updateSessionStorage = function () {
-    sessionStorage.setItem("nodes", JSON.stringify([...nodes]));
+    sessionStorage.setItem('nodes', JSON.stringify([...nodes]));
   };
 
   /**
@@ -57,7 +59,7 @@ function nodesService($log, Properties, Prefixes) {
    * @param newNode - the node which should be added to the graph
    */
   that.addNode = function (newNode) {
-    var newId = "";
+    var newId = '';
     if (typeof newNode === 'object' && newNode.hasOwnProperty('uri') && newNode.hasOwnProperty('type')) {
       if (newNode.type === 'class') {
         var idByUri = classUriIdMap.get(newNode.uri);
@@ -74,7 +76,7 @@ function nodesService($log, Properties, Prefixes) {
           if (newNode.uri !== that.DISJOINT_NODE_URI) {
             var pre = newNode.uri.replace(that.suffixRegEx, '');
             $log.debug("[Nodes] Prefix for new node is '" + pre + "'!");
-            Prefixes.addPrefix({"prefix": pre});
+            Prefixes.addPrefix({'prefix': pre});
           }
         }
       } else {
@@ -138,7 +140,7 @@ function nodesService($log, Properties, Prefixes) {
    * @returns {string}
    */
   that.getURIById = function (id) {
-    var uri = "";
+    var uri = '';
 
     var searchedItem = nodes.get(id);
 
@@ -194,7 +196,7 @@ function nodesService($log, Properties, Prefixes) {
 
       var clazz = nodes.get(classId);
 
-      if (clazz.type === "class") {
+      if (clazz.type === 'class') {
         clazz.typesLoaded = true;
       }
     }
@@ -210,7 +212,7 @@ function nodesService($log, Properties, Prefixes) {
     if (classId !== undefined && typeof classId === 'string') {
       var clazz = nodes.get(classId);
 
-      if (clazz.type === "class" && clazz.typesLoaded) {
+      if (clazz.type === 'class' && clazz.typesLoaded) {
         $log.debug("[Nodes] Types for '" + classId + "' are already loaded!");
         return true;
       }
@@ -236,8 +238,8 @@ function nodesService($log, Properties, Prefixes) {
         nodes.delete(classId2);
         $log.debug("[Nodes] Merged '" + classId1 + "' and '" + classId2 + "'.");
       } else {
-        $log.error("[Nodes] Unable to merge '" + classId1 + "' and '" + classId2 + "!" +
-          " at least one of them can not be found!");
+        $log.error("[Nodes] Unable to merge '" + classId1 + "' and '" + classId2 + '!' +
+          ' at least one of them can not be found!');
       }
     }
   };

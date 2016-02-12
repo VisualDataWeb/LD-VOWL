@@ -43,14 +43,14 @@ function queryFactory() {
 
       // build query and return it
       var query = prefixes() +
-        "SELECT DISTINCT ?class (count(?sub) AS ?instanceCount) " +
-        "WHERE { " +
-          "?sub a ?class. " +
-        "} " +
-        "GROUP BY ?class " +
-        "ORDER BY DESC(?instanceCount) " +
-        "LIMIT " + limit + " " +
-        "OFFSET " + offset;
+        'SELECT DISTINCT ?class (count(?sub) AS ?instanceCount) ' +
+        'WHERE { ' +
+          '?sub a ?class. ' +
+        '} ' +
+        'GROUP BY ?class ' +
+        'ORDER BY DESC(?instanceCount) ' +
+        'LIMIT ' + limit + ' ' +
+        'OFFSET ' + offset;
       return query;
     },
 
@@ -60,11 +60,11 @@ function queryFactory() {
       labelLang = labelLang || defaultLang;
 
       var query = prefixes() +
-      "SELECT (SAMPLE (?lbl) AS ?label) " +
-      "WHERE { " +
-        "<" + uri + "> rdfs:label ?lbl. " +
+      'SELECT (SAMPLE (?lbl) AS ?label) ' +
+      'WHERE { ' +
+        '<' + uri + '> rdfs:label ?lbl. ' +
         "FILTER (langMatches(lang(?lbl), '" + labelLang + "'))" +
-      "}";
+      '}';
       return query;
     },
 
@@ -72,11 +72,11 @@ function queryFactory() {
       labelLang = labelLang || defaultLang;
 
       var query = prefixes() +
-          "SELECT ?label " +
-          "WHERE { " +
-            "<" + uri + "> skos:prefLabel ?label . " +
+          'SELECT ?label ' +
+          'WHERE { ' +
+            '<' + uri + '> skos:prefLabel ?label . ' +
             "FILTER (langMatches(lang(?label), '" + labelLang + "')) " +
-          "}";
+          '}';
       return query;
     },
 
@@ -84,14 +84,14 @@ function queryFactory() {
       limit = (typeof limit === 'number' && limit > 0) ? limit : defaultLimit;
 
       var typeQuery = prefixes() +
-        "SELECT (COUNT(?val) AS ?valCount) ?valType " +
-        "WHERE { " +
-          "?instance a <" + classURI + "> . " +
-          "?instance ?prop ?val . " +
-          "BIND (datatype(?val) AS ?valType) . " +
-        "} " +
-        "GROUP BY ?valType " +
-        "LIMIT " + limit;
+        'SELECT (COUNT(?val) AS ?valCount) ?valType ' +
+        'WHERE { ' +
+          '?instance a <' + classURI + '> . ' +
+          '?instance ?prop ?val . ' +
+          'BIND (datatype(?val) AS ?valType) . ' +
+        '} ' +
+        'GROUP BY ?valType ' +
+        'LIMIT ' + limit;
       return typeQuery;
     },
 
@@ -99,42 +99,42 @@ function queryFactory() {
 
     getOrderedClassClassRelationQuery: function (originClass, targetClass, limit, offset) {
       var query = prefixes() +
-          "SELECT (count(?originInstance) as ?count) ?prop " +
-          "WHERE { " +
-            "?originInstance a <" + originClass + "> . " +
-            "?targetInstance a <" + targetClass + "> . " +
-            "?originInstance ?prop ?targetInstance . " +
-          "} " +
-          "GROUP BY ?prop " +
-          "ORDER BY DESC(?count) " +
-          "LIMIT " + limit + " " +
-          "OFFSET " + offset;
+          'SELECT (count(?originInstance) as ?count) ?prop ' +
+          'WHERE { ' +
+            '?originInstance a <' + originClass + '> . ' +
+            '?targetInstance a <' + targetClass + '> . ' +
+            '?originInstance ?prop ?targetInstance . ' +
+          '} ' +
+          'GROUP BY ?prop ' +
+          'ORDER BY DESC(?count) ' +
+          'LIMIT ' + limit + ' ' +
+          'OFFSET ' + offset;
       return query;
     },
 
     //TODO this may be used if number of distinct props is to high
     getUnorderedClassClassRelationQuery: function (originClass, targetClass, limit, offset) {
       var query  = prefixes() +
-        "SELECT distinct ?prop " +
-        "WHERE { " +
-          "?originInstance a <" + originClass + "> . " +
-          "?targetInstance a <" + targetClass + "> . " +
-          "?originInstance ?prop ?targetInstance . " +
-        "} " +
-        "LIMIT " + limit + " " +
-        "OFFSET " + offset;
+        'SELECT distinct ?prop ' +
+        'WHERE { ' +
+          '?originInstance a <' + originClass + '> . ' +
+          '?targetInstance a <' + targetClass + '> . ' +
+          '?originInstance ?prop ?targetInstance . ' +
+        '} ' +
+        'LIMIT ' + limit + ' ' +
+        'OFFSET ' + offset;
       return query;
     },
 
     getClassTypeRelationQuery: function (classURI, typeURI) {
       var query = prefixes() +
-        "SELECT DISTINCT ?prop " +
-        "WHERE { " +
-          "?instance a <" + classURI + "> . " +
-          "?instance ?prop ?val . " +
-          "FILTER (datatype(?val) = <" + typeURI + ">) " +
-        "} " +
-        "LIMIT 1"; //TODO increase this for multiple edges
+        'SELECT DISTINCT ?prop ' +
+        'WHERE { ' +
+          '?instance a <' + classURI + '> . ' +
+          '?instance ?prop ?val . ' +
+          'FILTER (datatype(?val) = <' + typeURI + '>) ' +
+        '} ' +
+        'LIMIT 1'; //TODO increase this for multiple edges
 
         return query;
     },
@@ -155,11 +155,11 @@ function queryFactory() {
 
     getCommentQuery: function (uri) {
       var commentQuery = prefixes() +
-        "SELECT ?comment " +
-        "WHERE { " +
-          "<" + uri + "> rdfs:comment ?comment . " +
-        "} " +
-        "LIMIT 1";
+        'SELECT ?comment ' +
+        'WHERE { ' +
+          '<' + uri + '> rdfs:comment ?comment . ' +
+        '} ' +
+        'LIMIT 1';
         return commentQuery;
     }
 

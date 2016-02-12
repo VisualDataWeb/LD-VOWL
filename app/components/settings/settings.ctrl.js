@@ -7,20 +7,21 @@ settingsCtrl.$inject = ['PREFIX', 'PROPERTY_BLACKLIST', 'CLASS_BLACKLIST', 'Requ
 function settingsCtrl(PREFIX, PROPERTY_BLACKLIST, CLASS_BLACKLIST, RequestConfig, Nodes, Properties, Requests,
                            ClassExtractor, RelationExtractor) {
 
+  /* jshint validthis: true */
   var vm = this;
 
   //TODO move default settings into a constant
   vm.currentLanguage = RequestConfig.getLabelLanguage() || 'en';
   vm.currentLimit = RequestConfig.getLimit();
 
-  vm.langPreferences = "en, de";
+  vm.langPreferences = 'en, de';
 
   vm.propsOrdered = true;
 
   vm.propertyBlacklistInput = '';
   vm.classBlacklistInput = '';
 
-  vm.separator = ", \n";
+  vm.separator = ', \n';
 
   vm.initialize = function () {
     var classItems = ClassExtractor.getBlacklist();
@@ -45,7 +46,7 @@ function settingsCtrl(PREFIX, PROPERTY_BLACKLIST, CLASS_BLACKLIST, RequestConfig
    */
   vm.save = function () {
 
-    var input = vm.propertyBlacklistInput.replace(/(\r\n|\n|\r|\s)/gm,"");
+    var input = vm.propertyBlacklistInput.replace(/(\r\n|\n|\r|\s)/gm,'');
     var items = input.split(',');
 
     // update blacklist in extractor

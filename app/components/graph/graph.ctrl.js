@@ -6,6 +6,7 @@ graphCtrl.$inject = ['$scope', '$q', '$log', 'Filters',  'ClassExtractor', 'Rela
 function graphCtrl($scope, $q, $log, Filters, ClassExtractor, RelationExtractor, TypeExtractor, DetailExtractor,
                            RequestConfig, Requests, Prefixes) {
 
+  /* jshint validthis: true */
   var vm = this;
 
   vm.numberOfProps = 5;
@@ -49,7 +50,7 @@ function graphCtrl($scope, $q, $log, Filters, ClassExtractor, RelationExtractor,
     });
   };
 
-  $scope.$on("pending-requests-changed", function(event, pending) {
+  $scope.$on('pending-requests-changed', function(event, pending) {
     $scope.pendingRequests = pending;
     $scope.successfulRequests = Requests.getSuccessfulRequests();
     $scope.failedRequests = Requests.getFailedRequests();
@@ -92,7 +93,7 @@ function graphCtrl($scope, $q, $log, Filters, ClassExtractor, RelationExtractor,
   vm.loadLoops = function () {
     for (var i = 0; i < vm.classes.length; i++) {
       var currentClass = vm.classes[i];
-      if (currentClass.class !== undefined && currentClass.class.hasOwnProperty("value")) {
+      if (currentClass.class !== undefined && currentClass.class.hasOwnProperty('value')) {
         RelationExtractor.requestClassClassRelation(currentClass.class.value, currentClass);
       }
     }
@@ -108,7 +109,7 @@ function graphCtrl($scope, $q, $log, Filters, ClassExtractor, RelationExtractor,
 
       // merge existing and new classes
       if (newClasses.length === 0) {
-        $log.debug("[Graph] No new classes!");
+        $log.debug('[Graph] No new classes!');
       } else {
         for (var i = 0; i < newClasses.length; i++) {
           vm.classes.push(newClasses[i]);
@@ -125,7 +126,7 @@ function graphCtrl($scope, $q, $log, Filters, ClassExtractor, RelationExtractor,
       // after class equality is checked for all pairs, types and relations can be loaded
       $q.allSettled(promises).then(function (data) {
 
-        $log.debug("[Graph] Now all should be settled!");
+        $log.debug('[Graph] Now all should be settled!');
 
         // remove merged class for class list to avoid further request for these classes
         for (var i = 0; i < data.length; i++) {
@@ -155,7 +156,7 @@ function graphCtrl($scope, $q, $log, Filters, ClassExtractor, RelationExtractor,
    * Load referring types for each class.
    */
   vm.loadTypes = function () {
-    $log.debug("[Graph] Loading types..." + vm.classes.length);
+    $log.debug('[Graph] Loading types...' + vm.classes.length);
     for (var i = 0; i < vm.classes.length; i++) {
       TypeExtractor.requestReferringTypes(vm.classes[i]);
     }
@@ -166,7 +167,7 @@ function graphCtrl($scope, $q, $log, Filters, ClassExtractor, RelationExtractor,
    */
   vm.loadRelations = function () {
 
-    $log.debug("[Graph] Send requests for relations...");
+    $log.debug('[Graph] Send requests for relations...');
 
     // for each pair of classes search relation and check equality
     for (var end = 0; end < vm.classes.length; end++) {

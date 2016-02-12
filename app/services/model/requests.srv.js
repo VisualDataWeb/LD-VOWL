@@ -4,6 +4,7 @@ requests.$inject = ['$rootScope'];
 
 function requests($rootScope) {
 
+  /* jshint validthis: true */
   var that = this;
 
   that.pendingRequests = 0;

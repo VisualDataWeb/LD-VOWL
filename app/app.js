@@ -1,3 +1,5 @@
+import angular from 'angular';
+
 // import dependencies
 import components from './components/components.module';
 import filters from './filters/index';

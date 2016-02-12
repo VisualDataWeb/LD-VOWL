@@ -66,7 +66,7 @@ class RelationExtractor extends Extractor {
 
           if (bindings !== undefined && bindings.length > 0) {
 
-            self.$log.debug("[Relations] " + bindings.length + " between '" + originClassURI + "' and '" +
+            self.$log.debug('[Relations] ' + bindings.length + " between '" + originClassURI + "' and '" +
               targetClassURI + "'.");
 
             if (bindings[0].prop !== undefined && bindings[0].prop.value !== undefined &&
@@ -78,7 +78,7 @@ class RelationExtractor extends Extractor {
 
                 // only add prop if not black listed
                 if (!self.inBlacklist(currentURI)) {
-                  var intermediateId = "";
+                  var intermediateId = '';
                   var uriBetween = self.props.existsBetween(originId, targetId);
                   if (uriBetween === false) {
                     var propNode = {};
@@ -93,7 +93,7 @@ class RelationExtractor extends Extractor {
                   }
 
                   if (intermediateId.length < 1) {
-                    self.$log.error("[Relations] Intermediate " + uriBetween + " was not found!");
+                    self.$log.error('[Relations] Intermediate ' + uriBetween + ' was not found!');
                   }
 
                   if (bindings[i].count !== undefined && bindings[i].count.value !== undefined) {
@@ -124,9 +124,9 @@ class RelationExtractor extends Extractor {
       }, function (err) {
         if (err !== undefined && err.hasOwnProperty('status')) {
           if (err.status === -1) {
-            self.$log.warn("[Relations] No results, likely because of CORS.");
-          } else if (err.status === 500 && err.data.search("estimated execution time ") !== -1) {
-            self.$log.debug("[Relations] Request would take too long!");
+            self.$log.warn('[Relations] No results, likely because of CORS.');
+          } else if (err.status === 500 && err.data.search('estimated execution time ') !== -1) {
+            self.$log.debug('[Relations] Request would take too long!');
           }
         } else {
           self.$log.error(err);
@@ -187,7 +187,7 @@ class RelationExtractor extends Extractor {
 
               var uriInBetween = self.props.existsBetween(originClassId, targetTypeId);
 
-              var intermediateId = "";
+              var intermediateId = '';
               if (uriInBetween === false) {
 
                 // add property node
@@ -208,7 +208,7 @@ class RelationExtractor extends Extractor {
       }, function (err) {
         if (err !== undefined && err.hasOwnProperty('status')) {
           if (err.status === 500 && err.data.search('estimated execution time') !== -1) {
-            self.$log.debug("[Relations] Request would take too long.");
+            self.$log.debug('[Relations] Request would take too long.');
           } else {
             self.$log.error(err);
           }
@@ -229,13 +229,13 @@ class RelationExtractor extends Extractor {
     var deferred = this.$q.defer();
 
     if (classId1 === undefined || classId2 === undefined) {
-      deferred.resolve("missing parameter");
+      deferred.resolve('missing parameter');
       return deferred.promise;
     }
 
     // this makes absolutely no sense
     if (classId1 === classId2) {
-      deferred.resolve("equal");
+      deferred.resolve('equal');
       return deferred.promise;
     }
 
@@ -268,7 +268,7 @@ class RelationExtractor extends Extractor {
 
             if (commonCount !== undefined) {
               self.$log.debug("[Relations] Classes '" + classURI1 + "' (" + count1 + ") and '" +
-                classURI2 + "' (" + count2 + ") have " + commonCount + " common instances!");
+                classURI2 + "' (" + count2 + ') have ' + commonCount + ' common instances!');
 
               var subClassPropNode;
               var subClassPropNodeId;
@@ -291,13 +291,13 @@ class RelationExtractor extends Extractor {
                 deferred.resolve(classId2);
               } else if (commonCount === count1 && commonCount < count2) {
                 // class1 is a subclass of class2, create a relation
-                self.$log.debug("[Relations] " + classId1 + " seems to be a subclass of " + classId2 + "!");
+                self.$log.debug('[Relations] ' + classId1 + ' seems to be a subclass of ' + classId2 + '!');
 
                 // create an intermediate node
                 subClassPropNode = {};
                 subClassPropNode.uri = self.props.SUBCLASS_URI;
-                subClassPropNode.type = "subClassProperty";
-                subClassPropNode.name = "Subclass of";
+                subClassPropNode.type = 'subClassProperty';
+                subClassPropNode.name = 'Subclass of';
                 subClassPropNode.value = 10000;
                 subClassPropNode.commonInstances = commonCount;
 
@@ -305,16 +305,16 @@ class RelationExtractor extends Extractor {
 
                 // create a property
                 self.props.addSubClassProperty(classId1, subClassPropNodeId, classId2);
-                deferred.reject("subclass");
+                deferred.reject('subclass');
               } else if (commonCount === count2 && commonCount < count1) {
                 // class2 is a subclass of class1, create a relation
-                self.$log.debug("[Relations] " + classId2 + " seems to be a subclass of " + classId1 + "!");
+                self.$log.debug('[Relations] ' + classId2 + ' seems to be a subclass of ' + classId1 + '!');
 
                 // create an intermediate node
                 subClassPropNode = {};
                 subClassPropNode.uri = self.props.SUBCLASS_URI;
-                subClassPropNode.name = "Subclass of";
-                subClassPropNode.type = "subClassProperty";
+                subClassPropNode.name = 'Subclass of';
+                subClassPropNode.type = 'subClassProperty';
                 subClassPropNode.value = 10000;
                 subClassPropNode.commonInstances = commonCount;
 
@@ -322,7 +322,7 @@ class RelationExtractor extends Extractor {
 
                 // create a property
                 self.props.addSubClassProperty(classId2, subClassPropNodeId, classId1);
-                deferred.reject("subclass");
+                deferred.reject('subclass');
               } else if (commonCount === 0) {
 
                 self.$log.debug('[Relations] ' + classId1 + ' and ' + classId2 + ' are disjoint.');
@@ -348,7 +348,7 @@ class RelationExtractor extends Extractor {
               } else {
                 self.$log.debug("[Relations] No Relation between '" + classURI1 + "' and '" + classURI2 +
                   "' was found via instance count.");
-                deferred.reject("no relation");
+                deferred.reject('no relation');
               }
             }
           }

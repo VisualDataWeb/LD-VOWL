@@ -4,6 +4,7 @@ typeExtractor.$inject = ['$http', '$log', 'RequestConfig', 'QueryFactory', 'Node
 
 function typeExtractor($http, $log, RequestConfig, QueryFactory, Nodes, Properties, RelationExtractor) {
 
+  /* jshint validthis: true */
   var that = this;
 
   that.requestReferringTypes = function (classId) {
@@ -17,7 +18,7 @@ function typeExtractor($http, $log, RequestConfig, QueryFactory, Nodes, Properti
       return;
     }
 
-    $log.debug("[Referring Types] Send requests for types referring to instances of '" + classURI + "...");
+    $log.debug("[Referring Types] Send requests for types referring to instances of '" + classURI + '...');
 
     $http.get(requestURL, RequestConfig.forQuery(query))
       .then(function (response) {
@@ -26,7 +27,7 @@ function typeExtractor($http, $log, RequestConfig, QueryFactory, Nodes, Properti
 
         if (bindings !== undefined && bindings.length > 0) {
 
-          $log.debug("[Referring Types] Found " + bindings.length + " for '" + classURI + "'.");
+          $log.debug('[Referring Types] Found ' + bindings.length + " for '" + classURI + "'.");
 
           for (var j = 0; j < bindings.length; j++) {
             if (bindings[j].valType !== undefined && bindings[j].valType.hasOwnProperty('value')) {
@@ -46,7 +47,7 @@ function typeExtractor($http, $log, RequestConfig, QueryFactory, Nodes, Properti
       }, function (err) {
         if (err !== undefined && err.hasOwnProperty('status')) {
           if (err.status === 500 &&  err.hasOwnProperty('data') && err.data.search('estimated execution time') !== -1) {
-            $log.debug("[Referring Types] Request would take to long!");
+            $log.debug('[Referring Types] Request would take to long!');
           }
         } else {
           $log.error(err);

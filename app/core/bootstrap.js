@@ -1,3 +1,4 @@
+/*global angular*/
 /*jshint browser:true */
 'use strict';
 

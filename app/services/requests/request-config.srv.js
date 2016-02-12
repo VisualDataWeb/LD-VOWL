@@ -4,7 +4,7 @@ requestConfig.$inject = ['$cookies'];
 
 function requestConfig($cookies) {
 
-  var cookiePrefix = "ldvowl_";
+  var cookiePrefix = 'ldvowl_';
   var localProxyURL = 'http://localhost:8080/sparql';
 
   var endpointURL = $cookies.get(cookiePrefix + 'endpoint') || 'http://dbpedia.org/sparql';
@@ -17,6 +17,7 @@ function requestConfig($cookies) {
 
   var propertiesOrdered = true;
 
+  /* jshint validthis: true */
   var self = this;
 
   self.init = function () {
@@ -142,7 +143,7 @@ function requestConfig($cookies) {
     }
 
     config.headers = {
-      "Accept": "application/sparql-results+json"
+      'Accept': 'application/sparql-results+json'
     };
 
     return config;

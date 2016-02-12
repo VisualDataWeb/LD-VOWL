@@ -5,6 +5,7 @@ detailExtractor.$inject = ['$http', '$log', 'QueryFactory', 'RequestConfig', 'No
 // TODO make this a ES6 class
 function detailExtractor($http, $log, QueryFactory, RequestConfig, Nodes) {
 
+  /* jshint validthis: true */
   var that = this;
 
   /**

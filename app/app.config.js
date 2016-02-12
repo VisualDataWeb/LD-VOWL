@@ -1,3 +1,7 @@
+import startTemplate from './components/start/start.html';
+import settingsTemplate from './components/settings/settings.html';
+import graphTemplate from './components/graph/graph.html';
+
 export default function routing($httpProvider, $routeProvider) {
 
   // set up http interceptor
@@ -9,19 +13,19 @@ export default function routing($httpProvider, $routeProvider) {
   $routeProvider
     .when('/', {
       title: 'Start',
-      templateUrl: 'components/start/start.html',
+      template: startTemplate,
       controller: 'StartCtrl',
       controllerAs: 'start'
     })
     .when('/settings', {
       title: 'Settings',
-      templateUrl: 'components/settings/settings.html',
+      template: settingsTemplate,
       controller: 'SettingsCtrl',
       controllerAs: 'vm'
     })
     .when('/graph', {
       title: 'Graph',
-      templateUrl: 'components/graph/graph.html',
+      template: graphTemplate,
       controller: 'GraphCtrl',
       controllerAs: 'vm'
     })

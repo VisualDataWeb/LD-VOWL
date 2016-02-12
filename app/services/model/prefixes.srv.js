@@ -8,6 +8,7 @@ function prefixesService($rootScope, $log) {
   var colorNumber = 1;
   var differentColors = true;
 
+  /* jshint validthis: true */
   var that = this;
 
   /**
@@ -19,7 +20,7 @@ function prefixesService($rootScope, $log) {
     if (typeof pre === 'object' && pre.prefix !== undefined) {
 
       if (pre.prefix.length < 8) {
-        $log.error('[Prefixes] Prefix is to short!');
+        $log.error("[Prefixes] Prefix is to short: '" + pre.prefix + "'");
         return;
       }
 

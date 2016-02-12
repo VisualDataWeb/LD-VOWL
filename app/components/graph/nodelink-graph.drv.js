@@ -31,7 +31,7 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
       var margin = parseInt(attrs.margin) || 20;
       var height = parseInt(attrs.height) || $window.innerHeight;
 
-      var colorRange = [d3.rgb("#3366CC"), d3.rgb('#EE2867')];
+      var colorRange = [d3.rgb('#3366CC'), d3.rgb('#EE2867')];
 
       var defaultRadius = 20;
 
@@ -41,7 +41,7 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
                   .append('svg')
                   .style('width', '100%');
 
-      var root = svg.append("g");
+      var root = svg.append('g');
 
       var lastUpdate = null;
 
@@ -77,7 +77,7 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
         'prefixes': Prefixes.getPrefixes(),
         'showTypes': Filters.getIncludeLiterals(),
         'showLoops': Filters.getIncludeLoops(),
-        "showDisjointNode": Filters.getIncludeDisjointNode()
+        'showDisjointNode': Filters.getIncludeDisjointNode()
       };
 
       scope.$watch(function () {
@@ -87,7 +87,7 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
       });
 
       scope.$watch('data.nodes.size', function () {
-        $log.debug("[Graph] Number of nodes has changed!");
+        $log.debug('[Graph] Number of nodes has changed!');
         return scope.render(scope.data);
       });
 
@@ -181,7 +181,7 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
 
       scope.getMarkerEnd = function (type, value) {
         var size = parseInt(Math.min(Math.log2(value + 2), 5));
-        return "url(#" + type + 'Arrow' +  size + ")";
+        return 'url(#' + type + 'Arrow' +  size + ')';
       };
 
       scope.calcRadius = function (element) {
@@ -279,33 +279,33 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
        * @param linkContainer
        */
       scope.createArrowHeads = function (linkContainer) {
-        linkContainer.append("defs").selectAll("marker")
+        linkContainer.append('defs').selectAll('marker')
           .data(scope.getArrowHeads())
-          .enter().append("marker")
-          .attr("id", function (d) {
+          .enter().append('marker')
+          .attr('id', function (d) {
             return d.id;
           })
-          .attr("class", function (d) {
+          .attr('class', function (d) {
             return d.class;
           })
-          .attr("viewBox", function (d) {
-            return "-1 " + ((d.size + 1) * (-1)) + " " + ((d.size + 1) * 2) + " " + ((d.size + 1) * 2);
+          .attr('viewBox', function (d) {
+            return '-1 ' + ((d.size + 1) * (-1)) + ' ' + ((d.size + 1) * 2) + ' ' + ((d.size + 1) * 2);
           })
-          .attr("refX", function (d) {
+          .attr('refX', function (d) {
             return d.size * 2;
           })
-          .attr("refY", 0)
-          .attr("markerWidth", function (d) {
+          .attr('refY', 0)
+          .attr('markerWidth', function (d) {
             return d.size;
           })
-          .attr("markerHeight", function (d) {
+          .attr('markerHeight', function (d) {
             return d.size;
           })
-          .attr("orient", "auto")
-          .style("stroke", function (d) {
+          .attr('orient', 'auto')
+          .style('stroke', function (d) {
             return (d.class === 'hovered') ? 'red' : scope.arrowColor(d.size);
           })
-          .style("fill", function (d) {
+          .style('fill', function (d) {
             if (d.class === 'hovered') {
               return 'red';
             } else if (d.class === 'subclass') {
@@ -314,9 +314,9 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
               return scope.arrowColor(d.size);
             }
           })
-          .append("path")
-            .attr("d", function (d) {
-              return "M0," + (d.size * -1) + "L" + (d.size * 2) + ",0L0," + d.size + "Z";
+          .append('path')
+            .attr('d', function (d) {
+              return 'M0,' + (d.size * -1) + 'L' + (d.size * 2) + ',0L0,' + d.size + 'Z';
             });
       };
 
@@ -349,18 +349,18 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
         scope.cardinalSpline = d3.svg.line()
           .x(function (d) { return (d !== undefined) ? d.x : 0; })
           .y(function(d) { return (d !== undefined) ? d.y : 0; })
-          .interpolate("cardinal");
+          .interpolate('cardinal');
 
         scope.loopSpline = d3.svg.line()
           .x(function (d) { return d.x; })
           .y(function (d) { return d.y; })
-          .interpolate("cardinal")
+          .interpolate('cardinal')
           .tension(0);
 
         scope.linearLine = d3.svg.line()
           .x(function (d) { return d.x; })
           .y(function (d) { return d.y; })
-          .interpolate("linear");
+          .interpolate('linear');
 
         // draw a ring for equivalent classes
         nodeContainer.selectAll('.equivalent')
@@ -371,12 +371,12 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
         nodeContainer.selectAll('.class')
           .append('circle')
           .classed('clazz', true)
-          .attr('r', function (d) { return d.radius + "px"; })
+          .attr('r', function (d) { return d.radius + 'px'; })
           .on('click', scope.updateActive)
           .on('mouseover', function () {
             d3.select(this).style('fill', 'red');
           })
-          .on('mouseout', function (d) {
+          .on('mouseout', function () {
             d3.select(this).style('fill', '#acf');
           })
           .append('title')
@@ -487,39 +487,39 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
 
         scope.createArrowHeads(linkContainer);
 
-        var links1 = scope.link = linkContainer.selectAll("g.link")
+        var links1 = scope.link = linkContainer.selectAll('g.link')
           .data(bilinks);
 
         var linksG = links1.enter()
-          .append("g")
-          .attr("class", "link")
-          .style("stroke", function (d) { return scope.lineColor(d.value); });
+          .append('g')
+          .attr('class', 'link')
+          .style('stroke', function (d) { return scope.lineColor(d.value); });
 
-        scope.link = linksG.append("path")
-          .attr("class", "link-line")
+        scope.link = linksG.append('path')
+          .attr('class', 'link-line')
           .classed('subClassProperty', function (d) { return d.type === 'subClassProperty'; });
 
         links1.exit().remove();
 
         linkContainer.selectAll('.link-line')
-          .attr("marker-end", function(d) { return scope.getMarkerEnd('', d.value); })
-          .style("stroke-width", function (d) {
+          .attr('marker-end', function(d) { return scope.getMarkerEnd('', d.value); })
+          .style('stroke-width', function (d) {
             return Math.min(Math.log2(d.value + 2), 5);
           })
           .on('mouseover', function () {
-            d3.select(this).attr("stroke", "red");
-            d3.select(this).attr("marker-end", function (d) { return scope.getMarkerEnd('hovered', d.value); });
+            d3.select(this).attr('stroke', 'red');
+            d3.select(this).attr('marker-end', function (d) { return scope.getMarkerEnd('hovered', d.value); });
           })
-          .on("mouseout", function () {
-            d3.select(this).attr("stroke", function (d) { return scope.lineColor(d.value); });
-            d3.select(this).attr("marker-end", function (d) { return scope.getMarkerEnd('', d.value); });
+          .on('mouseout', function () {
+            d3.select(this).attr('stroke', function (d) { return scope.lineColor(d.value); });
+            d3.select(this).attr('marker-end', function (d) { return scope.getMarkerEnd('', d.value); });
           });
 
         linkContainer.selectAll('.subClassProperty')
-          .attr("marker-end", function(d) { return scope.getMarkerEnd('subclass', d.value); })
-          .on("mouseout", function () {
-            d3.select(this).attr("stroke", function (d) { return scope.lineColor(d.value); });
-            d3.select(this).attr("marker-end", function (d) { return scope.getMarkerEnd('subclass', d.value); });
+          .attr('marker-end', function(d) { return scope.getMarkerEnd('subclass', d.value); })
+          .on('mouseout', function () {
+            d3.select(this).attr('stroke', function (d) { return scope.lineColor(d.value); });
+            d3.select(this).attr('marker-end', function (d) { return scope.getMarkerEnd('subclass', d.value); });
           })
           .style('stroke-dasharray', '5, 5');
       };
@@ -530,14 +530,14 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
         scope.directLink = linkContainer.selectAll('.direct-link')
                       .data(directLinks)
                       .enter()
-                      .append("g")
+                      .append('g')
                       .style('stroke', '#000')
-                      .append("path")
+                      .append('path')
                       .style('stroke-width', 1)
                       .classed('disjointProperty', function (d) { return d.type === 'disjointProperty'; });
 
         linkContainer.selectAll('.disjointProperty')
-          .attr("marker-end", 'none')
+          .attr('marker-end', 'none')
           .style('stroke-dasharray', '5, 5');
       };
 
@@ -628,7 +628,7 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
         var zoom = d3.behavior.zoom()
                     .duration(150)
                     .scaleExtent([0.1,2.0])
-                    .on("zoom", scope.redraw);
+                    .on('zoom', scope.redraw);
         svg.call(zoom);
 
         scope.maxValue = 0;
@@ -773,7 +773,7 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
         scope.force.on('tick', function() {
           scope.link.attr('d', scope.recalculateLines);
           scope.directLink.attr('d', scope.recalculateDirectLines);
-          scope.node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+          scope.node.attr('transform', function(d) { return 'translate(' + d.x + ',' + d.y + ')'; });
         });
       }; // end of scope.render()
     } // end of link()

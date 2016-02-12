@@ -50,7 +50,7 @@ class ClassExtractor extends Extractor {
 
     // do not request further classes
     if (this.nodes.hasClassNodes()) {
-      self.$log.debug("[Classes] Skip loading further classes...");
+      self.$log.debug('[Classes] Skip loading further classes...');
       deferred.resolve([]);
       return deferred.promise;
     }

@@ -9,6 +9,5 @@ module.exports = function () {
   require('jquery-ui');
   require('bootstrap-webpack');
   require('angular-ui-bootstrap');
-  require('d3');
 
 };

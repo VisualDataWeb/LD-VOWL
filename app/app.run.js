@@ -2,7 +2,7 @@ runBlock.$inject = ['$rootScope'];
 
 function runBlock($rootScope) {
 
-  $rootScope.$on('$routeChangeSuccess', function (event, current, previous) {
+  $rootScope.$on('$routeChangeSuccess', function (event, current) {
     $rootScope.title = current.$$route.title;
   });
 

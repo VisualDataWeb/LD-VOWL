@@ -1,3 +1,4 @@
+/* globals $ */
 require('jquery-ui');
 
 slider.$inject = ['$rootScope'];
@@ -7,13 +8,9 @@ function slider($rootScope) {
   return {
     restrict: 'AE',
     scope: {
-      value: "=model"
+      value: '=model'
     },
     link: function (scope, element, attrs) {
-
-      var setModel = function (value) {
-        scope.model = value;
-      };
 
       $(element).slider({
         range: false,
@@ -21,6 +18,7 @@ function slider($rootScope) {
         min: parseInt(attrs.min),
         max: parseInt(attrs.max),
         step: parseInt(attrs.step),
+
         slide: function (event, ui) {
           scope.$apply(function () {
             scope.value = parseInt(ui.value);
@@ -28,9 +26,9 @@ function slider($rootScope) {
           });
         }
       });
-    }
-  };
+    } // end pf link()
+  }; // end of returned directive
 
-}
+} // end of slider()
 
 export default slider;
