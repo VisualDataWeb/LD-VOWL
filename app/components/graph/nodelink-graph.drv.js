@@ -58,8 +58,8 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
       scope.dtPropDistance = 20;
       scope.disjointPropDistance = 100;
 
-      scope.disjointNodeWidth = 60;
-      scope.disjointNodeHeight = 30;
+      scope.disjointNodeWidth = 40;
+      scope.disjointNodeHeight = 20;
 
       scope.node = {};
       scope.force = {};
@@ -77,7 +77,8 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
         'prefixes': Prefixes.getPrefixes(),
         'showTypes': Filters.getIncludeLiterals(),
         'showLoops': Filters.getIncludeLoops(),
-        'showDisjointNode': Filters.getIncludeDisjointNode()
+        'showDisjointNode': Filters.getIncludeDisjointNode(),
+        'showSubclassRelations': Filters.getIncludeSubclassRelations()
       };
 
       scope.$watch(function () {
@@ -112,6 +113,14 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
         },
         function (newVal) {
           scope.data.showDisjointNode = newVal;
+          return scope.render(scope.data);
+        });
+
+      scope.$watch(function () {
+          return Filters.getIncludeSubclassRelations();
+        },
+        function (newVal) {
+          scope.data.showSubclassRelations = newVal;
           return scope.render(scope.data);
         });
 
@@ -391,15 +400,22 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
 
         nodeContainer.selectAll('.property')
           .append('rect')
+          .classed('propz', true)
           .attr('x', scope.calcPropBoxOffset)
           .attr('y', (-1 * (defaultPropHeight / 2)))
           .attr('width', scope.calcPropBoxWidth)
           .attr('height', defaultPropHeight)
           .on('click', scope.updateActive)
+          .on('mouseover', function () {
+            d3.select(this).style('fill', 'red');
+          })
+          .on('mouseout', function () {
+            d3.select(this).style('fill', '#acf');
+          })
           .append('title')
           .text(function(d) { return Utils.getName(d, false, false); });
 
-        nodeContainer.selectAll('.external rect')
+        nodeContainer.selectAll('.external rect.propz')
           .style('fill', function (d) { return scope.color(Prefixes.getColor(d.uri)); })
           .on('mouseout', function (d) {
             d3.select(this).style('fill', scope.color(Prefixes.getColor(d.uri)));
@@ -463,22 +479,21 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
           .attr('x', -1 * (scope.disjointNodeWidth / 2))
           .attr('y', -1 * (scope.disjointNodeHeight / 2))
           .attr('width', scope.disjointNodeWidth)
-          .attr('height', scope.disjointNodeHeight)
-          .style('fill', '#acf');
+          .attr('height', scope.disjointNodeHeight);
 
         // first circle
         nodeContainer.selectAll('.disjointNode')
           .append('circle')
           .classed('symbol', true)
-          .attr('cx', -15)
-          .attr('r', 10);
+          .attr('cx', -10)
+          .attr('r', 8);
 
         // second circle
         nodeContainer.selectAll('.disjointNode')
           .append('circle')
           .classed('symbol', true)
-          .attr('cx', 15)
-          .attr('r', 10);
+          .attr('cx', 10)
+          .attr('r', 8);
       }; // end of setUpDisjointNode()
 
       scope.setUpLinks = function(bilinks) {
@@ -531,9 +546,7 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
                       .data(directLinks)
                       .enter()
                       .append('g')
-                      .style('stroke', '#000')
                       .append('path')
-                      .style('stroke-width', 1)
                       .classed('disjointProperty', function (d) { return d.type === 'disjointProperty'; });
 
         linkContainer.selectAll('.disjointProperty')
@@ -662,6 +675,10 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
             if (data.showDisjointNode) {
               scope.nodesToDraw.push(n);
             }
+          } else if (n.type === 'subClassProperty') {
+            if (data.showSubclassRelations) {
+              scope.nodesToDraw.push(n);
+            }
           } else {
             scope.nodesToDraw.push(n);
           }
@@ -672,7 +689,8 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
 
             // do not add filtered elements
             if ((link.source === link.target && !data.showLoops) ||
-               (link.type === 'disjointProperty' && !data.showDisjointNode)) {
+               (link.type === 'disjointProperty' && !data.showDisjointNode) ||
+               (link.type === 'subClassProperty' && !data.showSubclassRelations)) {
               return;
             }
 

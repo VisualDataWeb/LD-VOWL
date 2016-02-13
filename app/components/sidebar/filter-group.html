@@ -15,6 +15,14 @@
   </div>
 
   <div class="checkbox">
+    <label for="includeSubclassRelations">
+      <input id="includeSubclassRelations" type="checkbox" ng-model="vm.includeSubclassRelations"
+             ng-change="vm.toggleSubclassRelations()">
+      Show subclass relations
+    </label>
+  </div>
+
+  <div class="checkbox">
     <label for="includeDisjointNode">
       <input id="includeDisjointNode" type="checkbox" ng-model="vm.includeDisjointNode"
              ng-change="vm.toggleDisjointNode()">
@@ -22,4 +30,4 @@
     </label>
   </div>
 
-</form><!-- end of .form-horizontal -->
+</form>

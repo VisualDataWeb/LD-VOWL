@@ -35,11 +35,11 @@ circle {
   stroke-width: 3px;
 }
 
-.node circle, .property rect, .datatypeProperty rect, .subClassProperty rect, .type rect {
+.node circle, .node rect, .property rect, .datatypeProperty rect, .subClassProperty rect, .type rect {
   cursor: pointer;
 }
 
-.node circle, .property rect {
+.node circle, .node rect, .property rect {
   fill: #acf;
 }
 
@@ -64,7 +64,11 @@ circle {
   fill: #fff;
 }
 
-.node circle:hover, .property rect:hover, .datatypeProperty rect:hover, .type rect:hover{
+.node circle.clazz:hover, .property rect:hover, .datatypeProperty rect:hover, .type rect:hover {
+  fill: #f00;
+}
+
+.node rect:hover {
   fill: #f00;
 }
 
@@ -86,4 +90,9 @@ circle {
 
 .link:hover text.text {
   fill: #f00;
+}
+
+.disjointProperty {
+  stroke: #000;
+  stroke-width: 1px;
 }

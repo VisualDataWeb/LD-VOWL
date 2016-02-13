@@ -14,6 +14,7 @@ function graphCtrl($scope, $q, $log, Filters, ClassExtractor, RelationExtractor,
   vm.extractTypes = Filters.getIncludeLiterals();
   vm.includeLoops = Filters.getIncludeLoops();
   vm.includeDisjointNode = Filters.getIncludeDisjointNode();
+  vm.includeSubclassRelations = Filters.getIncludeSubclassRelations();
   vm.differentColors = Prefixes.getDifferentColors();
 
   vm.endpointURL = RequestConfig.getEndpointURL();
@@ -81,6 +82,10 @@ function graphCtrl($scope, $q, $log, Filters, ClassExtractor, RelationExtractor,
 
   vm.toggleDisjointNode = function () {
     vm.includeDisjointNode = Filters.toggleDisjointNode();
+  };
+
+  vm.toggleSubclassRelations = function() {
+    vm.includeSubclassRelations = Filters.toggleSubclassRelations();
   };
 
   vm.toggleDifferentColors = function () {

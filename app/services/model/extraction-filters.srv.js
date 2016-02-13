@@ -19,6 +19,10 @@ function filters($cookies, $log) {
     var disjointNodeCookie = cookiePrefix + 'include_disjoint_node';
     var includeDisjointNode = self.getIncludeDisjointNode() || false;
     $cookies.put(disjointNodeCookie, includeDisjointNode);
+
+    var subclassCookie = cookiePrefix + 'include_subclass_relations';
+    var includeSubclassRelations = self.getIncludeSubclassRelations() || true;
+    $cookies.put(subclassCookie, includeSubclassRelations);
   };
 
   self.getIncludeLoops = function () {
@@ -67,6 +71,23 @@ function filters($cookies, $log) {
       return false;
     } else {
       $log.debug('[Filters] Enable disjoint node.');
+      $cookies.put(cookieName, 'true');
+      return true;
+    }
+  };
+
+  self.getIncludeSubclassRelations = function () {
+    return ($cookies.get(cookiePrefix + 'include_subclass_relations') === 'true');
+  };
+
+  self.toggleSubclassRelations = function () {
+    var cookieName = cookiePrefix + 'include_subclass_relations';
+    if (self.getIncludeSubclassRelations()) {
+      $log.debug('[Filters] Disable subclass relations');
+      $cookies.put(cookieName, 'false');
+      return false;
+    } else {
+      $log.debug('[Filters] Enable subclass relations.');
       $cookies.put(cookieName, 'true');
       return true;
     }
