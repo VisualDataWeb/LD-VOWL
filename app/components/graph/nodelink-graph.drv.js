@@ -3,7 +3,6 @@
 import angular from 'angular';
 import d3 from 'd3';
 
-
 NodeLinkGraph.$inject = ['$window', '$log', 'Properties', 'Nodes', 'Prefixes', 'Filters', 'Geometry', 'Utils'];
 
 /**
@@ -54,9 +53,10 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
         scope.$apply();
       };
 
-      scope.propDistance = 80;
-      scope.dtPropDistance = 20;
+      scope.propDistance = 100;
+      scope.dtPropDistance = 50;
       scope.disjointPropDistance = 100;
+      scope.loopDistance = 80;
 
       scope.disjointNodeWidth = 40;
       scope.disjointNodeHeight = 20;
@@ -279,8 +279,6 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
       scope.redraw = function () {
         root.attr('transform', 'translate(' + d3.event.translate + ')' + 'scale(' + d3.event.scale + ')');
       };
-
-      // TODO move geo functions into another module
 
       /**
        * Creates the arrowheads in the given linkContainer.
@@ -651,7 +649,6 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
         var bilinks = [];
         var directLinks = [];
 
-
         for (var n of data.nodes.values()) {
           var currentValue = n.value;
 
@@ -742,26 +739,34 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
           .charge(-500)
           .linkStrength(1.0)
           .linkDistance(function (d) {
-            var distance = scope.propDistance;
+            var distance;
+            if ((d.target !== undefined && d.target.isLoopNode) || (d.source !== undefined && d.source.isLoopNode)) {
 
-            // datatype properties should have lower distance then normal properties
-            if (d.type === 'datatypeProperty') {
-              distance = scope.dtPropDistance;
-            } else if (d.type === 'disjointProperty') {
-              distance = scope.disjointPropDistance;
-            }
+              // loops
+              distance = scope.loopDistance;
+            } else {
 
-            if (d.source !== undefined && d.source.radius !== undefined) {
-              distance += d.source.radius;
-            }
+              // non-loops
+              if (d.type === 'datatypeProperty') {
+                distance = scope.dtPropDistance;
+              } else if (d.type === 'disjointProperty') {
+                distance = scope.disjointPropDistance;
+              } else {
+                distance = scope.propDistance;
+              }
 
-            if (d.target !== undefined && d.target.radius !== undefined) {
-              distance += d.target.radius;
+              // add radius to source and target
+              if (d.source !== undefined && d.source.radius !== undefined) {
+                distance += d.source.radius;
+              }
+              if (d.target !== undefined && d.target.radius !== undefined) {
+                distance += d.target.radius;
+              }
             }
 
             return distance;
           })
-          .gravity(0.05)
+          .gravity(0.03)
           .size([width, height]);
 
         // needed to make panning and dragging of nodes work
@@ -795,7 +800,7 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
         });
       }; // end of scope.render()
     } // end of link()
-  }; // end of directive
-}
+  }; // end of returned directive
+} // end of NodeLinkGraph()
 
 export default NodeLinkGraph;

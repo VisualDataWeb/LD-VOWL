@@ -1,7 +1,7 @@
 import angular from 'angular';
 
-import extractors from './extractors/index';
-import model from './model/index';
+import extractors from './extractors/extractors.module';
+import model from './model/model.module';
 import requests from './requests/requests.module';
 import utils from './utils/utils.module';
 
