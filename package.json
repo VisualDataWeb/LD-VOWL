@@ -67,5 +67,21 @@
   ],
   "author": "Marc Weise <weisemc@studi.informatik.uni-stuttgart.de>",
   "private": true,
-  "license": "MIT"
+  "license": "MIT",
+  "_aerobatic": {
+    "router": [
+      {
+        "module": "basic-auth",
+        "path": "/",
+        "options": {
+          "username": "$BASIC_AUTH_USERNAME",
+          "password": "$BASIC_AUTH_PASSWORD"
+        }
+      },
+      {
+        "module": "webpage"
+      }
+    ]
+  }
+
 }
