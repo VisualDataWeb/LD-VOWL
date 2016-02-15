@@ -1,7 +1,5 @@
 'use strict';
 
-Geometry.$inject = ['Utils'];
-
 /**
  * @Name Geometry
  */
@@ -98,5 +96,7 @@ class Geometry {
   }
 
 } // end of Geometry class
+
+Geometry.$inject = ['Utils'];
 
 export default Geometry;

@@ -2,31 +2,42 @@ filters.$inject = ['$cookies', '$log'];
 
 function filters($cookies, $log) {
 
+  var self = this;
+
+  var includeLoops;
+  var includeLiterals;
+  var includeDisjointNode;
+  var includeSubclassRelations;
+
   // TODO move into constant
   var cookiePrefix = 'ldvowl_';
 
-  var self = this;
-
   self.init = function () {
     var loopCookie = cookiePrefix + 'include_loops';
-    var includeLoops = self.getIncludeLoops() || true;
+    includeLoops = self.getIncludeLoops() || true;
     $cookies.put(loopCookie, includeLoops);
 
     var literalCookie = cookiePrefix + 'include_literals';
-    var includeLiterals = self.getIncludeLiterals() || true;
+    includeLiterals = self.getIncludeLiterals() || true;
     $cookies.put(literalCookie, includeLiterals);
 
     var disjointNodeCookie = cookiePrefix + 'include_disjoint_node';
-    var includeDisjointNode = self.getIncludeDisjointNode() || false;
+    includeDisjointNode = self.getIncludeDisjointNode() || false;
     $cookies.put(disjointNodeCookie, includeDisjointNode);
 
     var subclassCookie = cookiePrefix + 'include_subclass_relations';
-    var includeSubclassRelations = self.getIncludeSubclassRelations() || true;
+    includeSubclassRelations = self.getIncludeSubclassRelations() || true;
     $cookies.put(subclassCookie, includeSubclassRelations);
   };
 
   self.getIncludeLoops = function () {
-    return ($cookies.get(cookiePrefix + 'include_loops') === 'true');
+    var cookieLoopFlag = $cookies.get(cookiePrefix + 'include_loops');
+
+    if (cookieLoopFlag !== undefined) {
+      includeLoops= cookieLoopFlag;
+    }
+
+    return (includeLoops === 'true');
   };
 
   self.toggleLoops = function () {
@@ -43,7 +54,13 @@ function filters($cookies, $log) {
   };
 
   self.getIncludeLiterals = function () {
-    return ($cookies.get(cookiePrefix + 'include_literals') === 'true');
+    var cookieLiteralsFlag = $cookies.get(cookiePrefix + 'include_literals');
+
+    if (cookieLiteralsFlag !== undefined) {
+      includeLiterals = cookieLiteralsFlag;
+    }
+
+    return (includeLiterals === 'true');
   };
 
   self.toggleLiterals = function () {
@@ -60,7 +77,13 @@ function filters($cookies, $log) {
   };
 
   self.getIncludeDisjointNode = function () {
-    return ($cookies.get(cookiePrefix + 'include_disjoint_node') === 'true');
+    var cookieDisjointNodeFlag = $cookies.get(cookiePrefix + 'include_disjoint_node');
+
+    if (cookieDisjointNodeFlag !== undefined) {
+      includeDisjointNode = cookieDisjointNodeFlag;
+    }
+
+    return (includeDisjointNode === 'true');
   };
 
   self.toggleDisjointNode = function () {
@@ -77,7 +100,13 @@ function filters($cookies, $log) {
   };
 
   self.getIncludeSubclassRelations = function () {
-    return ($cookies.get(cookiePrefix + 'include_subclass_relations') === 'true');
+    var cookieSubclassRelationFlag = $cookies.get(cookiePrefix + 'include_subclass_relations');
+
+    if (cookieSubclassRelationFlag !== undefined) {
+      includeSubclassRelations = cookieSubclassRelationFlag;
+    }
+
+    return (includeSubclassRelations === 'true');
   };
 
   self.toggleSubclassRelations = function () {

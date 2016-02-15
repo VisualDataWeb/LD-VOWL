@@ -59,7 +59,8 @@
     "host": "webpack-dev-server --host 0.0.0.0 --content-base app --inline --hot",
     "proxy": "node ../anti-cors-proxy/index.js",
     "test": "karma start",
-    "lint": "eslint . --ext .js || true"
+    "lint": "eslint . --ext .js || true",
+    "deploy": "NODE_ENV=production webpack -p --config webpack.production.config.js"
   },
   "keywords": [
     "VOWL"

@@ -2,7 +2,7 @@ import startTemplate from './components/start/start.html';
 import settingsTemplate from './components/settings/settings.html';
 import graphTemplate from './components/graph/graph.html';
 
-export default function routing($httpProvider, $routeProvider) {
+function routing($httpProvider, $routeProvider) {
 
   // set up http interceptor
   $httpProvider.interceptors.push('RequestCounter');
@@ -34,3 +34,7 @@ export default function routing($httpProvider, $routeProvider) {
     });
 
 } // end of export
+
+routing.$inject = ['$httpProvider', '$routeProvider'];
+
+export default routing;

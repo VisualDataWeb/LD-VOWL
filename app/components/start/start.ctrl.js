@@ -77,7 +77,7 @@ function startCtrl($log, $location, Nodes, Properties, Requests, RequestConfig) 
     'http://www.ida.liu.se/projects/semtech/openrdf-sesame/repositories/energy' // about energy reduction, fast
   ];
 
-  start.endpoint = RequestConfig.getEndpointURL();
+  start.endpoint = RequestConfig.getEndpointURL() || start.endpoints[0];
 
   start.useLocalProxy = RequestConfig.getUseLocalProxy();
 

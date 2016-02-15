@@ -37,7 +37,7 @@ function requestConfig($cookies) {
     if (self.getUseLocalProxy()) {
       url = localProxyURL;
     } else {
-      endpointURL = $cookies.get(cookiePrefix + 'endpoint');
+      endpointURL = self.getEndpointURL();
       url = endpointURL;
     }
 
@@ -45,7 +45,10 @@ function requestConfig($cookies) {
   };
 
   self.getEndpointURL = function () {
-    endpointURL = $cookies.get(cookiePrefix + 'endpoint');
+    var cookieEndpoint = $cookies.get(cookiePrefix + 'endpoint');
+    if (cookieEndpoint !== undefined) {
+      endpointURL = cookieEndpoint;
+    }
     return endpointURL;
   };
 
@@ -60,7 +63,10 @@ function requestConfig($cookies) {
    * @returns {boolean}
    */
   self.getUseLocalProxy = function () {
-    useLocalProxy = $cookies.get(cookiePrefix + 'proxy');
+    var cookieProxyFlag = $cookies.get(cookiePrefix + 'proxy');
+    if (cookieProxyFlag !== undefined) {
+      useLocalProxy = cookieProxyFlag;
+    }
     return (useLocalProxy === 'true');
   };
 
