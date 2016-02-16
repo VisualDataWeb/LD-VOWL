@@ -9,7 +9,18 @@ module.exports = {
   // config goes here
   context: APP,
   entry: {
-    app: ['./core/bootstrap.js']
+    app: ['./core/bootstrap.js'],
+    vendors: [
+      'angular',
+      'angular-route',
+      'angular-animate',
+      'angular-cookies',
+      'd3',
+      'jquery',
+      'jquery-ui',
+      'bootstrap-webpack',
+      'angular-ui-bootstrap'
+    ]
   },
   module: {
     loaders: [
@@ -21,10 +32,11 @@ module.exports = {
 
       // Needed for the css-loader when [bootstrap-webpack](https://github.com/bline/bootstrap-webpack)
       // loads bootstrap's css.
-      { test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url-loader?limit=10000&minetype=application/font-woff' },
-      { test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'file-loader' },
+      { test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        loader: 'url-loader?limit=10000&minetype=application/font-woff&name=fonts/[name].[ext]' },
+      { test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'file-loader?name=img/[name].[ext]' },
       { test: /\.css$/, loader: 'style!css' },
-      { test: /\.(jpg|png|gif)$/, loader: 'file'}
+      { test: /\.(jpg|png|gif)$/, loader: 'file-loader?name=img/[name].[ext]'}
     ]
   },
   plugins: [
@@ -36,11 +48,13 @@ module.exports = {
 
     new ngAnnotatePlugin({
       add: true
-    })
+    }),
+
+    new webpack.optimize.CommonsChunkPlugin('vendors', 'vendors.js')
   ],
   output: {
     path: __dirname + '/dist',
     filename: 'bundle.js'
   },
-  devtool: 'source-map'
+  devtool: false
 };
