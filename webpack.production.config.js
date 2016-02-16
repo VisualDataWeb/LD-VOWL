@@ -2,6 +2,7 @@
 
 var webpack = require('webpack');
 var ngAnnotatePlugin = require('ng-annotate-webpack-plugin');
+var ExtractPlugin = require('extract-text-webpack-plugin');
 
 var APP = __dirname + '/app';
 
@@ -28,14 +29,13 @@ module.exports = {
       { test: /\.js$/, loader: 'eslint-loader', exclude: /node_modules/},
 
       { test: /\.html$/, loader: 'ng-cache?prefix=[dir]/[dir]', exclude: /index.html/},
-      { test: /index.html/, loader: 'file-loader'},
 
       // Needed for the css-loader when [bootstrap-webpack](https://github.com/bline/bootstrap-webpack)
       // loads bootstrap's css.
       { test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
         loader: 'url-loader?limit=10000&minetype=application/font-woff&name=fonts/[name].[ext]' },
       { test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'file-loader?name=img/[name].[ext]' },
-      { test: /\.css$/, loader: 'style!css' },
+      { test: /\.css$/, loader: ExtractPlugin.extract('style', 'css') },
       { test: /\.(jpg|png|gif)$/, loader: 'file-loader?name=img/[name].[ext]'}
     ]
   },
@@ -50,11 +50,13 @@ module.exports = {
       add: true
     }),
 
-    new webpack.optimize.CommonsChunkPlugin('vendors', 'vendors.js')
+    new ExtractPlugin('styles/bundle.css'),
+
+    new webpack.optimize.CommonsChunkPlugin('vendors', 'js/vendors.js')
   ],
   output: {
     path: __dirname + '/dist',
-    filename: 'bundle.js'
+    filename: 'js/bundle.js'
   },
   devtool: false
 };
