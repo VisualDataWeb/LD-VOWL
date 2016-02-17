@@ -1,18 +1,19 @@
 'use strict';
 
-properties.$inject = ['$interval', '$log'];
+properties.$inject = ['$interval', '$log', '$rootScope'];
 
-function properties($interval, $log) {
+function properties($interval, $log, $rootScope) {
 
   /* jshint validthis: true */
   var self = this;
 
   self.SUBCLASS_URI = 'http://my-own-sub-class';
-  self.DISJOINT_PROP_URI ='http://my-own-disjoint-prop';
+  self.DISJOINT_PROP_URI = 'http://my-own-disjoint-prop';
+  self.PLACEHOLDER_PROP_URI = 'http://my-placeholder-prop/unknown';
 
   self.properties = [];
   self.needsUpdate = false;
-  self.updateInterval = 10000;
+  self.updateInterval = 5000;
   self.sessionStorageUpdate = undefined;
   self.unusedRounds = 0;
 
@@ -52,11 +53,13 @@ function properties($interval, $log) {
     self.sessionStorageUpdate = $interval(function() {
       if (self.needsUpdate) {
         self.updateSessionStorage();
+        $rootScope.$broadcast('properties-changed', '');
         self.needsUpdate = false;
+        self.unusedRounds = 0;
       } else {
         $log.debug('[Properties] No SessionStorage update needed!');
         self.unusedRounds++;
-        if (self.unusedRounds >= 2) {
+        if (self.unusedRounds >= 3) {
           self.endSessionStorageUpdate();
         }
       }
@@ -100,7 +103,7 @@ function properties($interval, $log) {
     return false;
   };
 
-  self.addProperty = function (source, intermediate, target, uri, value) {
+    self.addProperty = function (source, intermediate, target, uri, value) {
     if (typeof source === 'string' && typeof intermediate === 'string' && typeof target === 'string') {
 
       var ordered;
@@ -279,20 +282,34 @@ function properties($interval, $log) {
     if (index > -1) {
       var currentProp = self.properties[index];
 
-      // search for new uri is already in there
-      var exists = false;
-      for (var j = 0; j < currentProp.props.length; j++) {
-        if (currentProp.props[j].uri === uriToAdd) {
-          exists = true;
-          break;
-        }
-      }
+      if (currentProp.uri === self.PLACEHOLDER_PROP_URI) {
 
-      // uri to add doesn't exist, so it can be added
-      if (!exists) {
-        var p = {uri: uriToAdd, value: value};
-        self.properties[index].props.push(p);
-        self.properties[index].value++;
+        $log.debug("[Properties] Remove placeholder of property '" + currentProp.uri + "'!");
+
+        // do not add it, replace the placeholder information
+        currentProp.uri = uriToAdd;
+        currentProp.value = value;
+
+        currentProp.props = [];
+        currentProp.props.push({uri: uriToAdd, value: value});
+      } else {
+
+        // search for new uri is already in there
+        var exists = false;
+        for (var j = 0; j < currentProp.props.length; j++) {
+          if (currentProp.props[j].uri === uriToAdd) {
+            exists = true;
+            break;
+          }
+        }
+
+        // uri to add doesn't exist, so it can be added
+        if (!exists) {
+          var p = {uri: uriToAdd, value: value};
+          self.properties[index].props.push(p);
+          self.properties[index].value++;
+
+        }
       }
     }
   };

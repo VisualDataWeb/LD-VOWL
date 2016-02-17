@@ -166,6 +166,10 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
         }
       });
 
+      scope.$on('properties-changed', function () {
+        scope.render(scope.data);
+      });
+
       scope.lineColor = d3.scale.log()
                           .base(2)
                           .domain([1, 32])

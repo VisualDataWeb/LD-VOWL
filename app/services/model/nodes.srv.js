@@ -186,6 +186,16 @@ function nodesService($log, Properties, Prefixes) {
     }
   };
 
+  that.setURI = function (id, newUri) {
+    var nodeToChange = nodes.get(id);
+
+    if (nodeToChange !== undefined) {
+      nodeToChange.uri = newUri;
+    } else {
+      $log.error("[Nodes] Unable to change uri of '" + id + "' to '" + newUri + "', there is no node with this id!");
+    }
+  };
+
   /**
    * Set a flag indicating that the types for the class with the given id were loaded.
    *

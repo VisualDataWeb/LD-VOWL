@@ -163,7 +163,7 @@ class RelationExtractor extends Extractor {
       });
   }
 
-  requestClassTypeRelation(originClassId, targetTypeId) {
+  requestClassTypeRelation(originClassId, intermediateId, targetTypeId) {
     var classURI = this.nodes.getURIById(originClassId);
     var typeURI = this.nodes.getURIById(targetTypeId);
 
@@ -185,20 +185,10 @@ class RelationExtractor extends Extractor {
           for (var i = 0; i < bindings.length; i++) {
             if (bindings[i].prop.value !== undefined) {
 
-              var uriInBetween = self.props.existsBetween(originClassId, targetTypeId);
+              self.nodes.incValueOfId(intermediateId);
 
-              var intermediateId = '';
-              if (uriInBetween === false) {
-
-                // add property node
-                var propNode = {};
-                propNode.uri = bindings[i].prop.value;
-                propNode.type = 'datatypeProperty';
-                propNode.value = 1;
-                intermediateId = self.nodes.addNode(propNode);
-              } else {
-                intermediateId = self.props.getIntermediateId(originClassId, targetTypeId);
-                self.nodes.incValueOfId(intermediateId);
+              if (i === 0) {
+                self.nodes.setURI(intermediateId, bindings[i].prop.value);
               }
 
               self.props.addProperty(originClassId, intermediateId, targetTypeId, bindings[i].prop.value);

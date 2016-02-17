@@ -36,7 +36,17 @@ function typeExtractor($http, $log, RequestConfig, QueryFactory, Nodes, Properti
               newNode.type = 'type';
               newNode.value = 1;
               var typeId = Nodes.addNode(newNode);
-              RelationExtractor.requestClassTypeRelation(classId, typeId);
+
+              // connect this node with placeholder intermediate node until the relation is found
+              var intermediateNode = {};
+              intermediateNode.uri = Properties.PLACEHOLDER_PROP_URI;
+              intermediateNode.type = 'datatypeProperty';
+              intermediateNode.value = 1;
+              var intermediateId = Nodes.addNode(intermediateNode);
+
+              Properties.addProperty(classId, intermediateId, typeId, Properties.PLACEHOLDER_PROP_URI);
+
+              RelationExtractor.requestClassTypeRelation(classId, intermediateId, typeId);
             }
           }
         } else {
