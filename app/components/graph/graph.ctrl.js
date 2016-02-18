@@ -10,6 +10,7 @@ function graphCtrl($scope, $q, $log, Filters, ClassExtractor, RelationExtractor,
   var vm = this;
 
   vm.numberOfProps = 5;
+  vm.numberOfPrefixes = 5;
 
   vm.extractTypes = Filters.getIncludeLiterals();
   vm.includeLoops = Filters.getIncludeLoops();
@@ -64,6 +65,10 @@ function graphCtrl($scope, $q, $log, Filters, ClassExtractor, RelationExtractor,
 
   vm.incNumberOfProps = function () {
     vm.numberOfProps += 5;
+  };
+
+  vm.incNumberOfPrefixes = function () {
+    vm.numberOfPrefixes += 5;
   };
 
   vm.toggleTypes = function () {

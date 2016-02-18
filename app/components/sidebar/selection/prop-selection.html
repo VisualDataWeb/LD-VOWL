@@ -4,6 +4,14 @@
     <strong>Type:</strong> {{selected.type}}
   </p>
 
+  <p ng-if="selected.props.length === 1">
+    <strong>URI:</strong>
+    <a href="{{selected.props[0].uri}}" target="_blank">
+      {{selected.props[0].uri}}
+      <span class="glyphicon glyphicon-new-window"></span>
+    </a>
+  </p>
+
   <p>
     <strong>From instances of:</strong>
     <a href="{{selected.sourceURI}}" target="_blank">
@@ -23,7 +31,7 @@
   </p>
 
   <p>
-    <strong ng-if="selected.props.length <= vm.numberOfProps">
+    <strong ng-if="selected.props.length > 1 && selected.props.length <= vm.numberOfProps">
       Properties ({{selected.props.length}}):
     </strong>
     <strong ng-if="selected.props.length > vm.numberOfProps">
@@ -31,7 +39,8 @@
     </strong>
   </p>
 
-  <div class="prop-list">
+  <div ng-if="selected.props.length > 1" class="prop-list">
+
     <!-- if props are NOT ordered -->
     <ul class="properties" ng-if="!selected.ordered">
       <li ng-repeat="p in selected.props | limitTo: vm.numberOfProps">
@@ -53,10 +62,17 @@
       </li>
     </ol>
 
-    <button ng-hide="selected.props.length < vm.numberOfProps" type="button" class="btn btn-link"
+    <button ng-hide="selected.props.length <= vm.numberOfProps" type="button" class="btn btn-link"
             ng-click="vm.incNumberOfProps()">
-      more ...
+      show more ...
     </button>
+  </div>
+
+  <!-- for single properties -->
+  <div ng-if="selected.props.length === 1">
+    <p>
+      <strong># Domain Instances:</strong> {{selected.props[0].value | number}}
+    </p>
   </div>
 
   <p ng-hide="selected.comment === undefined">

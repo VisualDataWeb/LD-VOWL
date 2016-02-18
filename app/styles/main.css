@@ -105,6 +105,14 @@ div.prefix {
   overflow-wrap: break-word;
 }
 
+td.prefix-table {
+  font-size: 12px;
+}
+
+.prop-list table {
+  margin-bottom: 0px;
+}
+
 /* Responsive: Portrait tablets and up */
 @media screen and (min-width: 768px) {
   .container {

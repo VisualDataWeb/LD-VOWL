@@ -342,7 +342,7 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
           .append('g')
           .classed('node', true)
           .classed('class', function (d) { return d.type === 'class'; })
-          .classed('equivalent', function (d) {return d.equivalentURI !== undefined; })
+          .classed('equivalent', function (d) { return d.hasEquivalent !== undefined; })
           .classed('property', function (d) { return d.type === 'property'; })
           .classed('datatypeProperty', function (d) { return d.type === 'datatypeProperty'; })
           .classed('subClassProperty', function (d) { return d.type === 'subClassProperty'; })

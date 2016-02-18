@@ -2,11 +2,29 @@
   <p>
     <strong>Class Prefixes:</strong>
   </p>
-  <div class="row prefix" ng-repeat="pre in prefixes">
-    <button type="button" class="btn btn-default btn-xs" ng-model="pre.classification" uib-btn-checkbox
-            btn-checkbox-true="'intern'" btn-checkbox-false="'extern'" ng-click="vm.updatePrefixes()">
-      intern
+  <div class="prop-list" style="max-height: 180px;">
+    <table class="table table-condensed">
+      <tr ng-repeat="pre in prefixes | limitTo: vm.numberOfPrefixes">
+        <td>
+          <button type="button" class="btn btn-default btn-xs" ng-model="pre.classification" uib-btn-checkbox
+                  btn-checkbox-true="'intern'" btn-checkbox-false="'extern'" ng-click="vm.updatePrefixes()">
+            internal
+          </button>
+        </td>
+
+        <td class="prefix-table" style="max-width: 150px; word-wrap: break-word;">
+          <a href="{{pre.prefix}}" target="_blank">{{pre.prefix | httpLess}}</a>
+        </td>
+
+        <td class="prefix-table">
+          {{pre.value}}
+        </td>
+
+      </tr>
+    </table>
+    <button ng-hide="prefixes.length <= vm.numberOfPrefixes" type="button" class="btn btn-link"
+            ng-click="vm.incNumberOfPrefixes()">
+      show more ...
     </button>
-    <a href="{{pre.prefix}}" target="_blank">{{pre.prefix | httpLess}}</a> ({{pre.value}})
   </div>
 </div>

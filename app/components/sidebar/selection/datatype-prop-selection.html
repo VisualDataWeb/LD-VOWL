@@ -8,6 +8,7 @@
     <strong>URI:</strong>
     <a href="{{selected.props[0].uri}}" target="_blank">
       {{selected.props[0].uri}}
+      <span class="glyphicon glyphicon-new-window"></span>
     </a>
   </p>
 
@@ -16,6 +17,7 @@
     <a href="{{selected.sourceURI}}" target="_blank">
       {{selected.sourceName}}
       <span ng-hide="selected.sourceName.length > 0">{{selected.sourceURI | uriLabel}}</span>
+      <span class="glyphicon glyphicon-new-window"></span>
     </a>
   </p>
 
@@ -23,6 +25,7 @@
     <strong>To instances of data type:</strong>
     <a href="{{selected.targetURI}}" target="_blank">
       {{selected.targetURI | uriLabel}}
+      <span class="glyphicon glyphicon-new-window"></span>
     </a>
   </p>
 </div>

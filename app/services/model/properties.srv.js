@@ -45,7 +45,7 @@ function properties($interval, $log, $rootScope) {
    */
   self.startSessionStorageUpdate = function () {
 
-    $log.debug('[Properties] Start Session Store upgrade!');
+    $log.debug('[Properties] (Re-)Start Session Store update!');
     if (self.sessionStorageUpdate !== undefined) {
       return;
     }
@@ -259,7 +259,8 @@ function properties($interval, $log, $rootScope) {
 
   self.clearAll = function () {
     self.properties = [];
-    self.updateSessionStorage();
+    self.needsUpdate = true;
+    self.startSessionStorageUpdate();
   };
 
   self.addURI = function (sourceIndex, targetIndex, uriToAdd, value) {
@@ -308,7 +309,6 @@ function properties($interval, $log, $rootScope) {
           var p = {uri: uriToAdd, value: value};
           self.properties[index].props.push(p);
           self.properties[index].value++;
-
         }
       }
     }
@@ -344,6 +344,7 @@ function properties($interval, $log, $rootScope) {
         currentProp.target = classId1;
       }
     }
+    self.needsUpdate = true;
   };
 
   self.initProperties();

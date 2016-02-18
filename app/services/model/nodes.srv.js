@@ -191,6 +191,7 @@ function nodesService($log, Properties, Prefixes) {
 
     if (nodeToChange !== undefined) {
       nodeToChange.uri = newUri;
+      that.updateSessionStorage();
     } else {
       $log.error("[Nodes] Unable to change uri of '" + id + "' to '" + newUri + "', there is no node with this id!");
     }
@@ -244,7 +245,9 @@ function nodesService($log, Properties, Prefixes) {
       var cl2 = nodes.get(classId2);
 
       if (cl1 !== undefined && cl1.type === 'class' && cl2 !== undefined && cl2.type === 'class') {
-        cl1.equivalentURI = cl2.uri;
+        cl1.hasEquivalent = true;
+        cl1.equivalentURIs = [];
+        cl1.equivalentURIs.push(cl2.uri);
         nodes.delete(classId2);
         $log.debug("[Nodes] Merged '" + classId1 + "' and '" + classId2 + "'.");
       } else {

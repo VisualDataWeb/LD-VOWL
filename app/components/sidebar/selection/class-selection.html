@@ -1,21 +1,50 @@
 <!-- for selected classes -->
 <div ng-show="selected !== undefined && selected.type === 'class'">
-  <p ng-hide="selected.name === ''">
-    <strong>Label:</strong> {{selected.name}}
-  </p>
 
   <p>
     <strong>Type:</strong> {{selected.type}}
   </p>
 
   <p>
-    <strong>URI:</strong> <a href="{{selected.uri}}" target="_blank">{{ selected.uri }}</a>
+    <strong>URI:</strong>
+    <a href="{{selected.uri}}" target="_blank">
+      {{ selected.uri }}
+      <span class="glyphicon glyphicon-new-window"></span>
+    </a>
   </p>
 
-  <p ng-show="selected.equivalentURI !== undefined">
-    <strong>Equivalent Class:</strong>
-    <a href="{{selected.uri}}" target="_blank">{{selected.equivalentURI | uriLabel}}</a>
+  <p ng-hide="selected.name === ''">
+    <strong>Label:</strong> {{selected.name}}
   </p>
+
+  <!-- for a single equivalentURI -->
+  <p ng-if="selected.equivalentURIs !== undefined && selected.equivalentURIs.length === 1">
+    <strong>Equivalent Class:</strong>
+    <a href="{{selected.equivalentURIs[0]}}" target="_blank">
+      {{selected.equivalentURIs[0] | uriLabel}}
+      <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>
+    </a>
+  </p>
+
+  <!-- for multiple equivalent URIs -->
+  <div ng-if="selected.equivalentURIs !== undefined && selected.equivalentURIs.length > 1">
+    <p>
+      <strong>Equivalent Classes:</strong>
+    </p>
+    <ul>
+      <li ng-repeat="equivURI in selected.equivalentURIs | limitTo: vm.numberOfProps">
+        <a href="{{equiv}}" target="_blank">
+          {{equivURI | uriLabel}}
+          <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>
+        </a>
+      </li>
+    </ul>
+
+    <button ng-hide="selected.equivalentURIs.length <= vm.numberOfProps" type="button" class="btn btn-link"
+            ng-click="vm.incNumberOfProps()">
+      show more ...
+    </button>
+  </div>
 
   <p>
     <strong># Instances:</strong>
