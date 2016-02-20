@@ -30,6 +30,9 @@ module.exports = {
           d3: 'd3',
           $: 'jquery',
           jQuery: 'jquery'
+      }),
+      new webpack.DefinePlugin({
+        __LOGGING__: true
       })
   ],
   devServer: {

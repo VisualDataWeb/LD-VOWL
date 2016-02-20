@@ -46,6 +46,10 @@ module.exports = {
       jQuery: 'jquery'
     }),
 
+    new webpack.DefinePlugin({
+      __LOGGING__: false
+    }),
+
     new ngAnnotatePlugin({
       add: true
     }),
