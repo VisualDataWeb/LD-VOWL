@@ -11,7 +11,7 @@ class RelationExtractor extends Extractor {
   /**
    * Creates a RelationExtractor.
    */
-  constructor($http, $q, $log, PREFIX, PROPERTY_BLACKLIST, QueryFactory, RequestConfig, Nodes, Properties) {
+  constructor($http, $q, $log, PREFIX, PROPERTY_BLACKLIST, QueryFactory, RequestConfig, Nodes, Properties, Promises) {
 
     // call constructor of super class Extractor
     super();
@@ -24,6 +24,7 @@ class RelationExtractor extends Extractor {
     this.rConfig = RequestConfig;
     this.nodes = Nodes;
     this.props = Properties;
+    this.promises = Promises;
 
     for (var type in PROPERTY_BLACKLIST) {
       if (PROPERTY_BLACKLIST.hasOwnProperty(type)) {
@@ -43,6 +44,9 @@ class RelationExtractor extends Extractor {
    * @param offset - the number of the relation to start with
    */
   requestClassClassRelation(originId, targetId, limit, offset) {
+    var canceller = this.$q.defer();
+    const promiseId = this.promises.addPromise(canceller);
+
     offset = offset || 0;
     limit = limit || 10;
 
@@ -59,7 +63,7 @@ class RelationExtractor extends Extractor {
 
     var self = this;
 
-    this.$http.get(requestURL, this.rConfig.forQuery(query))
+    this.$http.get(requestURL, this.rConfig.forQuery(query, canceller))
       .then(function (response) {
         if (response.data.results !== undefined) {
           var bindings = response.data.results.bindings;
@@ -124,13 +128,21 @@ class RelationExtractor extends Extractor {
       }, function (err) {
         if (err !== undefined && err.hasOwnProperty('status')) {
           if (err.status === -1) {
-            self.$log.warn('[Relations] No results, likely because of CORS.');
+            if (err.config !== undefined && err.config.timeout !== undefined &&
+                err.config.timeout.$$state !== undefined && err.config.timeout.$$state.value === 'canceled') {
+              self.$log.warn('[Relations] Request was canceled!');
+            } else {
+              self.$log.warn('[Relations] No results, likely because of CORS.');
+            }
           } else if (err.status === 500 && err.data.search('estimated execution time ') !== -1) {
             self.$log.debug('[Relations] Request would take too long!');
           }
         } else {
           self.$log.error(err);
         }
+      }) // end of then()
+      .finally(function () {
+        self.promises.removePromise(promiseId);
       });
   }
 
@@ -140,6 +152,9 @@ class RelationExtractor extends Extractor {
    * @param uri - the uri of the property which label should be caught
    */
   requestPropertyLabel(uri) {
+    var canceller = this.$q.defer();
+    const promiseId = this.promises.addPromise(canceller);
+
     var labelLang = this.rConfig.getLabelLanguage();
     var query = this.qFactory.getLabelQuery(uri, labelLang);
     var requestURL = this.rConfig.getRequestURL();
@@ -148,7 +163,7 @@ class RelationExtractor extends Extractor {
 
     self.$log.debug("[Property Label] Send Request for '" + uri + "'...");
 
-    this.$http.get(requestURL, this.rConfig.forQuery(query))
+    this.$http.get(requestURL, this.rConfig.forQuery(query, canceller))
       .then(function (response) {
         var bindings = response.data.results.bindings;
         if (bindings !== undefined && bindings.length > 0 && bindings[0].label !== undefined) {
@@ -159,11 +174,22 @@ class RelationExtractor extends Extractor {
           self.$log.debug("[Property Label] Found None for '" + uri + "'.");
         }
       }, function (err) {
-        self.$log.error(err);
+        if (err.status === -1 && err.config !== undefined && err.config.timeout !== undefined &&
+            err.config.timeout.$$state.value === 'canceled') {
+          self.$log.warn('[Relations] Request was canceled!');
+        } else {
+          self.$log.error(err);
+        }
+      })
+      .finally(function () {
+        self.promises.removePromise(promiseId);
       });
-  }
+  } // end of requestPropertyLabel()
 
   requestClassTypeRelation(originClassId, intermediateId, targetTypeId) {
+    var canceller = this.$q.defer();
+    const promiseId = this.promises.addPromise(canceller);
+
     var classURI = this.nodes.getURIById(originClassId);
     var typeURI = this.nodes.getURIById(targetTypeId);
 
@@ -172,7 +198,7 @@ class RelationExtractor extends Extractor {
 
     var self = this;
 
-    this.$http.get(requestURL, this.rConfig.forQuery(query))
+    this.$http.get(requestURL, this.rConfig.forQuery(query, canceller))
       .then(function (response) {
 
         var bindings = response.data.results.bindings;
@@ -205,6 +231,9 @@ class RelationExtractor extends Extractor {
         }  else {
           self.$log.error(err);
         }
+      })
+      .finally(function () {
+        self.promises.removePromise(promiseId);
       });
   } // end of requestClassPropertyRelation()
 
@@ -217,6 +246,7 @@ class RelationExtractor extends Extractor {
   requestClassEquality(classId1, classId2) {
 
     var deferred = this.$q.defer();
+    const promiseId = this.promises.addPromise(deferred);
 
     if (classId1 === undefined || classId2 === undefined) {
       deferred.resolve('missing parameter');
@@ -243,7 +273,7 @@ class RelationExtractor extends Extractor {
     self.$log.debug("[Relations] Query for number of common Instances of '" + classURI1 + "' and '" + classURI2 +
       "'...");
 
-    this.$http.get(requestURL, this.rConfig.forQuery(query))
+    this.$http.get(requestURL, this.rConfig.forQuery(query, deferred))
       .then(function (response) {
 
         var results = response.data.results;
@@ -346,14 +376,19 @@ class RelationExtractor extends Extractor {
       }, function (err) {
         self.$log.error(err);
         deferred.reject(err);
-      });
+      }) // end of then()
+    .finally(function () {
+      self.promises.removePromise(promiseId);
+    });
 
     // always return a promise
     return deferred.promise;
   } // end of requestClassEquality()
 } // end of class RelationExtractor
 
-RelationExtractor.$inject = ['$http', '$q', '$log', 'PREFIX', 'PROPERTY_BLACKLIST', 'QueryFactory', 'RequestConfig',
-  'Nodes', 'Properties'];
+RelationExtractor.$inject = [
+  '$http', '$q', '$log', 'PREFIX', 'PROPERTY_BLACKLIST', 'QueryFactory', 'RequestConfig', 'Nodes', 'Properties',
+  'Promises'
+];
 
 export default RelationExtractor;

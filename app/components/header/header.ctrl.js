@@ -1,5 +1,7 @@
 'use strict';
 
+HeaderCtrl.$inject = ['$scope', '$location'];
+
 /**
  * @name HeaderCtrl
  * @param $scope
@@ -18,7 +20,5 @@ function HeaderCtrl($scope, $location) {
   };
 
 }
-
-HeaderCtrl.$inject = ['$scope', '$location'];
 
 export default HeaderCtrl;

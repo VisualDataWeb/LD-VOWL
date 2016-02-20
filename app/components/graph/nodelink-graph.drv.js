@@ -258,10 +258,12 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
           message.item.type = d.type;
 
           // add source and target node information
-          message.item.sourceName = sourceNode.name;
-          message.item.sourceURI = sourceNode.uri;
-          message.item.targetName = targetNode.name;
-          message.item.targetURI = targetNode.uri;
+          if (sourceNode !== undefined) {
+            message.item.sourceName = sourceNode.name;
+            message.item.sourceURI = sourceNode.uri;
+            message.item.targetName = targetNode.name;
+            message.item.targetURI = targetNode.uri;
+          }
 
           //TODO add ordered attribute
           message.item.ordered = true;

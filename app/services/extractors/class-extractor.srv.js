@@ -20,7 +20,7 @@ class ClassExtractor extends Extractor {
    * @param QueryFactory
    * @param Nodes
    */
-  constructor ($http, $q, $log, PREFIX, CLASS_BLACKLIST, RequestConfig, QueryFactory, Nodes) {
+  constructor ($http, $q, $log, PREFIX, CLASS_BLACKLIST, RequestConfig, QueryFactory, Nodes, Promises) {
 
     // call constructor of Extractor
     super();
@@ -32,6 +32,7 @@ class ClassExtractor extends Extractor {
     this.reqConfig = RequestConfig;
     this.queryFactory = QueryFactory;
     this.nodes = Nodes;
+    this.promises = Promises;
 
     // set up blacklists
     for (var type in CLASS_BLACKLIST) {
@@ -41,12 +42,13 @@ class ClassExtractor extends Extractor {
         }
       }
     }
-  }
+  } // end of constructor()
 
   requestClasses() {
     var self = this;
 
     var deferred = this.$q.defer();
+    const promiseId = self.promises.addPromise(deferred);
 
     // do not request further classes
     if (this.nodes.hasClassNodes()) {
@@ -63,7 +65,7 @@ class ClassExtractor extends Extractor {
 
     function doQuery(lastTry) {
       self.$log.debug('[Classes] Send Request...');
-      self.$http.get(requestURL, self.reqConfig.forQuery(query))
+      self.$http.get(requestURL, self.reqConfig.forQuery(query, deferred))
         .then(function (response) {
           if (response.data.results !== undefined) {
             var bindings = response.data.results.bindings;
@@ -119,8 +121,11 @@ class ClassExtractor extends Extractor {
         }, function (err) {
           self.$log.error(err);
           deferred.reject([]);
+        })
+        .finally(function () {
+          self.promises.removePromise(promiseId);
         });
-    }
+    } // end of doQuery()
 
     doQuery(false);
 
@@ -130,13 +135,16 @@ class ClassExtractor extends Extractor {
   requestClassLabel (classId, classURI) {
     var self = this;
 
+    var canceller = self.$q.defer();
+    const promiseId = self.promises.addPromise(canceller);
+
     var labelLang = this.reqConfig.getLabelLanguage();
     var labelQuery = this.queryFactory.getLabelQuery(classURI, labelLang);
     var requestURL = this.reqConfig.getRequestURL();
 
     self.$log.debug("[Class Label] Send request for '" + classURI + "'...");
 
-    this.$http.get(requestURL, this.reqConfig.forQuery(labelQuery))
+    this.$http.get(requestURL, this.reqConfig.forQuery(labelQuery, canceller))
       .then(function (response) {
         var bindings = response.data.results.bindings;
 
@@ -151,6 +159,9 @@ class ClassExtractor extends Extractor {
         }
       },function (err) {
         self.$log.error(err);
+      })
+      .finally(function () {
+        self.promises.removePromise(promiseId);
       });
   } // end of requestClassLabel()
 
@@ -163,13 +174,15 @@ class ClassExtractor extends Extractor {
   requestClassSkosLabel (classId, classURI) {
     var self = this;
 
+    var canceller = this.$q.defer();
+
     var labelLang = this.reqConfig.getLabelLanguage();
     var skosLabelQuery = this.queryFactory.getPreferredLabelQuery(classURI, labelLang);
     var requestURL = this.reqConfig.getRequestURL();
 
     self.$log.debug("[Class Label] Send request for '" + classURI + "' skos preferred label...");
 
-    this.$http.get(requestURL, this.reqConfig.forQuery(skosLabelQuery))
+    this.$http.get(requestURL, this.reqConfig.forQuery(skosLabelQuery, canceller))
       .then(function (response) {
         var bindings = response.data.results.bindings;
 
@@ -184,10 +197,12 @@ class ClassExtractor extends Extractor {
     }, function (err) {
       self.$log.error(err);
     });
-  }
+  } // end of requestClassSkosLabel()
 
 } // end of class 'ClassExtractor'
 
-ClassExtractor.$inject = ['$http', '$q', '$log', 'PREFIX', 'CLASS_BLACKLIST', 'RequestConfig', 'QueryFactory', 'Nodes'];
+ClassExtractor.$inject = [
+  '$http', '$q', '$log', 'PREFIX', 'CLASS_BLACKLIST', 'RequestConfig', 'QueryFactory', 'Nodes', 'Promises'
+];
 
 export default ClassExtractor;

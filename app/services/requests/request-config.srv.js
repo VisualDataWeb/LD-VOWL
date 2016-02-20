@@ -130,7 +130,7 @@ function requestConfig($cookies) {
   /**
    * Returns a configuration object for the given SPARQL query
    */
-  self.forQuery = function (query, short) {
+  self.forQuery = function (query, canceller, short) {
     var config = {};
     if (short) {
       config.params = {
@@ -151,6 +151,8 @@ function requestConfig($cookies) {
     config.headers = {
       'Accept': 'application/sparql-results+json'
     };
+
+    config.timeout = canceller.promise;
 
     return config;
   };

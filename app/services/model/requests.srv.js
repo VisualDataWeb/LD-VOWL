@@ -7,6 +7,8 @@ function requests($rootScope) {
   /* jshint validthis: true */
   var that = this;
 
+  that.promises = [];
+
   that.pendingRequests = 0;
   that.successfulRequests = 0;
   that.failedRequests = 0;
@@ -77,6 +79,11 @@ function requests($rootScope) {
     that.pendingRequests = 0;
     that.successfulRequests = 0;
     that.failedRequests = 0;
+
+    for (let i = 0; i < that.promises.length; i++) {
+      that.promises[i].reject([]);
+    }
+
     $rootScope.$broadcast('pending-requests-changed', that.pendingRequests);
   };
   

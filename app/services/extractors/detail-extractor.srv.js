@@ -1,9 +1,9 @@
 'use strict';
 
-detailExtractor.$inject = ['$http', '$log', 'QueryFactory', 'RequestConfig', 'Nodes'];
+detailExtractor.$inject = ['$http', '$q', '$log', 'QueryFactory', 'RequestConfig', 'Nodes', 'Promises'];
 
 // TODO make this a ES6 class
-function detailExtractor($http, $log, QueryFactory, RequestConfig, Nodes) {
+function detailExtractor($http, $q, $log, QueryFactory, RequestConfig, Nodes, Promises) {
 
   /* jshint validthis: true */
   var that = this;
@@ -14,11 +14,14 @@ function detailExtractor($http, $log, QueryFactory, RequestConfig, Nodes) {
   that.requestCommentForClass = function (id) {
     var uri = Nodes.getURIById(id);
 
+    var canceller = $q.defer();
+    const promiseId = Promises.addPromise(canceller);
+
     var query = QueryFactory.getCommentQuery(uri);
     var requestURL = RequestConfig.getRequestURL();
 
-    $http.get(requestURL, RequestConfig.forQuery(query))
-    .then(function (response) {
+    $http.get(requestURL, RequestConfig.forQuery(query, canceller))
+      .then(function (response) {
       var bindings = response.data.results.bindings;
 
       if (bindings.length > 0) {
@@ -33,9 +36,12 @@ function detailExtractor($http, $log, QueryFactory, RequestConfig, Nodes) {
       }
     }, function (err) {
       $log.error(err);
+    })
+    .finally(function () {
+      Promises.removePromise(promiseId);
     });
-  };
+  }; // end of requestCommentForClass()
 
-}
+} // end of detailExtractor
 
 export default detailExtractor;

@@ -1,6 +1,6 @@
 'use strict';
 
-startCtrl.$inject = ['$log','$location', 'Nodes', 'Properties', 'Requests', 'RequestConfig'];
+startCtrl.$inject = ['$log','$location', 'Nodes', 'Properties', 'Requests', 'RequestConfig', 'Promises'];
 
 /**
  * @Name StartCtrl
@@ -12,7 +12,7 @@ startCtrl.$inject = ['$log','$location', 'Nodes', 'Properties', 'Requests', 'Req
  * @param Requests
  * @param RequestConfig
  */
-function startCtrl($log, $location, Nodes, Properties, Requests, RequestConfig) {
+function startCtrl($log, $location, Nodes, Properties, Requests, RequestConfig, Promises) {
 
   /* jshint validthis: true */
   var start = this;
@@ -90,8 +90,9 @@ function startCtrl($log, $location, Nodes, Properties, Requests, RequestConfig) 
 
       // clear loaded data if endpoint has changed
       if (lastEndpoint !== start.endpoint && start.endpoint !== undefined && start.endpoint.length > 0) {
-        Nodes.clearAll();
+        Promises.rejectAll();
 
+        Nodes.clearAll();
         Properties.clearAll();
         Requests.clear();
 

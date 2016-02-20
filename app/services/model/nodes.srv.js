@@ -207,7 +207,7 @@ function nodesService($log, Properties, Prefixes) {
 
       var clazz = nodes.get(classId);
 
-      if (clazz.type === 'class') {
+      if (clazz !== undefined && clazz.type === 'class') {
         clazz.typesLoaded = true;
       }
     }
@@ -223,7 +223,7 @@ function nodesService($log, Properties, Prefixes) {
     if (classId !== undefined && typeof classId === 'string') {
       var clazz = nodes.get(classId);
 
-      if (clazz.type === 'class' && clazz.typesLoaded) {
+      if (clazz !== undefined && clazz.type === 'class' && clazz.typesLoaded) {
         $log.debug("[Nodes] Types for '" + classId + "' are already loaded!");
         return true;
       }

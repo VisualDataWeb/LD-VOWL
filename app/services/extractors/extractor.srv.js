@@ -40,4 +40,4 @@ class Extractor {
 
 }
 
-module.exports = Extractor;
+export default Extractor;

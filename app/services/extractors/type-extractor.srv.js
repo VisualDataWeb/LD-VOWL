@@ -1,13 +1,19 @@
 'use strict';
 
-typeExtractor.$inject = ['$http', '$log', 'RequestConfig', 'QueryFactory', 'Nodes', 'Properties', 'RelationExtractor'];
+typeExtractor.$inject = [
+  '$http', '$q', '$log', 'RequestConfig', 'QueryFactory', 'Nodes', 'Properties', 'RelationExtractor', 'Promises'
+];
 
-function typeExtractor($http, $log, RequestConfig, QueryFactory, Nodes, Properties, RelationExtractor) {
+function typeExtractor($http, $q, $log, RequestConfig, QueryFactory, Nodes, Properties, RelationExtractor, Promises) {
 
   /* jshint validthis: true */
   var that = this;
 
   that.requestReferringTypes = function (classId) {
+
+    var canceller = $q.defer();
+    const promiseId = Promises.addPromise(canceller);
+
     var classURI = Nodes.getURIById(classId);
     var query = QueryFactory.getInstanceReferringTypesQuery(classURI, 5);
     var requestURL = RequestConfig.getRequestURL();
@@ -20,7 +26,7 @@ function typeExtractor($http, $log, RequestConfig, QueryFactory, Nodes, Properti
 
     $log.debug("[Referring Types] Send requests for types referring to instances of '" + classURI + '...');
 
-    $http.get(requestURL, RequestConfig.forQuery(query))
+    $http.get(requestURL, RequestConfig.forQuery(query, canceller))
       .then(function (response) {
 
         var bindings = response.data.results.bindings;
@@ -62,8 +68,10 @@ function typeExtractor($http, $log, RequestConfig, QueryFactory, Nodes, Properti
         } else {
           $log.error(err);
         }
+      }) // end of then()
+      .finally(function () {
+        Promises.removePromise(promiseId);
       });
-
   }; // end of requestReferringTypes()
 
 } // end of TypeExtractor
