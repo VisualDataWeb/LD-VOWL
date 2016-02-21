@@ -3,9 +3,12 @@
   <form class="form-horizontal well">
 
     <div class="form-group">
-      <label class="control-label col-sm-2" for="lang">Languages</label>
+      <label class="control-label col-sm-2" for="lang">Language</label>
       <div class="col-sm-4">
-        <input type="text" class="form-control" id="lang" ng-model="vm.langPreferences">
+        <select class="form-control" name="lang" id="lang" ng-model="vm.currentLanguage"
+                ng-change="vm.updateLabelLanguage()"
+                ng-options="language.id as language.name for language in vm.availableLanguages">
+        </select>
       </div>
 
       <label for="limit" class="col-sm-2 control-label">Limit</label>

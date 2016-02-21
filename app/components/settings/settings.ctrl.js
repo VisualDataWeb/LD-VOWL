@@ -1,10 +1,10 @@
 'use strict';
 
-settingsCtrl.$inject = ['PREFIX', 'PROPERTY_BLACKLIST', 'CLASS_BLACKLIST', 'RequestConfig', 'Nodes', 'Properties',
+settingsCtrl.$inject = ['$log', 'PREFIX', 'PROPERTY_BLACKLIST', 'CLASS_BLACKLIST', 'RequestConfig', 'Nodes', 'Properties',
   'Requests', 'ClassExtractor', 'RelationExtractor'];
 
 
-function settingsCtrl(PREFIX, PROPERTY_BLACKLIST, CLASS_BLACKLIST, RequestConfig, Nodes, Properties, Requests,
+function settingsCtrl($log, PREFIX, PROPERTY_BLACKLIST, CLASS_BLACKLIST, RequestConfig, Nodes, Properties, Requests,
                            ClassExtractor, RelationExtractor) {
 
   /* jshint validthis: true */
@@ -14,7 +14,10 @@ function settingsCtrl(PREFIX, PROPERTY_BLACKLIST, CLASS_BLACKLIST, RequestConfig
   vm.currentLanguage = RequestConfig.getLabelLanguage() || 'en';
   vm.currentLimit = RequestConfig.getLimit();
 
-  vm.langPreferences = 'en, de';
+  vm.availableLanguages = [
+    {id: 'en', name: 'English'},
+    {id: 'de', name: 'German'}
+  ];
 
   vm.propsOrdered = true;
 
@@ -35,6 +38,7 @@ function settingsCtrl(PREFIX, PROPERTY_BLACKLIST, CLASS_BLACKLIST, RequestConfig
 
   vm.updateLabelLanguage = function () {
     RequestConfig.setLabelLanguage(vm.currentLanguage);
+    $log.debug(`[Settings] Changed label language to "${vm.currentLanguage}".`);
   };
 
   vm.updatePropsOrdered = function () {

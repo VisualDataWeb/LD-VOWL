@@ -103,11 +103,16 @@ function requestConfig($cookies) {
   };
 
   self.getLabelLanguage = function () {
+    var cookieLang = $cookies.get(cookiePrefix + 'lang');
+    if (cookieLang !== undefined) {
+      labelLanguage = cookieLang;
+    }
     return labelLanguage;
   };
 
   self.setLabelLanguage = function (newLang) {
     labelLanguage = newLang;
+    $cookies.put(cookiePrefix + 'lang', newLang);
   };
 
   self.getPropertiesOrdered = function () {
@@ -130,22 +135,19 @@ function requestConfig($cookies) {
   /**
    * Returns a configuration object for the given SPARQL query
    */
-  self.forQuery = function (query, canceller, short) {
+  self.forQuery = function (query, canceller, jsonp) {
     var config = {};
-    if (short) {
-      config.params = {
-        query: query,
-        output: format
-      };
 
-    } else {
-      config.params = {
-        timeout: sparqlTimeout,
-        debug: debug,
-        format: format,
-        query: query,
-        ep: endpointURL
-      };
+    config.params = {
+      timeout: sparqlTimeout,
+      debug: debug,
+      format: format,
+      query: query,
+      ep: endpointURL
+    };
+
+    if (jsonp) {
+      config.params.callback = 'JSON_CALLBACK';
     }
 
     config.headers = {
