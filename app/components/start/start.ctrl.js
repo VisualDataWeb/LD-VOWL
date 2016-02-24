@@ -81,6 +81,10 @@ function startCtrl($log, $location, Nodes, Properties, Requests, RequestConfig, 
 
   start.useLocalProxy = RequestConfig.getUseLocalProxy();
 
+  // jshint ignore:start
+  start.proxyAvailable = __PROXY__; // eslint-disable-line no-undef
+  // jshint ignore:end
+
   /**
    * Shows the graph for the current endpoint and clears all data if endpoint has changed.
    */

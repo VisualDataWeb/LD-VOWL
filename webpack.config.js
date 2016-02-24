@@ -32,7 +32,8 @@ module.exports = {
           jQuery: 'jquery'
       }),
       new webpack.DefinePlugin({
-        __LOGGING__: true
+        __LOGGING__: true,
+        __PROXY__: true
       })
   ],
   devServer: {

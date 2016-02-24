@@ -1,7 +1,7 @@
 'use strict';
 
-settingsCtrl.$inject = ['$log', 'PREFIX', 'PROPERTY_BLACKLIST', 'CLASS_BLACKLIST', 'RequestConfig', 'Nodes', 'Properties',
-  'Requests', 'ClassExtractor', 'RelationExtractor'];
+settingsCtrl.$inject = ['$log', 'PREFIX', 'PROPERTY_BLACKLIST', 'CLASS_BLACKLIST', 'RequestConfig', 'Nodes',
+  'Properties', 'Requests', 'ClassExtractor', 'RelationExtractor'];
 
 
 function settingsCtrl($log, PREFIX, PROPERTY_BLACKLIST, CLASS_BLACKLIST, RequestConfig, Nodes, Properties, Requests,
