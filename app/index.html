@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <title ng-bind="'Linked Data VOWL &mdash; ' + title">Linked Data VOWL</title>
     <meta name="description" content="">
+    <meta name="author" content="Marc Weise">
     <meta name="viewport" content="width=device-width">
   </head>
   <body>
@@ -13,38 +14,8 @@
     <![endif]-->
 
     <!-- Add your site or application content here -->
-    <div ng-controller="HeaderCtrl" class="header">
-      <div class="navbar navbar-inverse" role="navigation">
-        <div class="container-fluid">
-          <div class="navbar-header">
-
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-              data-target="#js-navbar-collapse">
-              <span class="sr-only">Toggle navigation</span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-            </button>
-
-            <a class="navbar-brand" href="#/">Linked Data VOWL</a>
-          </div>
-
-          <div class="collapse navbar-collapse" id="js-navbar-collapse">
-
-            <ul class="nav navbar-nav">
-              <li ng-class="{ active: isActive('/graph') }">
-                <a ng-href="#/graph">Graph</a>
-              </li>
-              <li ng-class="{ active: isActive('/settings') }">
-                <a ng-href="#/settings">
-                  <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
-                  Settings
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
+    <div ng-controller="HeaderCtrl as header" class="header">
+      <header></header>
     </div>
 
     <div ng-view="">

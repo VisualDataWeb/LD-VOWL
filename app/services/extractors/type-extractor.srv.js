@@ -20,11 +20,11 @@ function typeExtractor($http, $q, $log, RequestConfig, QueryFactory, Nodes, Prop
 
     // avoid loading types multiple times
     if (Nodes.getTypesLoaded(classId)) {
-      $log.debug("[Referring Types] Types for '" + classURI + "' are already loaded!");
+      $log.debug(`[Referring Types] Types for '${classURI}' are already loaded!`);
       return;
     }
 
-    $log.debug("[Referring Types] Send requests for types referring to instances of '" + classURI + '...');
+    $log.debug(`[Referring Types] Send requests for types referring to instances of '${classURI}'...`);
 
     $http.get(requestURL, RequestConfig.forQuery(query, canceller))
       .then(function (response) {
@@ -33,7 +33,7 @@ function typeExtractor($http, $q, $log, RequestConfig, QueryFactory, Nodes, Prop
 
         if (bindings !== undefined && bindings.length > 0) {
 
-          $log.debug('[Referring Types] Found ' + bindings.length + " for '" + classURI + "'.");
+          $log.debug(`[Referring Types] Found ${bindings.length} for '${classURI}'.`);
 
           for (var j = 0; j < bindings.length; j++) {
             if (bindings[j].valType !== undefined && bindings[j].valType.hasOwnProperty('value')) {
@@ -56,7 +56,7 @@ function typeExtractor($http, $q, $log, RequestConfig, QueryFactory, Nodes, Prop
             }
           }
         } else {
-          $log.debug("[Referring Types] None found for instances of '" + classURI + "'.");
+          $log.debug(`[Referring Types] None found for instances of '${classURI}'.`);
         }
 
         Nodes.setTypesLoaded(classId);

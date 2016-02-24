@@ -29,10 +29,10 @@ function detailExtractor($http, $q, $log, QueryFactory, RequestConfig, Nodes, Pr
         if (newComment !== undefined && newComment.hasOwnProperty('value')) {
           Nodes.insertComment(id, newComment.value);
         } else {
-          $log.error("[DetailExtractor] Error parsing comment for '" + uri + "'.");
+          $log.error(`[DetailExtractor] Error parsing comment for '${uri}'.`);
         }
       } else {
-        $log.debug("[DetailExtractor] No Comment found for '" + uri + "'.");
+        $log.debug(`[DetailExtractor] No Comment found for '${uri}'.`);
       }
     }, function (err) {
       $log.error(err);

@@ -18,7 +18,9 @@ function requestCounter($q, Requests) {
 
     'responseError': function (rejection) {
       Requests.decPendingRequests();
-      Requests.incFailedRequests();
+      if (rejection.status !== undefined) {
+        Requests.incFailedRequests(rejection.status);
+      }
       return $q.reject(rejection);
     }
   };

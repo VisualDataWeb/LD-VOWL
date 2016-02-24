@@ -1,11 +1,11 @@
 import angular from 'angular';
 
 // import all group directives
-import EndpointGroup from './endpoint-group.drv.js';
-import NamespaceGroup from './namespace-group.drv.js';
-import GraphSettingsGroup from './graph-settings-group.drv.js';
-import FilterGroup from './filter-group.drv.js';
-import SelectionGroup from './selection-group.drv.js';
+import EndpointGroup from './groups/endpoint-group/endpoint-group.drv.js';
+import NamespaceGroup from './groups/namespace-group/namespace-group.drv.js';
+import GraphSettingsGroup from './groups/graph-settings-group/graph-settings-group.drv.js';
+import FilterGroup from './groups/filter-group/filter-group.drv.js';
+import SelectionGroup from './groups/selection-group/selection-group.drv.js';
 
 import Slider from './slider.drv.js';
 

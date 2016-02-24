@@ -19,6 +19,7 @@ class ClassExtractor extends Extractor {
    * @param RequestConfig
    * @param QueryFactory
    * @param Nodes
+   * @param Promises
    */
   constructor ($http, $q, $log, PREFIX, CLASS_BLACKLIST, RequestConfig, QueryFactory, Nodes, Promises) {
 
@@ -142,7 +143,7 @@ class ClassExtractor extends Extractor {
     var labelQuery = this.queryFactory.getLabelQuery(classURI, labelLang);
     var requestURL = this.reqConfig.getRequestURL();
 
-    self.$log.debug("[Class Label] Send request for '" + classURI + "'...");
+    self.$log.debug(`[Class Label] Send request for '${classURI}'...`);
 
     this.$http.get(requestURL, this.reqConfig.forQuery(labelQuery, canceller))
       .then(function (response) {
@@ -152,9 +153,9 @@ class ClassExtractor extends Extractor {
             bindings[0].label.value !== '') {
           var label = bindings[0].label.value;
           self.nodes.insertLabel(classId, label);
-          self.$log.debug("[Class Label] Found '" + label + "' for '" + classURI + "'.");
+          self.$log.debug(`[Class Label] Found '${label}' for '${classURI}'.`);
         } else {
-          self.$log.debug("[Class Label] Found None for '" + classURI + "'.");
+          self.$log.debug(`[Class Label] Found None for '${classURI}'.`);
           self.requestClassSkosLabel(classId, classURI);
         }
       },function (err) {
@@ -180,7 +181,7 @@ class ClassExtractor extends Extractor {
     var skosLabelQuery = this.queryFactory.getPreferredLabelQuery(classURI, labelLang);
     var requestURL = this.reqConfig.getRequestURL();
 
-    self.$log.debug("[Class Label] Send request for '" + classURI + "' skos preferred label...");
+    self.$log.debug(`[Class Label] Send request for '${classURI}' SKOS preferred label...`);
 
     this.$http.get(requestURL, this.reqConfig.forQuery(skosLabelQuery, canceller))
       .then(function (response) {
@@ -190,9 +191,9 @@ class ClassExtractor extends Extractor {
             bindings[0].label.value !== '') {
           var label = bindings[0].label.value;
           self.nodes.insertLabel(classId, label);
-          self.$log.debug("[Class Label] Found skos preferred label '" + label + "' for '" + classURI + "'.");
+          self.$log.debug(`[Class Label] Found SKOS preferred label '${label}' for '${classURI}'.`);
         } else {
-          self.$log.debug("[Class Label] Found no skos preferred label for '" + classURI + "'.");
+          self.$log.debug(`[Class Label] Found no SKOS preferred label for '${classURI}'.`);
         }
     }, function (err) {
       self.$log.error(err);

@@ -1,0 +1,33 @@
+<div class="navbar navbar-inverse" role="navigation">
+  <div class="container-fluid">
+    <div class="navbar-header">
+
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+              data-target="#js-navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+
+      <a class="navbar-brand" href="#/">Linked Data VOWL</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="js-navbar-collapse">
+      <ul class="nav navbar-nav">
+        <li ng-class="{ active: header.isActive('/graph') }">
+          <a ng-href="#/graph">
+            <span ng-show="header.loading" class="glyphicon glyphicon-refresh glyphicon-spin"></span>
+            Graph
+          </a>
+        </li>
+        <li ng-class="{ active: header.isActive('/settings') }">
+          <a ng-href="#/settings">
+            <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+            Settings
+          </a>
+        </li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</div><!-- /.navbar -->

@@ -70,8 +70,7 @@ class RelationExtractor extends Extractor {
 
           if (bindings !== undefined && bindings.length > 0) {
 
-            self.$log.debug('[Relations] ' + bindings.length + " between '" + originClassURI + "' and '" +
-              targetClassURI + "'.");
+            self.$log.debug(`[Relations] ${bindings.length} between '${originClassURI}' and '${targetClassURI}'.`);
 
             if (bindings[0].prop !== undefined && bindings[0].prop.value !== undefined &&
                 bindings[0].prop.value !== '') {
@@ -97,7 +96,7 @@ class RelationExtractor extends Extractor {
                   }
 
                   if (intermediateId.length < 1) {
-                    self.$log.error('[Relations] Intermediate ' + uriBetween + ' was not found!');
+                    self.$log.error(`[Relations] Intermediate '${uriBetween}' was not found!`);
                   }
 
                   if (bindings[i].count !== undefined && bindings[i].count.value !== undefined) {
@@ -122,7 +121,7 @@ class RelationExtractor extends Extractor {
               }
             }
           } else {
-            self.$log.debug("[Relations] None between '" + originClassURI + "' and '" + targetClassURI + "'...");
+            self.$log.debug(`[Relations] None between '${originClassURI}' and '${targetClassURI}'.`);
           }
         }
       }, function (err) {
@@ -161,17 +160,17 @@ class RelationExtractor extends Extractor {
 
     var self = this;
 
-    self.$log.debug("[Property Label] Send Request for '" + uri + "'...");
+    self.$log.debug(`[Property Label] Send Request for '${uri}'...`);
 
     this.$http.get(requestURL, this.rConfig.forQuery(query, canceller))
       .then(function (response) {
         var bindings = response.data.results.bindings;
         if (bindings !== undefined && bindings.length > 0 && bindings[0].label !== undefined) {
           var label = bindings[0].label.value;
-          self.$log.debug("[Property Label] Found '" + label + "' for '" + uri + "'.");
+          self.$log.debug(`[Property Label] Found '${label}' for '${uri}'.`);
           self.props.insertValue(uri, 'name', label);
         } else {
-          self.$log.debug("[Property Label] Found None for '" + uri + "'.");
+          self.$log.debug(`[Property Label] Found None for '${uri}'.`);
         }
       }, function (err) {
         if (err.status === -1 && err.config !== undefined && err.config.timeout !== undefined &&
@@ -205,8 +204,7 @@ class RelationExtractor extends Extractor {
 
         if (bindings !== undefined && bindings.length > 0) {
 
-          self.$log.debug("[Relations] Found '" + bindings.length + "' between " + classURI + "' and '" + typeURI +
-            "'.");
+          self.$log.debug(`[Relations] Found ${bindings.length} between '${classURI}' and '${typeURI}'.`);
 
           for (var i = 0; i < bindings.length; i++) {
             if (bindings[i].prop.value !== undefined) {
@@ -270,8 +268,7 @@ class RelationExtractor extends Extractor {
 
     var self = this;
 
-    self.$log.debug("[Relations] Query for number of common Instances of '" + classURI1 + "' and '" + classURI2 +
-      "'...");
+    self.$log.debug(`[Relations] Query for number of common Instances of '${classURI1}' and '${classURI2}'...`);
 
     this.$http.get(requestURL, this.rConfig.forQuery(query, deferred))
       .then(function (response) {
@@ -287,14 +284,14 @@ class RelationExtractor extends Extractor {
             var commonCount = parseInt(bindings[0].commonInstanceCount.value);
 
             if (commonCount !== undefined) {
-              self.$log.debug("[Relations] Classes '" + classURI1 + "' (" + count1 + ") and '" +
-                classURI2 + "' (" + count2 + ') have ' + commonCount + ' common instances!');
+              self.$log.debug(`[Relations] Classes '${classURI1}' (${count1}) and '${classURI2}' (${count2}) have
+              '${commonCount}' common instances!`);
 
               var subClassPropNode;
               var subClassPropNodeId;
 
               if ((commonCount === count1) && (commonCount === count2)) {
-                self.$log.debug("[Relations] Merge class '" + classId1 + "' and ' " + classId2 + "'...");
+                self.$log.debug(`[Relations] Merge class '${classId1}' and '${classId2}'...`);
 
                 // remove disjoint properties to avoid duplicates
                 var nodesToRemove = self.props.removeDisjointProperties(classId2);
@@ -366,8 +363,7 @@ class RelationExtractor extends Extractor {
 
                 deferred.reject('disjoint');
               } else {
-                self.$log.debug("[Relations] No Relation between '" + classURI1 + "' and '" + classURI2 +
-                  "' was found via instance count.");
+                self.$log.debug(`[Relations] None between '${classURI1}' and '${classURI2}' via instance count.`);
                 deferred.reject('no relation');
               }
             }

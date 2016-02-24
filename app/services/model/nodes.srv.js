@@ -75,7 +75,7 @@ function nodesService($log, Properties, Prefixes) {
 
           if (newNode.uri !== that.DISJOINT_NODE_URI) {
             var pre = newNode.uri.replace(that.suffixRegEx, '');
-            $log.debug("[Nodes] Prefix for new node is '" + pre + "'!");
+            $log.debug(`[Nodes] Prefix for new node is '${pre}'!`);
             Prefixes.addPrefix({'prefix': pre});
           }
         }
@@ -83,7 +83,7 @@ function nodesService($log, Properties, Prefixes) {
         newId = newNode.type + nodes.size;
         newNode.id = newId;
         nodes.set(newId, newNode);
-        $log.debug("[Nodes] Add new Node '" + newNode.uri +"'.");
+        $log.debug(`[Nodes] Add new Node '${newNode.uri}'.`);
       }
 
       that.updateSessionStorage();
@@ -147,7 +147,7 @@ function nodesService($log, Properties, Prefixes) {
     if (searchedItem !== undefined && searchedItem.hasOwnProperty('uri')) {
       uri = searchedItem.uri;
     } else {
-      $log.error("[Nodes] Can not resolve uri of '" + id + "'! Node doesn't exist!");
+      $log.error(`[Nodes] Can not resolve uri of '${id}'! Node doesn't exist!`);
     }
 
     return uri;
@@ -165,7 +165,7 @@ function nodesService($log, Properties, Prefixes) {
     if (searchedItem !== undefined) {
       searchedItem.name = label;
     } else {
-      $log.error("[Nodes] Can't add label to node with id '" + id + "', node was not found!");
+      $log.error(`[Nodes] Can't add label to node with id '${id}', node was not found!`);
     }
   };
 
@@ -181,8 +181,8 @@ function nodesService($log, Properties, Prefixes) {
     if (searchedItem !== undefined) {
       searchedItem.comment = commentToAdd;
     } else {
-      $log.error("[Nodes] Unable to add comment '" + commentToAdd + "' to node with id '" + id +
-        "'. There is no node with this id!");
+      $log.error(`[Nodes] Unable to add comment '${commentToAdd}' to node with id '${id}'.
+        There is no node with this id!`);
     }
   };
 
@@ -193,7 +193,7 @@ function nodesService($log, Properties, Prefixes) {
       nodeToChange.uri = newUri;
       that.updateSessionStorage();
     } else {
-      $log.error("[Nodes] Unable to change uri of '" + id + "' to '" + newUri + "', there is no node with this id!");
+      $log.error(`[Nodes] Unable to change uri of '${id}' to '${newUri}', there is no node with this id!`);
     }
   };
 
@@ -224,7 +224,7 @@ function nodesService($log, Properties, Prefixes) {
       var clazz = nodes.get(classId);
 
       if (clazz !== undefined && clazz.type === 'class' && clazz.typesLoaded) {
-        $log.debug("[Nodes] Types for '" + classId + "' are already loaded!");
+        $log.debug(`[Nodes] Types for '${classId}' are already loaded!`);
         return true;
       }
     }
@@ -249,10 +249,9 @@ function nodesService($log, Properties, Prefixes) {
         cl1.equivalentURIs = [];
         cl1.equivalentURIs.push(cl2.uri);
         nodes.delete(classId2);
-        $log.debug("[Nodes] Merged '" + classId1 + "' and '" + classId2 + "'.");
+        $log.debug(`[Nodes] Merged '${classId1}' and '${classId2}'.`);
       } else {
-        $log.error("[Nodes] Unable to merge '" + classId1 + "' and '" + classId2 + '!' +
-          ' at least one of them can not be found!');
+        $log.error(`[Nodes] Unable to merge '${classId1}' and '${classId2}'! at least one of them can not be found!`);
       }
     }
   };

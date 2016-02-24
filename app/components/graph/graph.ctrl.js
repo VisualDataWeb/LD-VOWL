@@ -43,6 +43,7 @@ function graphCtrl($scope, $q, $log, Filters, ClassExtractor, RelationExtractor,
   $scope.pendingRequests = Requests.getPendingRequests();
   $scope.failedRequests = Requests.getFailedRequests();
   $scope.successfulRequests = Requests.getSuccessfulRequests();
+  $scope.errorStatus = Requests.getStatus();
 
   $scope.onClick = function(item) {
     $scope.$apply(function () {
@@ -56,6 +57,7 @@ function graphCtrl($scope, $q, $log, Filters, ClassExtractor, RelationExtractor,
     $scope.pendingRequests = pending;
     $scope.successfulRequests = Requests.getSuccessfulRequests();
     $scope.failedRequests = Requests.getFailedRequests();
+    $scope.errorStatus = Requests.getStatus();
   });
 
   $scope.$on('prefixes-changed', function () {
@@ -145,9 +147,9 @@ function graphCtrl($scope, $q, $log, Filters, ClassExtractor, RelationExtractor,
 
             if (indexToRemove !== -1) {
               vm.classes.splice(indexToRemove, 1);
-              $log.debug("[Graph] Removed '" + data[i]['value'] + "' from class list.");
+              $log.debug(`[Graph] Removed '${data[i]['value']}' from class list.`);
             } else {
-              $log.error("[Graph] Unable to remove '" + data[i]['value'] + "' from class list, class doesn't exist!");
+              $log.error(`[Graph] Unable to remove '${data[i]['value']}' from class list, class doesn't exist!`);
             }
           }
         }

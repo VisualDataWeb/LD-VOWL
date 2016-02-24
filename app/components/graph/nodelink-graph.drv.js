@@ -245,7 +245,7 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
 
         if (d.type === 'property' || d.type === 'datatypeProperty' || d.type === 'subClassProperty') {
 
-          $log.debug("[Graph] Selected property '" + d.uri + "'.");
+          $log.debug(`[Graph] Selected property '${d.uri}'.`);
 
           // get relation and nodes involved
           var prop = Properties.getByNodeId(d.id);
@@ -274,7 +274,7 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
             message.item.props = prop.props.slice();
           }
         } else {
-          $log.debug("[Graph] Selected class '" + d.uri + "'.");
+          $log.debug(`[Graph] Selected class '${d.uri}'.`);
           message.item = d;
         }
 

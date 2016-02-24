@@ -285,7 +285,7 @@ function properties($interval, $log, $rootScope) {
 
       if (currentProp.uri === self.PLACEHOLDER_PROP_URI) {
 
-        $log.debug("[Properties] Remove placeholder of property '" + currentProp.uri + "'!");
+        $log.debug(`[Properties] Remove placeholder of property '${currentProp.uri}'!`);
 
         // do not add it, replace the placeholder information
         currentProp.uri = uriToAdd;
@@ -327,7 +327,7 @@ function properties($interval, $log, $rootScope) {
       self.properties[index][key] = value;
       self.needsUpdate = true;
     } else {
-      $log.error("[Properties] '" + uri + ' was not found!');
+      $log.error(`[Properties] '${uri}' was not found!`);
       $log.error('[Properties] There is no property at index ' + index + '!');
     }
   };

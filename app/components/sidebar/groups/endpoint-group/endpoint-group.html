@@ -1,0 +1,37 @@
+<div>
+  <p>
+    <strong>
+      <span class="glyphicon glyphicon-link" aria-hidden="true"></span>
+      URL:
+    </strong>
+    <a href="{{vm.endpointURL}}" target="_blank">{{vm.endpointURL}}</a>
+  </p>
+
+  <p>
+    <span class="glyphicon glyphicon-refresh" ng-class="{'glyphicon-spin': pendingRequests > 0}"></span>
+    <strong>Pending Requests:</strong>
+      <span ng-hide="pendingRequests === 0">
+        {{pendingRequests | number}}
+      </span>
+    <span ng-show="pendingRequests === 0">None</span>
+  </p>
+
+  <p>
+    <strong>
+      <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+      Successful Requests:
+    </strong>
+    <span ng-hide="successfulRequests === 0">{{successfulRequests | number}}</span>
+    <span ng-show="successfulRequests === 0">None</span>
+  </p>
+
+  <p ng-if="failedRequests > 0">
+    <strong>
+      <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+      Failed Requests:
+    </strong>
+    <span ng-hide="failedRequests === 0">{{failedRequests | number}}</span>
+    <span>(Status: {{errorStatus.join(', ')}})</span>
+    <span ng-show="failedRequests === 0">None</span>
+  </p>
+</div>

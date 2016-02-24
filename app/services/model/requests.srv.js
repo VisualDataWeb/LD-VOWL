@@ -13,6 +13,10 @@ function requests($rootScope) {
   that.successfulRequests = 0;
   that.failedRequests = 0;
 
+  that.errorStatus = new Set();
+  that.statusArray = [];
+  that.statusChanged = false;
+
   /**
    * Returns the number of pending requests.
    *
@@ -68,8 +72,27 @@ function requests($rootScope) {
   /**
    * Increases the number of failed requests by one.
    */
-  that.incFailedRequests = function () {
+  that.incFailedRequests = function (status) {
+    that.errorStatus.add(status);
+    that.statusChanged = true;
     that.failedRequests++;
+  };
+
+  /**
+   * Returns an array of status codes for the failed requests.
+   *
+   * @returns {Array}
+   */
+  that.getStatus = function () {
+    if (that.statusArray.length === 0 || that.statusChanged) {
+      that.statusArray.length = 0;
+      for (let s of that.errorStatus.values()) {
+        that.statusArray.push(s);
+      }
+      that.statusChanged = false;
+    }
+
+    return that.statusArray;
   };
 
   /**
@@ -79,6 +102,8 @@ function requests($rootScope) {
     that.pendingRequests = 0;
     that.successfulRequests = 0;
     that.failedRequests = 0;
+    that.errorStatus.clear();
+    that.statusArray.length = 0;
 
     for (let i = 0; i < that.promises.length; i++) {
       that.promises[i].reject([]);

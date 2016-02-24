@@ -20,7 +20,7 @@ function prefixesService($rootScope, $log) {
     if (typeof pre === 'object' && pre.prefix !== undefined) {
 
       if (pre.prefix.length < 8) {
-        $log.error("[Prefixes] Prefix is to short: '" + pre.prefix + "'");
+        $log.error(`[Prefixes] Prefix is to short: '${pre.prefix}'`);
         return;
       }
 
