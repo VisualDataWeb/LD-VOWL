@@ -27,16 +27,61 @@
         </div>
       </div>
     </div><!-- /.form-group -->
+  </form>
 
-    </form>
+  <h2>Blacklists</h2>
+  <form class="form-horizontal well">
+    <div class="form-group">
+      <label class="control-label col-sm-2">Lists</label>
+      <div class="col-sm-2">
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" ng-model="vm.enabled.RDF" ng-change="vm.restoreDefaults()">
+            RDF
+          </label>
+        </div>
+      </div>
 
-    <h2>Blacklists</h2>
-    <form class="form-horizontal well">
+      <div class="col-sm-2">
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" ng-model="vm.enabled.RDFS" ng-change="vm.restoreDefaults()">
+            RDFS
+          </label>
+        </div>
+      </div>
 
+      <div class="col-sm-2">
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" ng-model="vm.enabled.OWL" ng-change="vm.restoreDefaults()">
+            OWL
+          </label>
+        </div>
+      </div>
+
+      <div class="col-sm-2">
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" ng-model="vm.enabled.SKOS" ng-change="vm.restoreDefaults()">
+            SKOS
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="col-sm-offset-2 col-sm-10">
+        <p class="help-block">Watch out, any manual changes below will be overwritten!</p>
+      </div>
+    </div>
+  </form>
+
+  <form class="form-horizontal well">
     <div class="form-group">
       <label for="classBlacklist" class="control-label col-sm-2">Classes</label>
       <div class="col-sm-10">
-        <textarea class="form-control" id="classBlacklist" rows="9" ng-model="vm.classBlacklistInput">
+        <textarea class="form-control" id="classBlacklist" rows="6" ng-model="vm.classBlacklistInput">
         </textarea>
       </div>
     </div>
@@ -44,7 +89,7 @@
     <div class="form-group">
       <label class="control-label col-sm-2" for="propBlacklist">Properties</label>
       <div class="col-sm-10">
-        <textarea class="form-control" id="propBlacklist" rows="9" ng-model="vm.propertyBlacklistInput">
+        <textarea class="form-control" id="propBlacklist" rows="6" ng-model="vm.propertyBlacklistInput">
         </textarea>
       </div>
     </div>
@@ -62,5 +107,4 @@
       </div>
     </div>
   </form>
-
 </div>

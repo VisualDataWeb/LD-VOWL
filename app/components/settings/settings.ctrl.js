@@ -1,14 +1,16 @@
 'use strict';
 
-settingsCtrl.$inject = ['$log', 'PREFIX', 'PROPERTY_BLACKLIST', 'CLASS_BLACKLIST', 'RequestConfig', 'Nodes',
+settingsCtrl.$inject = ['$log', '$cookies', 'PREFIX', 'PROPERTY_BLACKLIST', 'CLASS_BLACKLIST', 'RequestConfig', 'Nodes',
   'Properties', 'Requests', 'ClassExtractor', 'RelationExtractor'];
 
 
-function settingsCtrl($log, PREFIX, PROPERTY_BLACKLIST, CLASS_BLACKLIST, RequestConfig, Nodes, Properties, Requests,
-                           ClassExtractor, RelationExtractor) {
+function settingsCtrl($log, $cookies, PREFIX, PROPERTY_BLACKLIST, CLASS_BLACKLIST, RequestConfig, Nodes, Properties,
+                      Requests, ClassExtractor, RelationExtractor) {
 
   /* jshint validthis: true */
   var vm = this;
+
+  const cookiePrefix = 'ldvowl_';
 
   //TODO move default settings into a constant
   vm.currentLanguage = RequestConfig.getLabelLanguage() || 'en';
@@ -26,11 +28,24 @@ function settingsCtrl($log, PREFIX, PROPERTY_BLACKLIST, CLASS_BLACKLIST, Request
 
   vm.separator = ', \n';
 
+  vm.enabled = [];
+
   vm.initialize = function () {
     var classItems = ClassExtractor.getBlacklist();
     var propertyItems = RelationExtractor.getBlacklist();
 
     vm.propsOrdered = RequestConfig.getPropertiesOrdered();
+
+    let cookieFlag = [];
+    cookieFlag['RDF'] = $cookies.get(cookiePrefix + 'blacklist_rdf');
+    cookieFlag['RDFS'] = $cookies.get(cookiePrefix + 'blacklist_rdfs');
+    cookieFlag['OWL'] = $cookies.get(cookiePrefix + 'blacklist_owl');
+    cookieFlag['SKOS'] = $cookies.get(cookiePrefix + 'blacklist_skos');
+
+    vm.enabled['RDF'] =  (cookieFlag['RDF'] !== undefined) ? (cookieFlag['RDF'] === 'true') : true;
+    vm.enabled['RDFS'] =  (cookieFlag['RDFS'] !== undefined) ? (cookieFlag['RDFS'] === 'true') : true;
+    vm.enabled['OWL'] =  (cookieFlag['OWL'] !== undefined) ? (cookieFlag['OWL'] === 'true') : true;
+    vm.enabled['SKOS'] =  (cookieFlag['SKOS'] !== undefined) ? (cookieFlag['SKOS'] === 'true') : false;
 
     vm.classBlacklistInput = classItems.join(vm.separator);
     vm.propertyBlacklistInput = propertyItems.join(vm.separator);
@@ -43,6 +58,11 @@ function settingsCtrl($log, PREFIX, PROPERTY_BLACKLIST, CLASS_BLACKLIST, Request
 
   vm.updatePropsOrdered = function () {
     RequestConfig.setPropertiesOrdered(vm.propsOrdered);
+  };
+
+  vm.updateList = function () {
+    vm.restoreDefaults();
+    vm.save();
   };
 
   /**
@@ -62,27 +82,37 @@ function settingsCtrl($log, PREFIX, PROPERTY_BLACKLIST, CLASS_BLACKLIST, Request
     Requests.clear();
 
     RequestConfig.setLimit(vm.currentLimit);
+
+    const rdfState = (vm.enabled['RDF']) ? 'true' : 'false';
+    const rdfsState = (vm.enabled['RDFS']) ? 'true' : 'false';
+    const owlState = (vm.enabled['OWL']) ? 'true' : 'false';
+    const skosState = (vm.enabled['SKOS']) ? 'true' : 'false';
+
+    $cookies.put(cookiePrefix + 'blacklist_rdf', rdfState);
+    $cookies.put(cookiePrefix + 'blacklist_rdfs', rdfsState);
+    $cookies.put(cookiePrefix + 'blacklist_owl', owlState);
+    $cookies.put(cookiePrefix + 'blacklist_skos', skosState);
   };
 
   /**
    * Reset all settings to its default values.
    */
   vm.restoreDefaults = function () {
-    var propertyItems = [];
-    for (var pVoc in PROPERTY_BLACKLIST) {
-      if (PROPERTY_BLACKLIST.hasOwnProperty(pVoc)) {
-        for (var i = 0; i < PROPERTY_BLACKLIST[pVoc].length; i++) {
+    let propertyItems = [];
+    for (let pVoc in PROPERTY_BLACKLIST) {
+      if (vm.enabled[pVoc] && PROPERTY_BLACKLIST.hasOwnProperty(pVoc)) {
+        for (let i = 0; i < PROPERTY_BLACKLIST[pVoc].length; i++) {
           propertyItems.push(PREFIX[pVoc] + PROPERTY_BLACKLIST[pVoc][i]);
         }
       }
     }
     vm.propertyBlacklistInput = propertyItems.join(vm.separator);
 
-    var classItems = [];
-    for (var cVoc in CLASS_BLACKLIST) {
-      if (CLASS_BLACKLIST.hasOwnProperty(cVoc)) {
-        for (var j = 0; j < CLASS_BLACKLIST[cVoc].length; j++) {
-          propertyItems.push(PREFIX[cVoc] + PROPERTY_BLACKLIST[cVoc][j]);
+    let classItems = [];
+    for (let cVoc in CLASS_BLACKLIST) {
+      if (vm.enabled[cVoc] && CLASS_BLACKLIST.hasOwnProperty(cVoc)) {
+        for (let i = 0; i < CLASS_BLACKLIST[cVoc].length; i++) {
+          classItems.push(PREFIX[cVoc] + CLASS_BLACKLIST[cVoc][i]);
         }
       }
     }

@@ -58,14 +58,17 @@ class ClassExtractor extends Extractor {
       return deferred.promise;
     }
 
-    var limit = this.reqConfig.getLimit() || 10;
-    var offset = 0;
+    self.classIds = [];
 
-    var query = this.queryFactory.getClassQuery(limit, offset);
+    let limit = this.reqConfig.getLimit() || 10;
+
     var requestURL = this.reqConfig.getRequestURL();
 
-    function doQuery(lastTry) {
-      self.$log.debug('[Classes] Send Request...');
+    function doQuery(lastTry = false, offset = 0, limit = 10) {
+
+      let query = self.queryFactory.getClassQuery(limit, offset);
+
+      self.$log.log(`[Classes] Send Request with offset ${offset}...`);
       self.$http.get(requestURL, self.reqConfig.forQuery(query, deferred))
         .then(function (response) {
           if (response.data.results !== undefined) {
@@ -76,9 +79,9 @@ class ClassExtractor extends Extractor {
               // endpoint may ignore limit
               bindings = bindings.slice(0, Math.min(bindings.length, limit*2));
 
-              var newClassIds = [];
+              let fetchMore = 0;
 
-              for (var i = 0; i < bindings.length; i++) {
+              for (let i = 0; i < bindings.length; i++) {
 
                 var currentClassURI = bindings[i].class.value;
 
@@ -92,18 +95,26 @@ class ClassExtractor extends Extractor {
                   node.active = false;
                   var newClassId = self.nodes.addNode(node);
 
-                  newClassIds.push(newClassId);
+                  self.classIds.push(newClassId);
 
                   if (bindings[i].class !== undefined && bindings[i].class.value !== undefined) {
                     self.requestClassLabel(newClassId, currentClassURI);
                   }
+                } else {
+                  self.$log.error(`[Classes] Class '${currentClassURI} is blacklisted!`);
+                  fetchMore++;
                 }
               }
 
-              deferred.resolve(newClassIds);
+              if (fetchMore === 0) {
+                deferred.resolve(self.classIds);
+              } else {
+                self.$log.error(`[Classes] Fetch ${fetchMore} more classes!`);
+                doQuery(false, offset + limit, fetchMore);
+              }
             } else {
               self.$log.debug('[Classes] No further classes found!');
-              deferred.resolve([]);
+              deferred.resolve(self.classIds);
             }
           } else {
             self.$log.error(response);
@@ -116,19 +127,19 @@ class ClassExtractor extends Extractor {
               // switch back and surrender
               self.reqConfig.switchFormat();
               self.$log.error('[Classes] Okay, I surrender...');
-              deferred.resolve([]);
+              deferred.resolve(self.classIds);
             }
           }
         }, function (err) {
           self.$log.error(err);
-          deferred.reject([]);
+          deferred.reject(self.classIds);
         })
         .finally(function () {
           self.promises.removePromise(promiseId);
         });
     } // end of doQuery()
 
-    doQuery(false);
+    doQuery(false, 0,limit);
 
     return deferred.promise;
   }
