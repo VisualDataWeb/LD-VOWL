@@ -101,7 +101,7 @@ class ClassExtractor extends Extractor {
                     self.requestClassLabel(newClassId, currentClassURI);
                   }
                 } else {
-                  self.$log.error(`[Classes] Class '${currentClassURI} is blacklisted!`);
+                  self.$log.debug(`[Classes] Class '${currentClassURI} is blacklisted!`);
                   fetchMore++;
                 }
               }
@@ -109,7 +109,7 @@ class ClassExtractor extends Extractor {
               if (fetchMore === 0) {
                 deferred.resolve(self.classIds);
               } else {
-                self.$log.error(`[Classes] Fetch ${fetchMore} more classes!`);
+                self.$log.debug(`[Classes] Fetch ${fetchMore} more classes!`);
                 doQuery(false, offset + limit, fetchMore);
               }
             } else {
