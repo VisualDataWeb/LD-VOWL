@@ -74,7 +74,8 @@ function startCtrl($log, $location, Nodes, Properties, Requests, RequestConfig, 
     'http://rdf.disgenet.org/sparql/', // genetic diseases, properties have no meaningful names
     'http://linkeddata.finki.ukim.mk/sparql', // Drug Data from the Health Insurance Fund of Macedonia
     'http://fintrans.publicdata.eu/sparql',
-    'http://www.ida.liu.se/projects/semtech/openrdf-sesame/repositories/energy' // about energy reduction, fast
+    'http://www.ida.liu.se/projects/semtech/openrdf-sesame/repositories/energy', // about energy reduction, fast
+    'http://ldf.fi/ww1lod/sparql' // about WW1, works without proxy, good candidate for user study
   ];
 
   start.endpoint = RequestConfig.getEndpointURL() || start.endpoints[0];

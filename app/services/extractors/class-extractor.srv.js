@@ -85,7 +85,7 @@ class ClassExtractor extends Extractor {
 
                 var currentClassURI = bindings[i].class.value;
 
-                if (!self.inBlacklist(currentClassURI)) {
+                if (!self.inBlacklist(currentClassURI) && bindings[i].instanceCount !== undefined) {
                   var node = {};
 
                   node.uri = currentClassURI;
