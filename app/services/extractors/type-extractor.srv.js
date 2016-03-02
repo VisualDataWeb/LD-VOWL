@@ -29,6 +29,11 @@ function typeExtractor($http, $q, $log, RequestConfig, QueryFactory, Nodes, Prop
     $http.get(requestURL, RequestConfig.forQuery(query, canceller))
       .then(function (response) {
 
+        if (response === undefined || response.data === undefined || response.data.results === undefined) {
+          $log.warn('[Referring Types] No results');
+          return;
+        }
+
         var bindings = response.data.results.bindings;
 
         if (bindings !== undefined && bindings.length > 0) {
@@ -37,22 +42,30 @@ function typeExtractor($http, $q, $log, RequestConfig, QueryFactory, Nodes, Prop
 
           for (var j = 0; j < bindings.length; j++) {
             if (bindings[j].valType !== undefined && bindings[j].valType.hasOwnProperty('value')) {
-              var newNode = {};
-              newNode.uri = bindings[j].valType.value;
-              newNode.type = 'type';
-              newNode.value = 1;
-              var typeId = Nodes.addNode(newNode);
 
-              // connect this node with placeholder intermediate node until the relation is found
-              var intermediateNode = {};
-              intermediateNode.uri = Properties.PLACEHOLDER_PROP_URI;
-              intermediateNode.type = 'datatypeProperty';
-              intermediateNode.value = 1;
-              var intermediateId = Nodes.addNode(intermediateNode);
+              let typeURI = bindings[j].valType.value;
 
-              Properties.addProperty(classId, intermediateId, typeId, Properties.PLACEHOLDER_PROP_URI);
+              // check whether type has a valid URI
+              if (typeof typeURI === 'string' && typeURI.length > 5 && typeURI.match(/^http.*/)) {
+                var newNode = {};
+                newNode.uri = typeURI;
+                newNode.type = 'type';
+                newNode.value = 1;
+                var typeId = Nodes.addNode(newNode);
 
-              RelationExtractor.requestClassTypeRelation(classId, intermediateId, typeId);
+                // connect this node with placeholder intermediate node until the relation is found
+                var intermediateNode = {};
+                intermediateNode.uri = Properties.PLACEHOLDER_PROP_URI;
+                intermediateNode.type = 'datatypeProperty';
+                intermediateNode.value = 1;
+                var intermediateId = Nodes.addNode(intermediateNode);
+
+                Properties.addProperty(classId, intermediateId, typeId, Properties.PLACEHOLDER_PROP_URI);
+
+                RelationExtractor.requestClassTypeRelation(classId, intermediateId, typeId);
+              } else {
+                $log.warn(`[Referring Types] '${typeURI}' is not a valid URI! Data type was ignored.`);
+              }
             }
           }
         } else {
