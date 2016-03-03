@@ -113,6 +113,11 @@ td.prefix-table {
   margin-bottom: 0px;
 }
 
+p.comment {
+  max-height: 130px;
+  overflow-y: scroll;
+}
+
 /* Responsive: Portrait tablets and up */
 @media screen and (min-width: 768px) {
   .container {
