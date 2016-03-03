@@ -22,19 +22,20 @@ function startCtrl($log, $location, Nodes, Properties, Requests, RequestConfig, 
 
   start.nonProxyEndpoints = [
     'http://dbpedia.org/sparql', // about dbpedia, works without proxy
+    'http://ldf.fi/ww1lod/sparql', // about WW1, works without proxy, good candidate for user study
     'http://lod.springer.com/sparql', // about scientific publications @ springer, no relations (504 Gateway Timeout)
     'http://transparency.270a.info/sparql', // about corruption, works without proxy
     'http://bfs.270a.info/sparql', // swiss statistics, many subclass relations
     'http://dutchshipsandsailors.nl/data/sparql/', // no relations anymore (no errors), fast
     'http://semanticweb.cs.vu.nl/dss/sparql/', // dutch ships and sailors, with few edges
-    'http://data.allie.dbcls.jp/sparql', // database center for life science, works without proxy, no types
 
+    'http://data.allie.dbcls.jp/sparql', // database center for life science, works without proxy, no types
     'https://www.ebi.ac.uk/rdf/services/biomodels/sparql',    // works without proxy, classes and types, very slow
     'http://www.ebi.ac.uk/rdf/services/biosamples/sparql', // works without proxy, types & props slow
     'https://www.ebi.ac.uk/rdf/services/biosamples/sparql',
     'http://www.ebi.ac.uk/rdf/services/biomodels/sparql', // slow, also available via https
-    'https://www.ebi.ac.uk/rdf/services/chembl/sparql', // works without proxy, classes and types, slow
 
+    'https://www.ebi.ac.uk/rdf/services/chembl/sparql', // works without proxy, classes and types, slow
     'http://datos.bcn.cl/sparql', // about norms, works without proxy, classes and subclasses, fast
     'http://lod.euscreen.eu/sparql', // about television, works without proxy, (sub-)classes & types, slow
     'http://enipedia.tudelft.nl/sparql',                      // works without proxy, no types or properties, fast
@@ -45,12 +46,11 @@ function startCtrl($log, $location, Nodes, Properties, Requests, RequestConfig, 
     'http://trulla.visus.uni-stuttgart.de:8081/linkedmdb/sparql',
     'http://trulla.visus.uni-stuttgart.de:8081/dblp/sparql',
     'http://trulla.visus.uni-stuttgart.de:8081/ciawfb/sparql',
+
     'http://trulla.visus.uni-stuttgart.de:8081/stackexchange/sparql',
 
     'http://vocabulary.semantic-web.at/PoolParty/sparql/AustrianSkiTeam', // austrian ski team
-
-    'http://data.archiveshub.ac.uk/sparql', // works without proxy, some broken types, fast
-    'http://ldf.fi/ww1lod/sparql' // about WW1, works without proxy, good candidate for user study
+    'http://data.archiveshub.ac.uk/sparql' // works without proxy, some broken types, fast
   ];
 
   start.proxyOnlyEndpoints =  [
@@ -81,7 +81,8 @@ function startCtrl($log, $location, Nodes, Properties, Requests, RequestConfig, 
     'http://rdf.disgenet.org/sparql/', // genetic diseases, proxy only, props have no meaningful names, no types
     'http://linkeddata.finki.ukim.mk/sparql', // Drug Data from the Health Insurance Fund of Macedonia
 
-    'http://www.ida.liu.se/projects/semtech/openrdf-sesame/repositories/energy' // about energy reduction, fast
+    'http://www.ida.liu.se/projects/semtech/openrdf-sesame/repositories/energy', // about energy reduction, fast
+    'http://aemet.linkeddata.es/sparql'
   ];
 
   // jshint ignore:start
