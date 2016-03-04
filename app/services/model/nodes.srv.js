@@ -6,6 +6,7 @@ function nodesService($log, Properties, Prefixes) {
 
   var classUriIdMap = new Map();
   var nodes = new Map();
+  var subClassSet = new Set();
 
   /* jshint validthis: true */
   var that = this;
@@ -26,6 +27,8 @@ function nodesService($log, Properties, Prefixes) {
         for (var node of nodes.values()) {
           if (node.type === 'class' || node.type === 'disjointNode') {
             classUriIdMap.set(node.uri, node.id);
+          } else if (node.type === 'subClassProperty') {
+            subClassSet.add(node.childId + node.parentId);
           }
         }
 
@@ -78,6 +81,24 @@ function nodesService($log, Properties, Prefixes) {
             $log.debug(`[Nodes] Prefix for new node is '${pre}'!`);
             Prefixes.addPrefix({'prefix': pre});
           }
+        }
+      } else if(newNode.type === 'subClassProperty') {
+        if (newNode.parentId !== undefined && newNode.childId !== undefined)  {
+          const combination = newNode.childId + newNode.parentId ;
+
+          if (!subClassSet.has(combination)) {
+            // save this parent-child relation
+            subClassSet.add(newNode.childId + newNode.parentId);
+
+            newId = newNode.type + nodes.size;
+            newNode.id = newId;
+            nodes.set(newId, newNode);
+            $log.debug(`[Nodes] Add new Node '${newNode.uri}'.`);
+          } else {
+            $log.warn(`[Nodes] Sub-class rel between ${newNode.childId} & ${newNode.parentId} does already exist!`);
+          }
+        } else {
+          $log.error(`[Nodes] Missing parent child info for subclass relation!`);
         }
       } else {
         newId = newNode.type + nodes.size;
@@ -294,6 +315,11 @@ function nodesService($log, Properties, Prefixes) {
     classUriIdMap = new Map();
     nodes = new Map();
     Prefixes.clear();
+  };
+
+  that.hasSubClassPropNode = function (childId, parentId) {
+    const combination = childId + parentId;
+    return subClassSet.has(combination);
   };
 
   that.initMap();

@@ -247,13 +247,13 @@ class RelationExtractor extends Extractor {
     const promiseId = this.promises.addPromise(deferred);
 
     if (classId1 === undefined || classId2 === undefined) {
-      deferred.resolve('missing parameter');
+      deferred.reject('missing parameter');
       return deferred.promise;
     }
 
     // this makes absolutely no sense
     if (classId1 === classId2) {
-      deferred.resolve('equal');
+      deferred.reject('same');
       return deferred.promise;
     }
 
@@ -308,37 +308,52 @@ class RelationExtractor extends Extractor {
                 deferred.resolve(classId2);
               } else if (commonCount === count1 && commonCount < count2) {
                 // class1 is a subclass of class2, create a relation
-                self.$log.debug('[Relations] ' + classId1 + ' seems to be a subclass of ' + classId2 + '!');
+                self.$log.debug(`[Relations] '${classId1}' seems to be a subclass of '${classId2}'!`);
 
-                // create an intermediate node
-                subClassPropNode = {};
-                subClassPropNode.uri = self.props.SUBCLASS_URI;
-                subClassPropNode.type = 'subClassProperty';
-                subClassPropNode.name = 'Subclass of';
-                subClassPropNode.value = 10000;
-                subClassPropNode.commonInstances = commonCount;
+                // check if this relation is already known
+                if (!self.nodes.hasSubClassPropNode(classId1, classId2)) {
 
-                subClassPropNodeId = self.nodes.addNode(subClassPropNode);
+                  // create an intermediate node
+                  subClassPropNode = {};
+                  subClassPropNode.uri = self.props.SUBCLASS_URI;
+                  subClassPropNode.type = 'subClassProperty';
+                  subClassPropNode.name = 'Subclass of';
+                  subClassPropNode.value = 10000;
+                  subClassPropNode.commonInstances = commonCount;
+                  subClassPropNode.childId = classId1;
+                  subClassPropNode.parentId = classId2;
 
-                // create a property
-                self.props.addSubClassProperty(classId1, subClassPropNodeId, classId2);
+                  subClassPropNodeId = self.nodes.addNode(subClassPropNode);
+
+                  // create a property
+                  self.props.addSubClassProperty(classId1, subClassPropNodeId, classId2);
+                }
+
                 deferred.reject('subclass');
               } else if (commonCount === count2 && commonCount < count1) {
                 // class2 is a subclass of class1, create a relation
-                self.$log.debug('[Relations] ' + classId2 + ' seems to be a subclass of ' + classId1 + '!');
+                self.$log.debug(`[Relations] '${classId2}' seems to be a subclass of '${classId1}'!`);
 
-                // create an intermediate node
-                subClassPropNode = {};
-                subClassPropNode.uri = self.props.SUBCLASS_URI;
-                subClassPropNode.name = 'Subclass of';
-                subClassPropNode.type = 'subClassProperty';
-                subClassPropNode.value = 10000;
-                subClassPropNode.commonInstances = commonCount;
 
-                subClassPropNodeId = self.nodes.addNode(subClassPropNode);
+                // check whether this relation is already known
+                if (!self.nodes.hasSubClassPropNode(classId1, classId2)) {
 
-                // create a property
-                self.props.addSubClassProperty(classId2, subClassPropNodeId, classId1);
+                  // create an intermediate node
+                  subClassPropNode = {};
+                  subClassPropNode.uri = self.props.SUBCLASS_URI;
+                  subClassPropNode.name = 'Subclass of';
+                  subClassPropNode.type = 'subClassProperty';
+                  subClassPropNode.value = 10000;
+                  subClassPropNode.commonInstances = commonCount;
+                  subClassPropNode.childId = classId2;
+                  subClassPropNode.parentId = classId1;
+
+                  subClassPropNodeId = self.nodes.addNode(subClassPropNode);
+
+                  // create a property
+                  self.props.addSubClassProperty(classId2, subClassPropNodeId, classId1);
+                }
+
                 deferred.reject('subclass');
               } else if (commonCount === 0) {
 

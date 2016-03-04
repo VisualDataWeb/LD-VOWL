@@ -129,8 +129,8 @@ function graphCtrl($scope, $q, $log, Filters, ClassExtractor, RelationExtractor,
       }
 
       var promises = [];
-      for (var end = 0; end < vm.classes.length; end++) {
-        for (var start = 0; start < end; start++) {
+      for (let end = 0; end < vm.classes.length; end++) {
+        for (let start = 0; start < end; start++) {
           promises.push(RelationExtractor.requestClassEquality(vm.classes[start], vm.classes[end]));
         }
       }
@@ -182,8 +182,8 @@ function graphCtrl($scope, $q, $log, Filters, ClassExtractor, RelationExtractor,
     $log.debug('[Graph] Send requests for relations...');
 
     // for each pair of classes search relation and check equality
-    for (var end = 0; end < vm.classes.length; end++) {
-      for (var start = 0; start < vm.classes.length; start++) {
+    for (let end = 0; end < vm.classes.length; end++) {
+      for (let start = 0; start < vm.classes.length; start++) {
         if (vm.includeLoops || start !== end) {
           var origin = vm.classes[start];
           var target = vm.classes[end];
