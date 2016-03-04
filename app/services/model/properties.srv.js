@@ -328,7 +328,6 @@ function properties($interval, $log, $rootScope) {
       self.needsUpdate = true;
     } else {
       $log.error(`[Properties] '${uri}' was not found!`);
-      $log.error('[Properties] There is no property at index ' + index + '!');
     }
   };
 

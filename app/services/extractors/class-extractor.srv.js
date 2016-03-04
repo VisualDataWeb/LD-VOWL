@@ -37,7 +37,7 @@ class ClassExtractor extends Extractor {
 
     // set up blacklists
     for (var type in CLASS_BLACKLIST) {
-      if (CLASS_BLACKLIST.hasOwnProperty(type)) {
+      if (CLASS_BLACKLIST.hasOwnProperty(type) && type !== 'SKOS') {
         for (var i = 0; i < CLASS_BLACKLIST[type].length; i++) {
           this.blacklist.push(PREFIX[type] + CLASS_BLACKLIST[type][i]);
         }
@@ -68,7 +68,7 @@ class ClassExtractor extends Extractor {
 
       let query = self.queryFactory.getClassQuery(limit, offset);
 
-      self.$log.log(`[Classes] Send Request with offset ${offset}...`);
+      self.$log.debug(`[Classes] Send Request with offset ${offset}...`);
       self.$http.get(requestURL, self.reqConfig.forQuery(query, deferred))
         .then(function (response) {
           if (response.data.results !== undefined) {

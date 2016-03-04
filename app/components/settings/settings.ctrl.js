@@ -76,6 +76,10 @@ function settingsCtrl($log, $cookies, PREFIX, PROPERTY_BLACKLIST, CLASS_BLACKLIS
     // update blacklist in extractor
     RelationExtractor.setBlacklist(items);
 
+    var classInput = vm.classBlacklistInput.replace(/(\r\n|\n|\r|\s)/gm,'');
+    var classItems = classInput.split(',');
+    ClassExtractor.setBlacklist(classItems);
+
     // delete all loaded data
     Nodes.clearAll();
     Properties.clearAll();

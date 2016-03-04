@@ -27,7 +27,7 @@ class RelationExtractor extends Extractor {
     this.promises = Promises;
 
     for (var type in PROPERTY_BLACKLIST) {
-      if (PROPERTY_BLACKLIST.hasOwnProperty(type)) {
+      if (PROPERTY_BLACKLIST.hasOwnProperty(type) && type !== 'SKOS') {
         for (var i = 0; i < PROPERTY_BLACKLIST[type].length; i++) {
           this.blacklist.push(PREFIX[type] + PROPERTY_BLACKLIST[type][i]);
         }
@@ -75,6 +75,8 @@ class RelationExtractor extends Extractor {
             if (bindings[0].prop !== undefined && bindings[0].prop.value !== undefined &&
                 bindings[0].prop.value !== '') {
 
+              let first = true;
+
               // add uris if they are not blacklisted
               for (var i = 0; i < bindings.length; i++) {
                 var currentURI = bindings[i].prop.value;
@@ -107,13 +109,13 @@ class RelationExtractor extends Extractor {
                     self.props.addProperty(originId, intermediateId, targetId, currentURI);
                   }
 
+                  if (first) {
+                    self.requestPropertyLabel(currentURI);
+                    first = false;
+                  }
+
                 } // end of if not blacklisted
               } // end of for loop over all bindings
-
-              if (offset === 0 && bindings.length > 0) {
-                // now search for a label
-                self.requestPropertyLabel(bindings[0].prop.value);
-              }
 
               if (bindings.length === limit) {
                 // there might be more, schedule next request
