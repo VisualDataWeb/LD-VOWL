@@ -80,7 +80,16 @@
         }
       },
       {
-        "module": "webpage"
+        "module": "webpage",
+        "options": {
+          "pushState": true
+        }
+      },
+      {
+        "module": "client-settings",
+        "options": {
+          "showEndpointURL": "$SHOW_ENDPOINT_URL"
+        }
       }
     ]
   }

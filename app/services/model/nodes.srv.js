@@ -6,6 +6,7 @@ function nodesService($log, Properties, Prefixes) {
 
   var classUriIdMap = new Map();
   var nodes = new Map();
+
   var subClassSet = new Set();
 
   /* jshint validthis: true */
@@ -317,9 +318,24 @@ function nodesService($log, Properties, Prefixes) {
     Prefixes.clear();
   };
 
+  /**
+   * Returns true if an sub class relation between the classes with the given ids does already exist, false otherwise.
+   *
+   * @param childId - the id of the child class
+   * @param parentId - the id of the parent class
+   * @returns {boolean}
+   */
   that.hasSubClassPropNode = function (childId, parentId) {
-    const combination = childId + parentId;
-    return subClassSet.has(combination);
+    let exists = false;
+
+    if (childId !== undefined && parentId !== undefined) {
+      const combination = childId + parentId;
+      exists = subClassSet.has(combination);
+    } else {
+      $log.error('[Nodes] Child or parent id is undefined!');
+    }
+
+    return exists;
   };
 
   that.initMap();
