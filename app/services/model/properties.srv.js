@@ -315,8 +315,8 @@ function properties($interval, $log, $rootScope) {
   };
 
   self.insertValue = function (uri, key, value) {
-    var index = -1;
-    for (var i = 0; i < self.properties.length; i++) {
+    let index = -1;
+    for (let i = 0; i < self.properties.length; i++) {
       if (self.properties[i].uri === uri) {
         index = i;
         break;
@@ -327,7 +327,7 @@ function properties($interval, $log, $rootScope) {
       self.properties[index][key] = value;
       self.needsUpdate = true;
     } else {
-      $log.error(`[Properties] '${uri}' was not found!`);
+      $log.error(`[Properties] '${uri}' was not found! The value ${value} could not be inserted as ${key}.`);
     }
   };
 

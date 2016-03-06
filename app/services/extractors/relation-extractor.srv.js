@@ -75,7 +75,7 @@ class RelationExtractor extends Extractor {
             if (bindings[0].prop !== undefined && bindings[0].prop.value !== undefined &&
                 bindings[0].prop.value !== '') {
 
-              let first = true;
+              let first = (offset === 0);
 
               // add uris if they are not blacklisted
               for (var i = 0; i < bindings.length; i++) {
