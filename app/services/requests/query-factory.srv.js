@@ -68,6 +68,18 @@ function queryFactory() {
       return query;
     },
 
+    // alternative without SAMPLE
+    //
+    //getLabelQuery: function (uri, labelLang = defaultLang) {
+    //  return prefixes() +
+    //    `SELECT (?label)
+    //  WHERE {
+    //    <${uri}> rdfs:label ?label.
+    //    FILTER (langMatches(lang(?label), "${labelLang}"))
+    //  }
+    //  LIMIT 1`;
+    //},
+
     getPreferredLabelQuery: function (uri, labelLang) {
       labelLang = labelLang || defaultLang;
 

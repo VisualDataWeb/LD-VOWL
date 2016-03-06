@@ -23,6 +23,8 @@ function startCtrl($log, $location, Nodes, Properties, Requests, RequestConfig, 
   start.nonProxyEndpoints = [
     'http://dbpedia.org/sparql', // about dbpedia, works without proxy
     'http://ldf.fi/ww1lod/sparql', // about WW1, works without proxy, good candidate for user study
+    'http://apps.morelab.deusto.es/labman/sparql', // works, fast
+
     'http://lod.springer.com/sparql', // about scientific publications @ springer, no relations (504 Gateway Timeout)
     'http://transparency.270a.info/sparql', // about corruption, works without proxy
     'http://bfs.270a.info/sparql', // swiss statistics, many subclass relations
@@ -50,10 +52,23 @@ function startCtrl($log, $location, Nodes, Properties, Requests, RequestConfig, 
     'http://trulla.visus.uni-stuttgart.de:8081/stackexchange/sparql',
 
     'http://vocabulary.semantic-web.at/PoolParty/sparql/AustrianSkiTeam', // austrian ski team
-    'http://data.archiveshub.ac.uk/sparql' // works without proxy, some broken types, fast
+    'http://data.archiveshub.ac.uk/sparql', // works without proxy, some broken types, fast
+    'http://resource.geolba.ac.at/PoolParty/sparql/GeologicTimeScale',
+    'http://vocabulary.wolterskluwer.de/PoolParty/sparql/arbeitsrecht',
+    'http://imf.270a.info/sparql', // no class-to-class relations, slow
+    'http://data.linkedmdb.org/sparql',
+    'http://linkedgeodata.org/sparql', // works but slow
+    'http://www.lotico.com:3030/lotico/sparql', // semantic social network, works but slow
+    'http://onto.mondis.cz/openrdf-sesame/repositories/mondis-record-owlim', // subclass relations broken
+    'http://data.nobelprize.org/sparql', // works, rather slow
+    'http://data.oceandrilling.org/sparql', // no errors, class-to-class rather slow
+    'http://vocabulary.semantic-web.at/PoolParty/sparql/OpenData', // no errors, very abstract data set
+    'http://data.utpl.edu.ec/ecuadorresearch/lod/sparql' // feq errors, dense graph, abstract data set
   ];
 
   start.proxyOnlyEndpoints =  [
+    'http://www.influencetracker.com:8890/sparql', // about influence of twitter accounts, fast
+
     'http://linkedlifedata.com/sparql', // about some bio data, works only with proxy, slow
 
     'http://data.linkedu.eu/forge/query',                     // down?
@@ -82,7 +97,17 @@ function startCtrl($log, $location, Nodes, Properties, Requests, RequestConfig, 
     'http://linkeddata.finki.ukim.mk/sparql', // Drug Data from the Health Insurance Fund of Macedonia
 
     'http://www.ida.liu.se/projects/semtech/openrdf-sesame/repositories/energy', // about energy reduction, fast
-    'http://aemet.linkeddata.es/sparql'
+    'http://aemet.linkeddata.es/sparql',
+    'http://data.globalchange.gov/sparql',
+    'http://wordnet.okfn.gr:8890/sparql/',
+    'http://greek-lod.auth.gr/police/sparql',
+    'http://www.imagesnippets.com/sparql/images', // no class-to-class relations, slow
+    'http://www.rechercheisidore.fr/sparql',
+    'http://www.linklion.org:8890/sparql',
+    'http://www.contextdatacloud.org:8890/sparql', // no types
+    'http://sparql.reeep.org/', // no types
+    'http://en.openei.org/sparql', // open energy info, dirty names, really fast
+    'http://www.openmobilenetwork.org:8890/sparql' // fast, no types
   ];
 
   // jshint ignore:start
