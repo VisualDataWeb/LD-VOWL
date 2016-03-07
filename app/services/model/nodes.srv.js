@@ -15,7 +15,9 @@ function nodesService($log, Properties, Prefixes) {
 
   that.DISJOINT_NODE_URI = 'http://my-own-disjoint-node';
 
+  // regular expressions being used to get suffix
   that.suffixRegEx = /(#?[^\/#]*)\/?$/;
+  that.altSuffixRegEx = /(:[^:]*)$/;
 
   that.initMap = function () {
     if (sessionStorage !== undefined) {
@@ -52,7 +54,12 @@ function nodesService($log, Properties, Prefixes) {
     for (var node of nodes.values()) {
       if (node.uri !== undefined && node.uri.length > 0 &&
           (node.uri !== Properties.SUBCLASS_URI && node.uri !== that.DISJOINT_NODE_URI)) {
-        var pre = node.uri.replace(that.suffixRegEx, '');
+        let pre = node.uri.replace(that.suffixRegEx, '');
+
+        if (pre.length === 0) {
+          pre = node.uri.replace(that.altSuffixRegEx, '');
+        }
+        $log.debug(`[Nodes] Prefix for '${node.uri}' is '${pre}'.`);
         Prefixes.addPrefix({'prefix': pre});
       }
     }
@@ -83,8 +90,13 @@ function nodesService($log, Properties, Prefixes) {
           classUriIdMap.set(newNode.uri, newId);
 
           if (newNode.uri !== that.DISJOINT_NODE_URI) {
-            var pre = newNode.uri.replace(that.suffixRegEx, '');
-            $log.debug(`[Nodes] Prefix for new node is '${pre}'!`);
+            let pre = newNode.uri.replace(that.suffixRegEx, '');
+
+            if (pre.length === 0) {
+              pre = newNode.uri.replace(that.altSuffixRegEx, '');
+            }
+
+            $log.debug(`[Nodes] Prefix for new node with uri ${newNode.uri} is '${pre}'!`);
             Prefixes.addPrefix({'prefix': pre});
           }
         }
@@ -362,11 +374,13 @@ function nodesService($log, Properties, Prefixes) {
     classUriIdMap = new Map();
     nodes = new Map();
     equivalentClasses = new Map();
+    subClassSet.clear();
     Prefixes.clear();
   };
 
   /**
    * Returns true if an sub class relation between the classes with the given ids does already exist, false otherwise.
+   * If one of the given nodes does not exist anymore, it is assumed that the sub class node exists.
    *
    * @param childId - the id of the child class
    * @param parentId - the id of the parent class
@@ -376,8 +390,15 @@ function nodesService($log, Properties, Prefixes) {
     let exists = false;
 
     if (childId !== undefined && parentId !== undefined) {
-      const combination = childId + parentId;
-      exists = subClassSet.has(combination);
+      const childNode = nodes.get(childId);
+      const parentNode = nodes.get(parentId);
+
+      if (childNode !== undefined && parentNode !== undefined) {
+        const combination = childId + parentId;
+        exists = subClassSet.has(combination);
+      } else {
+        exists = true;
+      }
     } else {
       $log.error('[Nodes] Child or parent id is undefined!');
     }

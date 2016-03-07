@@ -85,7 +85,8 @@ class ClassExtractor extends Extractor {
 
                 var currentClassURI = bindings[i].class.value;
 
-                if (!self.inBlacklist(currentClassURI) && bindings[i].instanceCount !== undefined) {
+                if (currentClassURI.match(/^http.*/) && !self.inBlacklist(currentClassURI) &&
+                    bindings[i].instanceCount !== undefined) {
                   var node = {};
 
                   node.uri = currentClassURI;
@@ -101,7 +102,7 @@ class ClassExtractor extends Extractor {
                     self.requestClassLabel(newClassId, currentClassURI);
                   }
                 } else {
-                  self.$log.debug(`[Classes] Class '${currentClassURI} is blacklisted!`);
+                  self.$log.debug(`[Classes] Class '${currentClassURI} is either blacklisted or has an invalid URI!`);
                   fetchMore++;
                 }
               }
