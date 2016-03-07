@@ -6,6 +6,7 @@ function nodesService($log, Properties, Prefixes) {
 
   var classUriIdMap = new Map();
   var nodes = new Map();
+  let equivalentClasses = new Map();
 
   var subClassSet = new Set();
 
@@ -30,6 +31,10 @@ function nodesService($log, Properties, Prefixes) {
             classUriIdMap.set(node.uri, node.id);
           } else if (node.type === 'subClassProperty') {
             subClassSet.add(node.childId + node.parentId);
+          } else if (node.hasEquivalent === true && node.equivalentURIs !== undefined) {
+            for (let i = 0; i < node.equivalentURIs.length; i++) {
+              equivalentClasses.set(node.equivalentURIs[i], node.id);
+            }
           }
         }
 
@@ -260,22 +265,63 @@ function nodesService($log, Properties, Prefixes) {
    * @param classId2 - the id of the class to merge (will be deleted)
    */
   that.mergeClasses = function (classId1, classId2) {
+    let deletedId = '';
     if (classId1 !== undefined && typeof classId1 === 'string' && classId2 !== undefined &&
         typeof classId2 === 'string') {
 
-      var cl1 = nodes.get(classId1);
-      var cl2 = nodes.get(classId2);
+      $log.debug(`[Nodes] Try to merge ${classId1} and ${classId2}...`);
+
+      // NOTE: one or both of them may not exist anymore, because they are already merged with another node
+
+      var cl1 = that.getClassNodeOrEquivalent(classId1);
+      var cl2 = that.getClassNodeOrEquivalent(classId2);
 
       if (cl1 !== undefined && cl1.type === 'class' && cl2 !== undefined && cl2.type === 'class') {
-        cl1.hasEquivalent = true;
-        cl1.equivalentURIs = [];
-        cl1.equivalentURIs.push(cl2.uri);
-        nodes.delete(classId2);
-        $log.debug(`[Nodes] Merged '${classId1}' and '${classId2}'.`);
+        if (cl1 === cl2) {
+          $log.debug('[Nodes] Nothing to do here, classes are already merged!');
+        } else {
+
+          // okay classes are not yet equal
+
+          if (!cl1.hasEquivalent) {
+            cl1.hasEquivalent = true;
+            cl1.equivalentURIs = [];
+          }
+
+          if (!cl2.hasEquivalent) {
+            // only one uri to copy
+            cl1.equivalentURIs.push(cl2.uri);
+          } else if (cl2.equivalentURIs !== undefined) {
+            // copy all equivalent uris over
+            for (let i = 0; i < cl2.equivalentURIs.length; i++) {
+              cl1.equivalentURIs.push(cl2.equivalentURIs[i]);
+            }
+          }
+
+          equivalentClasses.set(classId2, cl1.id);
+          nodes.delete(classId2);
+          deletedId = classId2;
+          $log.debug(`[Nodes] Merged '${cl1.id}' and '${classId2}'.`);
+        }
       } else {
         $log.error(`[Nodes] Unable to merge '${classId1}' and '${classId2}'! at least one of them can not be found!`);
       }
     }
+
+    return deletedId;
+  };
+
+  that.getClassNodeOrEquivalent = function (classId) {
+    let nodeToReturn = nodes.get(classId);
+
+    if (nodeToReturn === undefined) {
+      const equivalentId = equivalentClasses.get(classId);
+      if (equivalentId !== undefined) {
+        nodeToReturn = nodes.get(equivalentId);
+      }
+    }
+
+    return nodeToReturn;
   };
 
   that.removeNodes = function (nodeArr) {
@@ -315,6 +361,7 @@ function nodesService($log, Properties, Prefixes) {
   that.clearAll = function () {
     classUriIdMap = new Map();
     nodes = new Map();
+    equivalentClasses = new Map();
     Prefixes.clear();
   };
 

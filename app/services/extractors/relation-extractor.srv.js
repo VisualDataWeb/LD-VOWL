@@ -304,10 +304,14 @@ class RelationExtractor extends Extractor {
                 self.props.mergePropertiesBetween(classId1, classId2);
 
                 // classes are equivalent, merge them
-                self.nodes.mergeClasses(classId1, classId2);
+                const deletedId = self.nodes.mergeClasses(classId1, classId2);
 
                 // save merged class
-                deferred.resolve(classId2);
+                if (deletedId !== '') {
+                  deferred.resolve(deletedId);
+                } else {
+                  deferred.reject('already merged');
+                }
               } else if (commonCount === count1 && commonCount < count2) {
                 // class1 is a subclass of class2, create a relation
                 self.$log.debug(`[Relations] '${classId1}' seems to be a subclass of '${classId2}'!`);

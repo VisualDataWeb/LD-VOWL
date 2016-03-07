@@ -77,7 +77,7 @@ class ClassExtractor extends Extractor {
             if (bindings !== undefined) {
 
               // endpoint may ignore limit
-              bindings = bindings.slice(0, Math.min(bindings.length, limit*2));
+              bindings = bindings.slice(0, Math.min(bindings.length, limit * 2));
 
               let fetchMore = 0;
 
@@ -158,7 +158,12 @@ class ClassExtractor extends Extractor {
 
     this.$http.get(requestURL, this.reqConfig.forQuery(labelQuery, canceller))
       .then(function (response) {
-        var bindings = response.data.results.bindings;
+
+        if (response === undefined || response.data === undefined || response.data.results === undefined) {
+          return;
+        }
+
+        const bindings = response.data.results.bindings;
 
         if (bindings !== undefined && bindings.length > 0 && bindings[0].label !== undefined &&
             bindings[0].label.value !== '') {
@@ -196,11 +201,15 @@ class ClassExtractor extends Extractor {
 
     this.$http.get(requestURL, this.reqConfig.forQuery(skosLabelQuery, canceller))
       .then(function (response) {
-        var bindings = response.data.results.bindings;
+        if (response === undefined || response.data === undefined || response.data.results === undefined) {
+          return;
+        }
+
+        const bindings = response.data.results.bindings;
 
         if (bindings !== undefined && bindings.length > 0 && bindings.label !== undefined &&
             bindings[0].label.value !== '') {
-          var label = bindings[0].label.value;
+          const label = bindings[0].label.value;
           self.nodes.insertLabel(classId, label);
           self.$log.debug(`[Class Label] Found SKOS preferred label '${label}' for '${classURI}'.`);
         } else {
