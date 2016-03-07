@@ -1,8 +1,8 @@
 'use strict';
 
-nodesService.$inject =['$log', 'Properties', 'Prefixes'];
+nodesService.$inject =['$log', 'Properties', 'Prefixes', 'RequestConfig'];
 
-function nodesService($log, Properties, Prefixes) {
+function nodesService($log, Properties, Prefixes, RequestConfig) {
 
   var classUriIdMap = new Map();
   var nodes = new Map();
@@ -21,7 +21,7 @@ function nodesService($log, Properties, Prefixes) {
 
   that.initMap = function () {
     if (sessionStorage !== undefined) {
-      var sessionNodes = sessionStorage.getItem('nodes');
+      var sessionNodes = sessionStorage.getItem(RequestConfig.getEndpointURL() + '_nodes');
 
       if (sessionNodes !== undefined && sessionNodes !== null) {
         $log.debug('[Nodes] Use nodes from session storage!');
@@ -66,7 +66,7 @@ function nodesService($log, Properties, Prefixes) {
   };
 
   that.updateSessionStorage = function () {
-    sessionStorage.setItem('nodes', JSON.stringify([...nodes]));
+    sessionStorage.setItem(RequestConfig.getEndpointURL() + '_nodes', JSON.stringify([...nodes]));
   };
 
   /**

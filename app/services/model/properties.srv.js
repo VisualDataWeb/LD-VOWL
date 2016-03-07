@@ -1,8 +1,8 @@
 'use strict';
 
-properties.$inject = ['$interval', '$log', '$rootScope'];
+properties.$inject = ['$interval', '$log', '$rootScope', 'RequestConfig'];
 
-function properties($interval, $log, $rootScope) {
+function properties($interval, $log, $rootScope, RequestConfig) {
 
   /* jshint validthis: true */
   var self = this;
@@ -22,7 +22,7 @@ function properties($interval, $log, $rootScope) {
    */
   self.initProperties = function () {
     if (sessionStorage !== undefined) {
-      var sessionProperties = sessionStorage.getItem('properties');
+      var sessionProperties = sessionStorage.getItem(RequestConfig.getEndpointURL() + '_properties');
 
       if (sessionProperties !== undefined && sessionProperties !== null) {
         var savedItems = JSON.parse(sessionProperties);
@@ -59,7 +59,7 @@ function properties($interval, $log, $rootScope) {
       } else {
         $log.debug('[Properties] No SessionStorage update needed!');
         self.unusedRounds++;
-        if (self.unusedRounds >= 3) {
+        if (self.unusedRounds > 50) {
           self.endSessionStorageUpdate();
         }
       }
@@ -83,7 +83,7 @@ function properties($interval, $log, $rootScope) {
    */
   self.updateSessionStorage = function () {
     $log.debug('[Properties] Update SessionStorage!');
-    sessionStorage.setItem('properties', JSON.stringify(self.properties));
+    sessionStorage.setItem(RequestConfig.getEndpointURL() + '_properties', JSON.stringify(self.properties));
   };
 
   self.existsBetween = function (sourceId, targetId) {
@@ -327,7 +327,7 @@ function properties($interval, $log, $rootScope) {
       self.properties[index][key] = value;
       self.needsUpdate = true;
     } else {
-      $log.error(`[Properties] '${uri}' was not found! The value ${value} could not be inserted as ${key}.`);
+      $log.debug(`[Properties] '${uri}' was not found! The value ${value} could not be inserted as ${key}.`);
     }
   };
 

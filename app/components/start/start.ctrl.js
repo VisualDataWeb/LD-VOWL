@@ -148,6 +148,9 @@ function startCtrl($log, $location, Nodes, Properties, Requests, RequestConfig, 
 
         // change endpoint
         RequestConfig.setEndpointURL(start.endpoint);
+
+        Nodes.initMap();
+        Properties.initProperties();
       }
 
       RequestConfig.setUseLocalProxy(start.useLocalProxy);
