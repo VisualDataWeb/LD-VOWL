@@ -68,7 +68,7 @@ function nodesService($log, Properties, Prefixes) {
    * @param newNode - the node which should be added to the graph
    */
   that.addNode = function (newNode) {
-    var newId = '';
+    let newId = '';
     if (typeof newNode === 'object' && newNode.hasOwnProperty('uri') && newNode.hasOwnProperty('type')) {
       if (newNode.type === 'class') {
         var idByUri = classUriIdMap.get(newNode.uri);
@@ -96,10 +96,10 @@ function nodesService($log, Properties, Prefixes) {
             // save this parent-child relation
             subClassSet.add(newNode.childId + newNode.parentId);
 
-            newId = newNode.type + nodes.size;
+            newId = combination;
             newNode.id = newId;
             nodes.set(newId, newNode);
-            $log.debug(`[Nodes] Add new Node '${newNode.uri}'.`);
+            $log.debug(`[Nodes] Add new Node '${newNode.uri}' with id '${newId}'.`);
           } else {
             $log.warn(`[Nodes] Sub-class rel between ${newNode.childId} & ${newNode.parentId} does already exist!`);
           }
@@ -326,7 +326,7 @@ function nodesService($log, Properties, Prefixes) {
 
   that.removeNodes = function (nodeArr) {
     if (nodeArr !== undefined && nodeArr.length > 0) {
-      for (var i = 0; i < nodeArr.length; i++) {
+      for (let i = 0; i < nodeArr.length; i++) {
         nodes.delete(nodeArr[i]);
       }
     }

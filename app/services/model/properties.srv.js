@@ -332,18 +332,44 @@ function properties($interval, $log, $rootScope) {
   };
 
   self.mergePropertiesBetween = function (classId1, classId2) {
-    for (var i = 0; i < self.properties.length; i++) {
-      var currentProp = self.properties[i];
+    let nodesToRemove = [];
+
+    let i = 0;
+    while (i < self.properties.length) {
+      let currentProp = self.properties[i];
 
       if (currentProp.source === classId2) {
-        currentProp.source = classId1;
+        if (currentProp.type === 'subClassProperty' &&
+          self.existsBetween(classId1, currentProp.target) === self.SUBCLASS_URI) {
+
+          $log.debug(`[Properties] Remove node '${currentProp.intermediate}'.`);
+          nodesToRemove.push(currentProp.intermediate);
+          self.properties.splice(i, 1);
+          continue;
+        } else {
+          currentProp.source = classId1;
+        }
       }
 
       if (currentProp.target === classId2) {
-        currentProp.target = classId1;
+        if (currentProp.type === 'subClassProperty' &&
+            self.existsBetween(currentProp.source, classId1) === self.SUBCLASS_URI) {
+
+          $log.debug(`[Properties] Remove node '${currentProp.intermediate}'.`);
+          nodesToRemove.push(currentProp.intermediate);
+          self.properties.splice(i, 1);
+          continue;
+        } else {
+          currentProp.target = classId1;
+        }
       }
+
+      i++;
     }
+
     self.needsUpdate = true;
+
+    return nodesToRemove;
   };
 
   self.initProperties();

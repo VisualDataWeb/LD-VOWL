@@ -289,19 +289,18 @@ class RelationExtractor extends Extractor {
               self.$log.debug(`[Relations] Classes '${classURI1}' (${count1}) and '${classURI2}' (${count2}) have
               '${commonCount}' common instances!`);
 
-              var subClassPropNode;
-              var subClassPropNodeId;
-
               if ((commonCount === count1) && (commonCount === count2)) {
                 self.$log.debug(`[Relations] Merge class '${classId1}' and '${classId2}'...`);
 
                 // remove disjoint properties to avoid duplicates
-                var nodesToRemove = self.props.removeDisjointProperties(classId2);
+                const disjointNodesToRemove = self.props.removeDisjointProperties(classId2);
 
-                self.nodes.removeNodes(nodesToRemove);
+                self.nodes.removeNodes(disjointNodesToRemove);
 
                 //  then change all existing relations between the two classes
-                self.props.mergePropertiesBetween(classId1, classId2);
+                const subClassPropNodes = self.props.mergePropertiesBetween(classId1, classId2);
+
+                self.nodes.removeNodes(subClassPropNodes);
 
                 // classes are equivalent, merge them
                 const deletedId = self.nodes.mergeClasses(classId1, classId2);
@@ -320,7 +319,7 @@ class RelationExtractor extends Extractor {
                 if (!self.nodes.hasSubClassPropNode(classId1, classId2)) {
 
                   // create an intermediate node
-                  subClassPropNode = {};
+                  let subClassPropNode = {};
                   subClassPropNode.uri = self.props.SUBCLASS_URI;
                   subClassPropNode.type = 'subClassProperty';
                   subClassPropNode.name = 'Subclass of';
@@ -329,7 +328,9 @@ class RelationExtractor extends Extractor {
                   subClassPropNode.childId = classId1;
                   subClassPropNode.parentId = classId2;
 
-                  subClassPropNodeId = self.nodes.addNode(subClassPropNode);
+                  const subClassPropNodeId = self.nodes.addNode(subClassPropNode);
+
+                  self.$log.debug(`Node between child ${classId1} and parent ${classId2} is '${subClassPropNodeId}'.`);
 
                   // create a property
                   self.props.addSubClassProperty(classId1, subClassPropNodeId, classId2);
@@ -345,7 +346,7 @@ class RelationExtractor extends Extractor {
                 if (!self.nodes.hasSubClassPropNode(classId1, classId2)) {
 
                   // create an intermediate node
-                  subClassPropNode = {};
+                  let subClassPropNode = {};
                   subClassPropNode.uri = self.props.SUBCLASS_URI;
                   subClassPropNode.name = 'Subclass of';
                   subClassPropNode.type = 'subClassProperty';
@@ -354,7 +355,9 @@ class RelationExtractor extends Extractor {
                   subClassPropNode.childId = classId2;
                   subClassPropNode.parentId = classId1;
 
-                  subClassPropNodeId = self.nodes.addNode(subClassPropNode);
+                  const subClassPropNodeId = self.nodes.addNode(subClassPropNode);
+
+                  self.$log.debug(`Node between parent ${classId1} and child ${classId2} is '${subClassPropNodeId}'.`);
 
                   // create a property
                   self.props.addSubClassProperty(classId2, subClassPropNodeId, classId1);
