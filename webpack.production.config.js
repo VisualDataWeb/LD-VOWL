@@ -55,7 +55,7 @@ module.exports = {
       add: true
     }),
 
-    new ExtractPlugin('styles/bundle.css'),
+    new ExtractPlugin('styles.css'),
 
     new webpack.optimize.CommonsChunkPlugin('vendors', 'js/vendors.js')
   ],
