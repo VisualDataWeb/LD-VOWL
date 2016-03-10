@@ -37,7 +37,7 @@ function routing($httpProvider, $routeProvider, $logProvider) {
   $logProvider.debugEnabled(__LOGGING__);// eslint-disable-line no-undef
   //jshint ignore:end
 
-} // end of export
+} // end of routing()
 
 routing.$inject = ['$httpProvider', '$routeProvider', '$logProvider'];
 

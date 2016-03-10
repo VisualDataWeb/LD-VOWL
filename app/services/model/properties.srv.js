@@ -11,18 +11,23 @@ function properties($interval, $log, $rootScope, RequestConfig) {
   self.DISJOINT_PROP_URI = 'http://my-own-disjoint-prop';
   self.PLACEHOLDER_PROP_URI = 'http://my-placeholder-prop/unknown';
 
+  // jshint ignore:start
+  self.useSessionStorage = (__aerobatic__.settings.useSessionStorage === 'true'); // eslint-disable-line no-undef
+  // jshint ignore:end
+
   self.properties = [];
   self.needsUpdate = false;
   self.updateInterval = 5000;
-  self.sessionStorageUpdate = undefined;
+  self.storageUpdate = undefined;
   self.unusedRounds = 0;
 
   /**
-   * Initializes properties with the ones saved in the SessionStorage.
+   * Initializes properties with the ones saved in Local- or SessionStorage.
    */
   self.initProperties = function () {
-    if (sessionStorage !== undefined) {
-      var sessionProperties = sessionStorage.getItem(RequestConfig.getEndpointURL() + '_properties');
+    let storage = (self.useSessionStorage) ? sessionStorage : localStorage ;
+    if (storage !== undefined) {
+      var sessionProperties = storage.getItem(RequestConfig.getEndpointURL() + '_properties');
 
       if (sessionProperties !== undefined && sessionProperties !== null) {
         var savedItems = JSON.parse(sessionProperties);
@@ -34,7 +39,7 @@ function properties($interval, $log, $rootScope, RequestConfig) {
           $log.debug('[Properties] No saved properties in session storage!');
         }
       }
-      self.startSessionStorageUpdate();
+      self.startStorageUpdate();
     } else {
       $log.error('[Properties] SessionStorage is not available! Properties will not be saved across page reloads!');
     }
@@ -43,24 +48,24 @@ function properties($interval, $log, $rootScope, RequestConfig) {
   /**
    * Start to update the HTML5 SessionStore at a regular basis.
    */
-  self.startSessionStorageUpdate = function () {
+  self.startStorageUpdate = function () {
 
     $log.debug('[Properties] (Re-)Start Session Store update!');
-    if (self.sessionStorageUpdate !== undefined) {
+    if (self.storageUpdate !== undefined) {
       return;
     }
 
-    self.sessionStorageUpdate = $interval(function() {
+    self.storageUpdate = $interval(function() {
       if (self.needsUpdate) {
-        self.updateSessionStorage();
+        self.updateStorage();
         $rootScope.$broadcast('properties-changed', '');
         self.needsUpdate = false;
         self.unusedRounds = 0;
       } else {
-        $log.debug('[Properties] No SessionStorage update needed!');
+        $log.debug('[Properties] No Storage update needed!');
         self.unusedRounds++;
         if (self.unusedRounds > 50) {
-          self.endSessionStorageUpdate();
+          self.endStorageUpdate();
         }
       }
     }, self.updateInterval);
@@ -69,11 +74,11 @@ function properties($interval, $log, $rootScope, RequestConfig) {
   /**
    * Stops session storage update from being re-executed.
    */
-  self.endSessionStorageUpdate = function () {
-    if (self.sessionStorageUpdate !== undefined) {
-      $log.debug('[Properties] End SessionStorage update.');
-      $interval.cancel(self.sessionStorageUpdate);
-      self.sessionStorageUpdate = undefined;
+  self.endStorageUpdate = function () {
+    if (self.storageUpdate !== undefined) {
+      $log.warn('[Properties] End the storage update.');
+      $interval.cancel(self.storageUpdate);
+      self.storageUpdate = undefined;
       self.unusedRounds = 0;
     }
   };
@@ -81,9 +86,15 @@ function properties($interval, $log, $rootScope, RequestConfig) {
   /**
    * Function which is triggered to update properties in HTML5 SessionStore.
    */
-  self.updateSessionStorage = function () {
-    $log.debug('[Properties] Update SessionStorage!');
-    sessionStorage.setItem(RequestConfig.getEndpointURL() + '_properties', JSON.stringify(self.properties));
+  self.updateStorage = function () {
+    let storage = (self.useSessionStorage) ? sessionStorage : localStorage;
+
+    if (storage !== undefined) {
+      $log.debug('[Properties] Update Storage!');
+      storage.setItem(RequestConfig.getEndpointURL() + '_properties', JSON.stringify(self.properties));
+    } else {
+      $log.error('[Properties] Unable to update storage, session or local storage is not supported by your browser!');
+    }
   };
 
   self.existsBetween = function (sourceId, targetId) {
@@ -260,7 +271,7 @@ function properties($interval, $log, $rootScope, RequestConfig) {
   self.clearAll = function () {
     self.properties = [];
     self.needsUpdate = true;
-    self.startSessionStorageUpdate();
+    self.startStorageUpdate();
   };
 
   self.addURI = function (sourceIndex, targetIndex, uriToAdd, value) {

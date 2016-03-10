@@ -82,7 +82,8 @@
       {
         "module": "client-settings",
         "options": {
-          "showEndpointURL": "$SHOW_ENDPOINT_URL"
+          "showEndpointURL": "$SHOW_ENDPOINT_URL",
+          "useSessionStorage": "$USE_SESSION_STORAGE"
         }
       }
     ]

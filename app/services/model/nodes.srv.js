@@ -11,7 +11,7 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
   var subClassSet = new Set();
 
   /* jshint validthis: true */
-  var that = this;
+  const that = this;
 
   that.DISJOINT_NODE_URI = 'http://my-own-disjoint-node';
 
@@ -19,12 +19,18 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
   that.suffixRegEx = /(#?[^\/#]*)\/?$/;
   that.altSuffixRegEx = /(:[^:]*)$/;
 
+  // jshint ignore:start
+  that.useSessionStorage = (__aerobatic__.settings.useSessionStorage === 'true'); // eslint-disable-line no-undef
+  // jshint ignore:end
+
   that.initMap = function () {
-    if (sessionStorage !== undefined) {
-      var sessionNodes = sessionStorage.getItem(RequestConfig.getEndpointURL() + '_nodes');
+    let storage = (that.useSessionStorage) ? sessionStorage : localStorage;
+
+    if (storage !== undefined) {
+      var sessionNodes = storage.getItem(RequestConfig.getEndpointURL() + '_nodes');
 
       if (sessionNodes !== undefined && sessionNodes !== null) {
-        $log.debug('[Nodes] Use nodes from session storage!');
+        $log.debug('[Nodes] Use nodes from session or local storage!');
         nodes = new Map(JSON.parse(sessionNodes));
 
         // rebuild the class uri map
@@ -44,7 +50,7 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
         that.buildPrefixMap();
       }
     } else {
-      $log.error('[Nodes] No Session Storage, caching disabled!');
+      $log.error('[Nodes] No session or local storage, caching of this app is disabled!');
     }
   };
 
@@ -65,8 +71,19 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
     }
   };
 
-  that.updateSessionStorage = function () {
-    sessionStorage.setItem(RequestConfig.getEndpointURL() + '_nodes', JSON.stringify([...nodes]));
+  that.updateStorage = function () {
+    let storage;
+    if (that.useSessionStorage) {
+      storage = sessionStorage;
+    } else {
+      storage = localStorage;
+    }
+
+    if (storage !== undefined) {
+      storage.setItem(RequestConfig.getEndpointURL() + '_nodes', JSON.stringify([...nodes]));
+    } else {
+      $log.error(`[Nodes] Can not update storage, local or session storage is not supported by your browser!`);
+    }
   };
 
   /**
@@ -125,7 +142,7 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
         $log.debug(`[Nodes] Add new Node '${newNode.uri}'.`);
       }
 
-      that.updateSessionStorage();
+      that.updateStorage();
     }
     return newId;
   };
@@ -230,7 +247,7 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
 
     if (nodeToChange !== undefined) {
       nodeToChange.uri = newUri;
-      that.updateSessionStorage();
+      that.updateStorage();
     } else {
       $log.error(`[Nodes] Unable to change uri of '${id}' to '${newUri}', there is no node with this id!`);
     }
