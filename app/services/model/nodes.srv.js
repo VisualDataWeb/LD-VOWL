@@ -1,6 +1,6 @@
 'use strict';
 
-nodesService.$inject =['$log', 'Properties', 'Prefixes', 'RequestConfig'];
+nodesService.$inject = ['$log', 'Properties', 'Prefixes', 'RequestConfig'];
 
 function nodesService($log, Properties, Prefixes, RequestConfig) {
 

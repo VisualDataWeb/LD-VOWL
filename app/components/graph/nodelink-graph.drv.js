@@ -466,7 +466,7 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
             if (d.type === 'class' && d.radius !== undefined) {
               return Utils.getNameForSpace(d, d.radius*2);
             } else {
-              return Utils.getName(d, (d.type === 'property'), true);
+              return Utils.getName(d, (d.type === 'property' || d.type === 'datatypeProperty'), true);
             }
           });
 

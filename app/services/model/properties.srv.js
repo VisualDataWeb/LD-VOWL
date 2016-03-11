@@ -300,7 +300,6 @@ function properties($interval, $log, $rootScope, RequestConfig) {
 
         // do not add it, replace the placeholder information
         currentProp.uri = uriToAdd;
-        currentProp.value = value;
 
         currentProp.props = [];
         currentProp.props.push({uri: uriToAdd, value: value});

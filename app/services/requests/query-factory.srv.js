@@ -124,10 +124,9 @@ function queryFactory() {
       return query;
     },
 
-    //TODO this may be used if number of distinct props is to high
     getUnorderedClassClassRelationQuery: function (originClass, targetClass, limit, offset) {
       var query  = prefixes() +
-        'SELECT distinct ?prop ' +
+        'SELECT DISTINCT ?prop ' +
         'WHERE { ' +
           '?originInstance a <' + originClass + '> . ' +
           '?targetInstance a <' + targetClass + '> . ' +
@@ -138,17 +137,34 @@ function queryFactory() {
       return query;
     },
 
-    getClassTypeRelationQuery: function (classURI, typeURI) {
-      var query = prefixes() +
-        'SELECT DISTINCT ?prop ' +
+    getOrderedClassTypeRelationQuery: function (classURI, typeURI, limit = 5, offset = 0) {
+      const query = prefixes() +
+        'SELECT (count(?instance) AS ?count) ?prop ' +
         'WHERE { ' +
-          '?instance a <' + classURI + '> . ' +
+          `?instance a <${classURI}> . ` +
           '?instance ?prop ?val . ' +
-          'FILTER (datatype(?val) = <' + typeURI + '>) ' +
+          `FILTER (datatype(?val) = <${typeURI}>) ` +
         '} ' +
-        'LIMIT 1'; //TODO increase this for multiple edges
+        'GROUP BY ?prop ' +
+        'ORDER BY DESC(?count) ' +
+        `LIMIT ${limit} ` +
+        `OFFSET ${offset}`;
 
         return query;
+    },
+
+    getUnorderedClassTypeRelationQuery: function (classURI, typeURI, limit = 5, offset = 0) {
+      const query = prefixes() +
+        'SELECT DISTINCT ?prop ' +
+        'WHERE { ' +
+        `?instance a <${classURI}> . ` +
+        '?instance ?prop ?val . ' +
+        `FILTER (datatype(?val) = <${typeURI}>) ` +
+        '} ' +
+        `LIMIT ${limit} ` +
+        `OFFSET ${offset}`;
+
+      return query;
     },
 
     // INSTANCE QUERIES

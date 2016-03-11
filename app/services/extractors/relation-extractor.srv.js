@@ -33,7 +33,7 @@ class RelationExtractor extends Extractor {
         }
       }
     }
-  }
+  } // end of constructor()
 
   /**
    * Requests class to class relations between the given uris.
@@ -44,7 +44,7 @@ class RelationExtractor extends Extractor {
    * @param offset - the number of the relation to start with
    */
   requestClassClassRelation(originId, targetId, limit, offset) {
-    var canceller = this.$q.defer();
+    const canceller = this.$q.defer();
     const promiseId = this.promises.addPromise(canceller);
 
     offset = offset || 0;
@@ -187,39 +187,61 @@ class RelationExtractor extends Extractor {
       });
   } // end of requestPropertyLabel()
 
-  requestClassTypeRelation(originClassId, intermediateId, targetTypeId) {
+  requestClassTypeRelation(originClassId, intermediateId, targetTypeId, limit = 10, offset = 0) {
     var canceller = this.$q.defer();
     const promiseId = this.promises.addPromise(canceller);
 
-    var classURI = this.nodes.getURIById(originClassId);
-    var typeURI = this.nodes.getURIById(targetTypeId);
+    const classURI = this.nodes.getURIById(originClassId);
+    const typeURI = this.nodes.getURIById(targetTypeId);
 
-    var query = this.qFactory.getClassTypeRelationQuery(classURI, typeURI);
-    var requestURL = this.rConfig.getRequestURL();
+    let query = '';
+    if (this.rConfig.getPropertiesOrdered()) {
+      query = this.qFactory.getOrderedClassTypeRelationQuery(classURI, typeURI, limit, offset);
+    } else {
+      query = this.qFactory.getUnorderedClassTypeRelationQuery(classURI, typeURI, limit, offset);
+    }
 
-    var self = this;
+    const requestURL = this.rConfig.getRequestURL();
+
+    const self = this;
 
     this.$http.get(requestURL, this.rConfig.forQuery(query, canceller))
       .then(function (response) {
-
-        var bindings = response.data.results.bindings;
+        let bindings = response.data.results.bindings;
 
         if (bindings !== undefined && bindings.length > 0) {
-
           self.$log.debug(`[Relations] Found ${bindings.length} between '${classURI}' and '${typeURI}'.`);
 
-          for (var i = 0; i < bindings.length; i++) {
-            if (bindings[i].prop.value !== undefined) {
+          for (let i = 0; i < bindings.length; i++) {
+            if (bindings[i].prop !== undefined && bindings[i].prop.value !== undefined) {
+              let currentURI = bindings[i].prop.value;
 
-              self.nodes.incValueOfId(intermediateId);
-
-              if (i === 0) {
-                self.nodes.setURI(intermediateId, bindings[i].prop.value);
+              if (offset === 0 && i === 0) {
+                self.nodes.setURI(intermediateId, currentURI);
+              } else {
+                // first one is skipped, because of placeholder
+                self.nodes.incValueOfId(intermediateId);
               }
 
-              self.props.addProperty(originClassId, intermediateId, targetTypeId, bindings[i].prop.value);
+              if (bindings[i].count !== undefined && bindings[i].count.value !== undefined) {
+                let currentCount = bindings[i].count.value;
+
+                // add property WITH its count to indicate ordered prop list
+                self.props.addProperty(originClassId, intermediateId, targetTypeId, currentURI, currentCount);
+              } else {
+                // add property without its count to indicate unordered prop list
+                self.props.addProperty(originClassId, intermediateId, targetTypeId, currentURI);
+              }
             }
           } // end of for loop over each binding
+
+          // if limit was not high enough, send a new request with doubled limit
+          if (bindings.length === limit) {
+            let newOffset = (offset + bindings.length);
+            self.requestClassTypeRelation(originClassId, intermediateId, targetTypeId, limit * 2, newOffset);
+          }
+        } else {
+          self.$log.debug(`[Relations] Found none between '${classURI}' and '${typeURI}'.`)
         }
       }, function (err) {
         if (err !== undefined && err.hasOwnProperty('status')) {
