@@ -49,7 +49,6 @@ function properties($interval, $log, $rootScope, RequestConfig) {
    * Start to update the HTML5 SessionStore at a regular basis.
    */
   self.startStorageUpdate = function () {
-
     $log.debug('[Properties] (Re-)Start Session Store update!');
     if (self.storageUpdate !== undefined) {
       return;
@@ -114,7 +113,7 @@ function properties($interval, $log, $rootScope, RequestConfig) {
     return false;
   };
 
-    self.addProperty = function (source, intermediate, target, uri, value) {
+  self.addProperty = function (source, intermediate, target, uri, value) {
     if (typeof source === 'string' && typeof intermediate === 'string' && typeof target === 'string') {
 
       var ordered;
@@ -148,7 +147,6 @@ function properties($interval, $log, $rootScope, RequestConfig) {
   };
 
   self.addSubClassProperty = function (source, intermediate, target) {
-
     var newSubClassProp = {};
 
     newSubClassProp.source = source;
@@ -380,7 +378,7 @@ function properties($interval, $log, $rootScope, RequestConfig) {
     self.needsUpdate = true;
 
     return nodesToRemove;
-  };
+  }; // end of mergePropertiesBetween()
 
   self.initProperties();
 

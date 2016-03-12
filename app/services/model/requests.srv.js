@@ -1,8 +1,8 @@
 'use strict';
 
-requests.$inject = ['$rootScope'];
+requests.$inject = ['$rootScope', 'StopWatch'];
 
-function requests($rootScope) {
+function requests($rootScope, StopWatch) {
 
   /* jshint validthis: true */
   var that = this;
@@ -39,6 +39,9 @@ function requests($rootScope) {
    */
   that.decPendingRequests = function () {
     if (that.pendingRequests > 0) {
+      if (that.pendingRequests === 1) {
+        StopWatch.stop();
+      }
       that.pendingRequests--;
     }
     $rootScope.$broadcast('pending-requests-changed', that.pendingRequests);

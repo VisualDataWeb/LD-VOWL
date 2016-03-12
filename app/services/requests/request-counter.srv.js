@@ -2,17 +2,32 @@
 
 requestCounter.$inject = ['$q', 'Requests'];
 
+/**
+ * Counts successful and failed http requests.
+ *
+ * @param $q
+ * @param Requests
+ * @returns {{request: 'request', response: 'response', responseError: 'responseError'}}
+ */
 function requestCounter($q, Requests) {
+
+  const templateRegEx = /.*\.html$/;
 
   return {
     'request': function (config) {
-      Requests.incPendingRequests();
+      // do not count template requests
+      if (!config.url.match(templateRegEx)) {
+        Requests.incPendingRequests();
+      }
       return config;
     },
 
     'response': function (response) {
-      Requests.decPendingRequests();
-      Requests.incSuccessfulRequests();
+      // do not count template requests
+      if (!response.config.url.match(templateRegEx)) {
+        Requests.decPendingRequests();
+        Requests.incSuccessfulRequests();
+      }
       return response;
     },
 
@@ -25,6 +40,6 @@ function requestCounter($q, Requests) {
     }
   };
 
-}
+} // end of requestCounter()
 
 export default requestCounter;

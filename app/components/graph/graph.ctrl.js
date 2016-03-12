@@ -1,10 +1,10 @@
 'use strict';
 
 graphCtrl.$inject = ['$scope', '$q', '$log', 'Filters',  'ClassExtractor', 'RelationExtractor', 'TypeExtractor',
-  'DetailExtractor', 'RequestConfig', 'Requests', 'Prefixes'];
+  'DetailExtractor', 'RequestConfig', 'Requests', 'Prefixes', 'StopWatch'];
 
 function graphCtrl($scope, $q, $log, Filters, ClassExtractor, RelationExtractor, TypeExtractor, DetailExtractor,
-                           RequestConfig, Requests, Prefixes) {
+                           RequestConfig, Requests, Prefixes, StopWatch) {
 
   /* jshint validthis: true */
   var vm = this;
@@ -119,6 +119,7 @@ function graphCtrl($scope, $q, $log, Filters, ClassExtractor, RelationExtractor,
    * Start loading data requesting classes. For each class request referring types and search class-class relations.
    */
   vm.startLoading = function () {
+    StopWatch.start();
     ClassExtractor.requestClasses().then(function (newClasses) {
 
       $log.debug('[Graph] Now the classes should be loaded!');

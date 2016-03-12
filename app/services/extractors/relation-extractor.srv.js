@@ -241,7 +241,7 @@ class RelationExtractor extends Extractor {
             self.requestClassTypeRelation(originClassId, intermediateId, targetTypeId, limit * 2, newOffset);
           }
         } else {
-          self.$log.debug(`[Relations] Found none between '${classURI}' and '${typeURI}'.`)
+          self.$log.debug(`[Relations] Found none between '${classURI}' and '${typeURI}'.`);
         }
       }, function (err) {
         if (err !== undefined && err.hasOwnProperty('status')) {
