@@ -121,6 +121,8 @@ function startCtrl($log, $location, Nodes, Properties, Requests, RequestConfig, 
 
   start.useLocalProxy = RequestConfig.getUseLocalProxy();
 
+  start.endpointAlert = true;
+
   /**
    * This function is triggered every time the proxy flag is toggled.
    */
@@ -165,6 +167,10 @@ function startCtrl($log, $location, Nodes, Properties, Requests, RequestConfig, 
         $log.error('[Start] Please enter an url for the SPARQL endpoint!');
       }
   }; // end of showGraph()
+
+  start.closeEndpointAlert = function () {
+    start.endpointAlert = false;
+  };
 
 } // end of StartCtrl
 

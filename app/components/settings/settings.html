@@ -70,9 +70,12 @@
       </div>
     </div>
 
-    <div class="form-group">
+    <div class="form-group" style="margin-bottom: 0;">
       <div class="col-sm-offset-2 col-sm-10">
-        <p class="help-block">Watch out, any manual changes below will be overwritten!</p>
+        <uib-alert type="warning" style="margin-bottom: 0;">
+          <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>
+          Any manual changes below will be overwritten!
+        </uib-alert>
       </div>
     </div>
   </form>
@@ -98,9 +101,11 @@
       <div class="col-sm-12">
         <div class= "pull-right">
           <button type="button" class="btn btn-default" ng-click="vm.restoreDefaults()">
+            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
             Restore Defaults
           </button>
           <button type="button" class="btn btn-primary" ng-click="vm.save()">
+            <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
             Save
           </button>
         </div>

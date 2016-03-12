@@ -1,6 +1,6 @@
 {
   "name": "linked-data-vowl",
-  "version": "0.0.1",
+  "version": "0.9.0",
   "description": "Extract ontology information out of arbitrary SPARQL endpoints and visualize it using a slightly adjusted form of VOWL.",
   "main": "app/app.js",
   "dependencies": {
@@ -56,7 +56,7 @@
     "webpack-dev-server": "^1.14.0"
   },
   "scripts": {
-    "start": "webpack-dev-server --content-base app --inline --hot & npm run proxy",
+    "start": "webpack-dev-server --content-base app --inline --hot --open & npm run proxy",
     "host": "webpack-dev-server --host 0.0.0.0 --content-base app --inline --hot",
     "proxy": "node ../anti-cors-proxy/index.js",
     "test": "karma start",

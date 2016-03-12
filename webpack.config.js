@@ -1,8 +1,9 @@
 'use strict';
 
 var webpack = require('webpack');
+var path = require('path');
 
-var APP = __dirname + '/app';
+var APP = path.join(__dirname, 'app');
 
 module.exports = {
   // config goes here

@@ -24,12 +24,13 @@
         </div>
       </div>
 
-      <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-10">
-          <p class="help-block">
-            A list of publicly available endpoints can be found
-            <a href="http://sparqles.ai.wu.ac.at/" target="_blank">here</a>.
-          </p>
+      <div class="form-group" ng-if="start.endpointAlert">
+        <div class="col-sm-offset-2 col-sm-7">
+          <uib-alert  type="info" close="start.closeEndpointAlert()" style="margin-bottom: 0;">
+            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+            A list of endpoints can be found
+            <a class="alert-link" href="http://sparqles.ai.wu.ac.at/availability" target="_blank">here</a>.
+          </uib-alert>
         </div>
       </div>
 
@@ -38,7 +39,7 @@
           <div class="checkbox">
             <label>
               <input type="checkbox" ng-model="start.useLocalProxy" ng-change="start.updateUseLocalProxy()">
-              Use a local proxy
+              Use local proxy
             </label>
           </div>
         </div>

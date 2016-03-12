@@ -118,6 +118,14 @@ p.comment {
   overflow-y: scroll;
 }
 
+img.logo {
+  height: 20px;
+  width: 20px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  margin-right: 5px;
+}
+
 /* Responsive: Portrait tablets and up */
 @media screen and (min-width: 768px) {
   .container {
