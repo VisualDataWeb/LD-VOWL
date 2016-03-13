@@ -36,7 +36,7 @@ function typeExtractor($http, $q, $log, RequestConfig, QueryFactory, Nodes, Prop
     $log.debug(`[Referring Types] Send requests for types referring to instances of '${classURI}'...`);
 
     $http.get(requestURL, RequestConfig.forQuery(query, canceller))
-      .then(function (response) {
+      .then(function handleExtractedReferringTypes(response) {
 
         if (response === undefined || response.data === undefined || response.data.results === undefined) {
           $log.warn('[Referring Types] No results');

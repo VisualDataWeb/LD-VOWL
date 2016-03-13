@@ -20,7 +20,7 @@ function detailExtractor($http, $q, $log, QueryFactory, RequestConfig, Nodes, Pr
     var requestURL = RequestConfig.getRequestURL();
 
     $http.get(requestURL, RequestConfig.forQuery(query, canceller))
-      .then(function (response) {
+      .then(function handleExtractedComment(response) {
       var bindings = response.data.results.bindings;
 
       if (bindings.length > 0) {

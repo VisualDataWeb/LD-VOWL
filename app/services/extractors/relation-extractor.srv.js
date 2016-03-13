@@ -66,7 +66,7 @@ class RelationExtractor extends Extractor {
     var self = this;
 
     this.$http.get(requestURL, this.rConfig.forQuery(query, canceller))
-      .then(function (response) {
+      .then(function handleClassClassRelations(response) {
         if (response.data.results !== undefined) {
           var bindings = response.data.results.bindings;
 
@@ -167,7 +167,7 @@ class RelationExtractor extends Extractor {
     self.$log.debug(`[Property Label] Send Request for '${uri}'...`);
 
     this.$http.get(requestURL, this.rConfig.forQuery(query, canceller))
-      .then(function (response) {
+      .then(function handleExtractedPropertyLabel(response) {
         var bindings = response.data.results.bindings;
         if (bindings !== undefined && bindings.length > 0 && bindings[0].label !== undefined) {
           var label = bindings[0].label.value;
@@ -208,7 +208,7 @@ class RelationExtractor extends Extractor {
     const self = this;
 
     this.$http.get(requestURL, this.rConfig.forQuery(query, canceller))
-      .then(function (response) {
+      .then(function handleClassTypeRelations(response) {
         let bindings = response.data.results.bindings;
 
         if (bindings !== undefined && bindings.length > 0) {
@@ -297,7 +297,7 @@ class RelationExtractor extends Extractor {
     self.$log.debug(`[Relations] Query for number of common Instances of '${classURI1}' and '${classURI2}'...`);
 
     this.$http.get(requestURL, this.rConfig.forQuery(query, deferred))
-      .then(function (response) {
+      .then(function handleCommonInstanceCounts(response) {
 
         var results = response.data.results;
 

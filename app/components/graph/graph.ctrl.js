@@ -133,7 +133,7 @@ function graphCtrl($scope, $q, $log, Filters, ClassExtractor, RelationExtractor,
    */
   vm.startLoading = function () {
     StopWatch.start();
-    ClassExtractor.requestClasses().then(function (newClasses) {
+    ClassExtractor.requestClasses().then(function extractForClasses(newClasses) {
 
       $log.debug('[Graph] Now the classes should be loaded!');
 
@@ -154,7 +154,7 @@ function graphCtrl($scope, $q, $log, Filters, ClassExtractor, RelationExtractor,
       }
 
       // after class equality is checked for all pairs, types and relations can be loaded
-      $q.allSettled(promises).then(function (data) {
+      $q.allSettled(promises).then(function extractForRemainingClasses(data) {
 
         $log.debug('[Graph] Now all should be settled!');
 

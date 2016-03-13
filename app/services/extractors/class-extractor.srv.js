@@ -72,7 +72,7 @@ class ClassExtractor extends Extractor {
 
       self.$log.debug(`[Classes] Send Request with offset ${offset}...`);
       self.$http.get(requestURL, self.reqConfig.forQuery(query, deferred))
-        .then(function (response) {
+        .then(function handleExtractedClasses(response) {
           if (response.data.results !== undefined) {
             var bindings = response.data.results.bindings;
 
@@ -160,7 +160,7 @@ class ClassExtractor extends Extractor {
     self.$log.debug(`[Class Label] Send request for '${classURI}'...`);
 
     this.$http.get(requestURL, this.reqConfig.forQuery(labelQuery, canceller))
-      .then(function (response) {
+      .then(function handleExtractedClassLabel(response) {
 
         if (response === undefined || response.data === undefined || response.data.results === undefined) {
           return;
@@ -203,7 +203,7 @@ class ClassExtractor extends Extractor {
     self.$log.debug(`[Class Label] Send request for '${classURI}' SKOS preferred label...`);
 
     this.$http.get(requestURL, this.reqConfig.forQuery(skosLabelQuery, canceller))
-      .then(function (response) {
+      .then(function handleExtractedSkosLabel(response) {
         if (response === undefined || response.data === undefined || response.data.results === undefined) {
           return;
         }
