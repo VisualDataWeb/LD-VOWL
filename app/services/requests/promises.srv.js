@@ -1,8 +1,8 @@
 'use strict';
 
-promises.$inject = ['$log'];
-
 function promises($log) {
+
+  'ngInject';
 
   /* jshint validthis: true */
   var that = this;

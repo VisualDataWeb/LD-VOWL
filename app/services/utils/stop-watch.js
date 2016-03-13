@@ -1,8 +1,8 @@
 'use strict';
 
-stopWatch.$inject = ['$log'];
-
 function stopWatch($log) {
+
+  'ngInject';
 
   /* jshint validthis: true */
   var that = this;

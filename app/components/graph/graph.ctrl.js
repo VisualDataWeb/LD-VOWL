@@ -1,10 +1,23 @@
 'use strict';
 
-graphCtrl.$inject = ['$scope', '$q', '$log', 'Filters',  'ClassExtractor', 'RelationExtractor', 'TypeExtractor',
-  'DetailExtractor', 'RequestConfig', 'Requests', 'Prefixes', 'StopWatch'];
-
+/**
+ *
+ * @param $scope
+ * @param {$q} $q
+ * @param {$log} $log
+ * @param Filters
+ * @param {ClassExtractor} ClassExtractor
+ * @param {RelationExtractor} RelationExtractor
+ * @param TypeExtractor
+ * @param DetailExtractor
+ * @param RequestConfig
+ * @param Requests
+ * @param Prefixes
+ * @param StopWatch
+ */
 function graphCtrl($scope, $q, $log, Filters, ClassExtractor, RelationExtractor, TypeExtractor, DetailExtractor,
                            RequestConfig, Requests, Prefixes, StopWatch) {
+  'ngInject';
 
   /* jshint validthis: true */
   var vm = this;

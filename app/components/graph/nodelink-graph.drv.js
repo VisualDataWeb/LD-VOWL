@@ -3,8 +3,6 @@
 import angular from 'angular';
 import d3 from 'd3';
 
-NodeLinkGraph.$inject = ['$window', '$log', 'Properties', 'Nodes', 'Prefixes', 'Filters', 'Geometry', 'Utils'];
-
 /**
  * @Name NodeLinkGraph
  *
@@ -14,12 +12,15 @@ NodeLinkGraph.$inject = ['$window', '$log', 'Properties', 'Nodes', 'Prefixes', '
  * @param Nodes
  * @param Prefixes
  * @param Filters
- * @param Geometry
+ * @param {Geometry} Geometry
  * @param Utils
  *
  * @returns {{restrict: string, scope: {data: string, onClick: string}, link: link}}
  */
 function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geometry, Utils) {
+
+  'ngInject';
+
   return {
     restrict: 'EA',
     scope: {
@@ -265,7 +266,6 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
             message.item.targetURI = targetNode.uri;
           }
 
-          //TODO add ordered attribute
           message.item.ordered = true;
 
           if (d.type === 'subClassProperty') {

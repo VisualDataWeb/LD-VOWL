@@ -1,8 +1,8 @@
 'use strict';
 
-requestConfig.$inject = ['$cookies'];
-
 function requestConfig($cookies) {
+
+  'ngInject';
 
   var cookiePrefix = 'ldvowl_';
   var localProxyURL = 'http://localhost:8080/sparql';

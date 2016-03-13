@@ -13,6 +13,8 @@ class RelationExtractor extends Extractor {
    */
   constructor($http, $q, $log, PREFIX, PROPERTY_BLACKLIST, QueryFactory, RequestConfig, Nodes, Properties, Promises) {
 
+    'ngInject';
+
     // call constructor of super class Extractor
     super();
 
@@ -427,10 +429,5 @@ class RelationExtractor extends Extractor {
     return deferred.promise;
   } // end of requestClassEquality()
 } // end of class RelationExtractor
-
-RelationExtractor.$inject = [
-  '$http', '$q', '$log', 'PREFIX', 'PROPERTY_BLACKLIST', 'QueryFactory', 'RequestConfig', 'Nodes', 'Properties',
-  'Promises'
-];
 
 export default RelationExtractor;

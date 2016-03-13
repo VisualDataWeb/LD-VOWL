@@ -1,11 +1,8 @@
 'use strict';
 
-settingsCtrl.$inject = ['$log', '$cookies', 'PREFIX', 'PROPERTY_BLACKLIST', 'CLASS_BLACKLIST', 'RequestConfig', 'Nodes',
-  'Properties', 'Requests', 'ClassExtractor', 'RelationExtractor'];
-
-
 function settingsCtrl($log, $cookies, PREFIX, PROPERTY_BLACKLIST, CLASS_BLACKLIST, RequestConfig, Nodes, Properties,
                       Requests, ClassExtractor, RelationExtractor) {
+  'ngInject';
 
   /* jshint validthis: true */
   var vm = this;

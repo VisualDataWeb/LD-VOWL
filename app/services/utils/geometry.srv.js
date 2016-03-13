@@ -5,8 +5,9 @@
  */
 class Geometry {
 
-  constructor(utils) {
-    this.utils = utils;
+  constructor(Utils) {
+    'ngInject';
+    this.utils = Utils;
     this.defaultPropHeight = 20;
   }
 
@@ -96,7 +97,5 @@ class Geometry {
   }
 
 } // end of Geometry class
-
-Geometry.$inject = ['Utils'];
 
 export default Geometry;

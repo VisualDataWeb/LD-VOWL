@@ -2,9 +2,14 @@ import angular from 'angular';
 
 function configure($provide) {
 
+  'ngInject';
+
   $provide.decorator('$q', delegate);
 
+  delegate.$inject = ['$delegate'];
+
   function delegate($delegate) {
+
     var $q = $delegate;
 
     $q.allSettled = function(promises) {
@@ -22,13 +27,8 @@ function configure($provide) {
     };
 
     return $q;
-  } // end of delegate
-
-  delegate.$inject = ['$delegate'];
-
+  } // end of delegate()
 } // end of configure()
-
-configure.$inject = ['$provide'];
 
 export default angular.module('qAllSettled', [])
                       .config(configure)

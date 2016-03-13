@@ -1,8 +1,8 @@
 'use strict';
 
-properties.$inject = ['$interval', '$log', '$rootScope', 'RequestConfig'];
-
 function properties($interval, $log, $rootScope, RequestConfig) {
+
+  'ngInject';
 
   /* jshint validthis: true */
   var self = this;

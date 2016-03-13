@@ -1,6 +1,11 @@
-filters.$inject = ['$cookies', '$log'];
-
+/**
+ * @Name Filters
+ * @param {$cookies} $cookies
+ * @param {$log} $log
+ */
 function filters($cookies, $log) {
+
+  'ngInject';
 
   var self = this;
 

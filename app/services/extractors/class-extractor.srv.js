@@ -11,17 +11,19 @@ class ClassExtractor extends Extractor {
   /**
    * Create a new ClassExtractor.
    *
-   * @param $http
+   * @param {$http} $http
    * @param $q
-   * @param $log
-   * @param PREFIX
-   * @param CLASS_BLACKLIST
+   * @param {$log} $log
+   * @param {PREFIX} PREFIX
+   * @param {CLASS_BLACKLIST} CLASS_BLACKLIST
    * @param RequestConfig
    * @param QueryFactory
    * @param Nodes
    * @param Promises
    */
   constructor ($http, $q, $log, PREFIX, CLASS_BLACKLIST, RequestConfig, QueryFactory, Nodes, Promises) {
+
+    'ngInject';
 
     // call constructor of Extractor
     super();
@@ -220,11 +222,6 @@ class ClassExtractor extends Extractor {
       self.$log.error(err);
     });
   } // end of requestClassSkosLabel()
-
 } // end of class 'ClassExtractor'
-
-ClassExtractor.$inject = [
-  '$http', '$q', '$log', 'PREFIX', 'CLASS_BLACKLIST', 'RequestConfig', 'QueryFactory', 'Nodes', 'Promises'
-];
 
 export default ClassExtractor;

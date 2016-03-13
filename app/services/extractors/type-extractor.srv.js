@@ -1,10 +1,19 @@
 'use strict';
-
-typeExtractor.$inject = [
-  '$http', '$q', '$log', 'RequestConfig', 'QueryFactory', 'Nodes', 'Properties', 'RelationExtractor', 'Promises'
-];
-
+/**
+ *
+ * @param $http
+ * @param $q
+ * @param $log
+ * @param RequestConfig
+ * @param QueryFactory
+ * @param Nodes
+ * @param Properties
+ * @param {RelationExtractor} RelationExtractor
+ * @param Promises
+ */
 function typeExtractor($http, $q, $log, RequestConfig, QueryFactory, Nodes, Properties, RelationExtractor, Promises) {
+
+  'ngInject';
 
   /* jshint validthis: true */
   var that = this;

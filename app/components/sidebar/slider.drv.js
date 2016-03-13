@@ -1,9 +1,9 @@
 /* globals $ */
 require('jquery-ui');
 
-slider.$inject = ['$rootScope'];
-
 function slider($rootScope) {
+
+  'ngInject';
 
   return {
     restrict: 'AE',

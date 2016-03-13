@@ -1,8 +1,8 @@
 'use strict';
 
-nodesService.$inject = ['$log', 'Properties', 'Prefixes', 'RequestConfig'];
-
 function nodesService($log, Properties, Prefixes, RequestConfig) {
+
+  'ngInject';
 
   var classUriIdMap = new Map();
   var nodes = new Map();

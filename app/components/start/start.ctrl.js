@@ -1,7 +1,5 @@
 'use strict';
 
-startCtrl.$inject = ['$log','$location', 'Nodes', 'Properties', 'Requests', 'RequestConfig', 'Promises'];
-
 /**
  * @Name StartCtrl
  *
@@ -14,6 +12,8 @@ startCtrl.$inject = ['$log','$location', 'Nodes', 'Properties', 'Requests', 'Req
  * @param Promises
  */
 function startCtrl($log, $location, Nodes, Properties, Requests, RequestConfig, Promises) {
+
+  'ngInject';
 
   /* jshint validthis: true */
   var start = this;

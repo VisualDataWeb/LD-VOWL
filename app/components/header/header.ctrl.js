@@ -1,7 +1,5 @@
 'use strict';
 
-HeaderCtrl.$inject = ['$scope', '$location'];
-
 /**
  * @name HeaderCtrl
  * @param $scope
@@ -9,16 +7,14 @@ HeaderCtrl.$inject = ['$scope', '$location'];
  */
 function HeaderCtrl($scope, $location) {
 
+  'ngInject';
+
   let header = this;
 
   header.loading = false;
 
   $scope.$on('pending-requests-changed', function(event, pending) {
-    if (pending > 0){
-      header.loading = true;
-    } else {
-      header.loading = false;
-    }
+    header.loading = pending > 0;
   });
 
   /**

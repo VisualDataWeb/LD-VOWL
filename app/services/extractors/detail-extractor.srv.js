@@ -1,9 +1,8 @@
 'use strict';
 
-detailExtractor.$inject = ['$http', '$q', '$log', 'QueryFactory', 'RequestConfig', 'Nodes', 'Promises'];
-
-// TODO make this a ES6 class
 function detailExtractor($http, $q, $log, QueryFactory, RequestConfig, Nodes, Promises) {
+
+  'ngInject';
 
   /* jshint validthis: true */
   var that = this;

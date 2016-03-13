@@ -1,8 +1,8 @@
 'use strict';
 
-prefixesService.$inject = ['$rootScope', '$log'];
-
 function prefixesService($rootScope, $log) {
+
+  'ngInject';
 
   var prefixes = [];
   var colorNumber = 1;

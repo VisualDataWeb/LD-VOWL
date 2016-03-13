@@ -4,6 +4,8 @@ import graphTemplate from './components/graph/graph.html';
 
 function routing($httpProvider, $routeProvider, $logProvider) {
 
+  'ngInject';
+
   // set up http interceptor
   $httpProvider.interceptors.push('RequestCounter');
   $httpProvider.defaults.useXDomain = true;
@@ -38,7 +40,5 @@ function routing($httpProvider, $routeProvider, $logProvider) {
   //jshint ignore:end
 
 } // end of routing()
-
-routing.$inject = ['$httpProvider', '$routeProvider', '$logProvider'];
 
 export default routing;

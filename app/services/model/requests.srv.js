@@ -1,8 +1,8 @@
 'use strict';
 
-requests.$inject = ['$rootScope', 'StopWatch'];
-
 function requests($rootScope, StopWatch) {
+
+  'ngInject';
 
   /* jshint validthis: true */
   var that = this;

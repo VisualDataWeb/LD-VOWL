@@ -1,7 +1,5 @@
 'use strict';
 
-requestCounter.$inject = ['$q', 'Requests'];
-
 /**
  * Counts successful and failed http requests.
  *
@@ -10,6 +8,8 @@ requestCounter.$inject = ['$q', 'Requests'];
  * @returns {{request: 'request', response: 'response', responseError: 'responseError'}}
  */
 function requestCounter($q, Requests) {
+
+  'ngInject';
 
   const templateRegEx = /.*\.html$/;
 
