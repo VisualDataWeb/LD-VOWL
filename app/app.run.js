@@ -3,7 +3,9 @@ function runBlock($rootScope) {
   'ngInject';
 
   $rootScope.$on('$routeChangeSuccess', function (event, current) {
-    $rootScope.title = current.$$route.title;
+    if (current && current.$$route && current.$$route.title) {
+      $rootScope.title = current.$$route.title;
+    }
   });
 
 }
