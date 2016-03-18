@@ -1,8 +1,14 @@
 <div>
-  <p>
-    <strong>Class Prefixes:</strong>
+  <p ng-if="prefixes.length === 0">
+    No prefixes found.
   </p>
-  <div class="prop-list" style="max-height: 180px;">
+  <p ng-if="prefixes.length > 0">
+    <strong>
+      Class Prefixes
+      ({{(vm.numberOfPrefixes < prefixes.length) ? vm.numberOfPrefixes : prefixes.length}} of {{prefixes.length}}):
+    </strong>
+  </p>
+  <div class="prop-list" style="max-height: 140px;" ng-if="prefixes.length > 0">
     <table class="table table-condensed">
       <tr ng-repeat="pre in prefixes | limitTo: vm.numberOfPrefixes">
         <td>

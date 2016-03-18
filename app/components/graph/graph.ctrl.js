@@ -23,7 +23,7 @@ function graphCtrl($scope, $q, $log, Filters, ClassExtractor, RelationExtractor,
   var vm = this;
 
   vm.numberOfProps = 5;
-  vm.numberOfPrefixes = 5;
+  vm.numberOfPrefixes = 3;
 
   vm.extractTypes = Filters.getIncludeLiterals();
   vm.includeLoops = Filters.getIncludeLoops();
