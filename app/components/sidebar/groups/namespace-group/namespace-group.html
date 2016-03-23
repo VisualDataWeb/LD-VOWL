@@ -3,9 +3,12 @@
     No prefixes found.
   </p>
   <p ng-if="prefixes.length > 0">
-    <strong>
-      Class Prefixes
-      ({{(vm.numberOfPrefixes < prefixes.length) ? vm.numberOfPrefixes : prefixes.length}} of {{prefixes.length}}):
+    <strong>Class Prefixes</strong>
+    <strong ng-if="vm.numberOfPrefixes < prefixes.length">
+      ({{ vm.numberOfPrefixes}} of {{ prefixes.length }})
+    </strong>
+    <strong ng-if="vm.numberOfPrefixes >= prefixes.length">
+      ({{ prefixes.length }}):
     </strong>
   </p>
   <div class="prop-list" style="max-height: 140px;" ng-if="prefixes.length > 0">
