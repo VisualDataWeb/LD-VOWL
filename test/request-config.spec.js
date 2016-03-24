@@ -71,7 +71,7 @@ describe('Service: RequestConfig', function () {
   });
 
   it('should return debug is on', function () {
-    expect(rconf.getDebug()).toBe('on')
+    expect(rconf.getDebug()).toBe('on');
   });
 
   it('should return whether properties should be fetched ordered', function () {

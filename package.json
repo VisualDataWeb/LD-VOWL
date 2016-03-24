@@ -28,6 +28,7 @@
     "babel-core": "^6.3.13",
     "babel-eslint": "^4.1.8",
     "babel-loader": "^6.2.0",
+    "babel-polyfill": "^6.7.4",
     "babel-preset-es2015": "^6.3.13",
     "chai": "^3.4.1",
     "css-loader": "^0.23.0",
@@ -64,7 +65,9 @@
     "deploy": "NODE_ENV=production webpack -p --config webpack.production.config.js"
   },
   "keywords": [
-    "Linked Data", "SPARQL", "VOWL"
+    "Linked Data",
+    "SPARQL",
+    "VOWL"
   ],
   "author": "Marc Weise <weisemc@studi.informatik.uni-stuttgart.de>",
   "private": true,

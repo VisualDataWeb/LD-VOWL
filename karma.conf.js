@@ -4,7 +4,7 @@ webpackConfig.entry = {};
 // Karma configuration
 // Generated on Thu Jan 21 2016 23:04:36 GMT+0100 (CET)
 
-module.exports = function(config) {
+module.exports = function (config) {
   config.set({
 
     // base path that will be used to resolve all patterns (eg. files, exclude)
@@ -44,14 +44,15 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      './test/test_index.js'
+      './test/test_index.js',
+      'node_modules/babel-polyfill/dist/polyfill.js' // polyfill needed for things like Set
     ],
 
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      './core/bootstrap.js': ['babel','webpack'],
-      './test/test_index.js': ['babel', 'webpack']
+      './app/core/bootstrap.js': ['webpack'],
+      './test/test_index.js': ['webpack']
     },
 
     webpack: webpackConfig,
