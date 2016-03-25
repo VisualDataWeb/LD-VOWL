@@ -96,25 +96,46 @@ function properties($interval, $log, $rootScope, RequestConfig) {
     }
   };
 
-  self.existsBetween = function (sourceId, targetId) {
-
-    if (sourceId !== undefined && typeof sourceId === 'string' && targetId !== undefined &&
-        typeof targetId === 'string') {
-
+  /**
+   * Returns true if source and target are strings and there is a property between these nodes.
+   * @param {string} sourceId - the id of the source node
+   * @param {string} targetId - the id of the target node
+   * @param {boolean} considerSubclasses - whether sub class property should be considered or not
+   * @param {boolean} considerDisjoint - whether disjoint properties should be considered or not
+   * @returns {*}
+   */
+  self.existsBetween = function (sourceId, targetId, considerSubclasses = false, considerDisjoint = false) {
+    if (typeof sourceId === 'string' && typeof targetId === 'string') {
       for (var i = 0; i < self.properties.length; i++) {
         var currentProp = self.properties[i];
 
+        // possible match
         if (currentProp.source === sourceId && currentProp.target === targetId) {
-          return currentProp.uri;
-        }
-      }
-    }
-
+          if (currentProp.type !== 'subClassProperty' && currentProp.type !== 'disjointProperty') {
+            return currentProp.uri;
+          } else if (currentProp.type === 'subClassProperty' && considerSubclasses) {
+            return currentProp.uri;
+          } else if (currentProp.type === 'disjointProperty' && considerDisjoint) {
+            return currentProp.uri;
+          }
+        } // end pf possible match
+      } // end of for loop
+    } // end of legal parameters
     return false;
   };
 
+  /**
+   * Adds a new property to the array. Parameters source, intermediate, target and uri must be strings.
+   *
+   * @param {string} source - the id of the source node
+   * @param {string} intermediate - the id of the intermediate node
+   * @param {string} target - the id of the target node
+   * @param {string} uri - the URI of the new property
+   * @param {number} value - the value of the new property
+   */
   self.addProperty = function (source, intermediate, target, uri, value) {
-    if (typeof source === 'string' && typeof intermediate === 'string' && typeof target === 'string') {
+    if (typeof source === 'string' && typeof intermediate === 'string' && typeof target === 'string' &&
+        typeof uri === 'string') {
 
       var ordered;
       if (value !== undefined) {
@@ -143,28 +164,43 @@ function properties($interval, $log, $rootScope, RequestConfig) {
         self.addURI(source, target, uri, value);
       }
       self.needsUpdate = true;
+    } else {
+      $log.error(`[Properties] Unable to add new prop '${source}' -> '${intermediate}' ->'${target}' named '${uri}': ` +
+                  'Missing information!');
     }
   };
 
+  /**
+   * Adds a new sub class property.
+   * @param {string} source - the id of the source node
+   * @param {string} intermediate - the id of the intermediate node
+   * @param {string} target - the id of the target node
+   */
   self.addSubClassProperty = function (source, intermediate, target) {
-    var newSubClassProp = {};
+    if (typeof source === 'string' && typeof intermediate === 'string' && typeof target === 'string') {
+      var newSubClassProp = {};
 
-    newSubClassProp.source = source;
-    newSubClassProp.intermediate = intermediate;
-    newSubClassProp.target = target;
-    newSubClassProp.value = 1;
-    newSubClassProp.props = [];
-    newSubClassProp.props.push({'uri': self.SUBCLASS_URI});
-    newSubClassProp.uri = self.SUBCLASS_URI;
-    newSubClassProp.type = 'subClassProperty';
+      newSubClassProp.source = source;
+      newSubClassProp.intermediate = intermediate;
+      newSubClassProp.target = target;
+      newSubClassProp.value = 1;
+      newSubClassProp.props = [];
+      newSubClassProp.props.push({'uri': self.SUBCLASS_URI});
+      newSubClassProp.uri = self.SUBCLASS_URI;
+      newSubClassProp.type = 'subClassProperty';
 
-    self.properties.push(newSubClassProp);
+      self.properties.push(newSubClassProp);
 
-    self.needsUpdate = true;
+      self.needsUpdate = true;
+    } else {
+      $log.error(`[Properties] Unable to add sub class prop from '${source}' via '${intermediate}' to '${target}': ` +
+                'Missing information!');
+    }
   };
 
   self.addDisjointProp = function (source, target) {
-    if (!self.existsBetween(source, target)) {
+    // sub class and disjoint props are added first, so this must be one of these set relations
+    if (!self.existsBetween(source, target, true, true)) {
       var disjointProp = {};
 
       disjointProp.source = source;
@@ -213,7 +249,7 @@ function properties($interval, $log, $rootScope, RequestConfig) {
   /**
    * Returns the property with the given URI or null, if no property with the given URI exists.
    *
-   * @param uriToSearchFor - the URI of the property to be caught
+   * @param {string} uriToSearchFor - the URI of the property to be caught
    * @returns {*}
    */
   self.getByURI = function (uriToSearchFor) {
@@ -348,7 +384,7 @@ function properties($interval, $log, $rootScope, RequestConfig) {
 
       if (currentProp.source === classId2) {
         if (currentProp.type === 'subClassProperty' &&
-          self.existsBetween(classId1, currentProp.target) === self.SUBCLASS_URI) {
+          self.existsBetween(classId1, currentProp.target, true, false) === self.SUBCLASS_URI) {
 
           $log.debug(`[Properties] Remove node '${currentProp.intermediate}'.`);
           nodesToRemove.push(currentProp.intermediate);
@@ -361,7 +397,7 @@ function properties($interval, $log, $rootScope, RequestConfig) {
 
       if (currentProp.target === classId2) {
         if (currentProp.type === 'subClassProperty' &&
-            self.existsBetween(currentProp.source, classId1) === self.SUBCLASS_URI) {
+            self.existsBetween(currentProp.source, classId1, true, false) === self.SUBCLASS_URI) {
 
           $log.debug(`[Properties] Remove node '${currentProp.intermediate}'.`);
           nodesToRemove.push(currentProp.intermediate);
