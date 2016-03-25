@@ -2,7 +2,7 @@ import angular from 'angular';
 
 // import dependencies
 import components from './components/components.module';
-import filters from './filters/index';
+import filters from './filters/filters.module';
 import services from './services/services.module';
 import utilities from './utilities/utilities.module';
 

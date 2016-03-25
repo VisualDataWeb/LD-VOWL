@@ -35,6 +35,14 @@ function promises($log) {
     $log.warn(`[Promises] Cleared all promises! Now holding ${cancelPromises.size} promises.`);
   };
 
+  /**
+   * Returns the amount of promises being hold by this service.
+   * @returns {number}
+   */
+  that.getSize = function () {
+    return cancelPromises.size;
+  };
+
 }
 
 export default promises;

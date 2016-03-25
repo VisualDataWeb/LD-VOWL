@@ -52,8 +52,8 @@ body {
 }
 
 div.main {
-  padding-left: 0px;
-  padding-right: 0px;
+  padding-left: 0;
+  padding-right: 0;
 }
 
 .sidebar {
@@ -70,7 +70,7 @@ div.main {
 
 /* Custom page header */
 .header .navbar{
-  margin-bottom: 0px;
+  margin-bottom: 0;
 }
 
 .jumbotron {
@@ -98,7 +98,7 @@ div.main {
 }
 
 div.prefix {
-  margin-left: 0px;
+  margin-left: 0;
 }
 
 .panel-body {
@@ -110,7 +110,7 @@ td.prefix-table {
 }
 
 .prop-list table {
-  margin-bottom: 0px;
+  margin-bottom: 0;
 }
 
 p.comment {
