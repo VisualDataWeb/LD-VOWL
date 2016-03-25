@@ -1,4 +1,4 @@
-import app from '../app/app';
+import app from '../../../app/app';
 
 describe('Service: Requests', function () {
 

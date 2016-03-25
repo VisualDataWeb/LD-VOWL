@@ -1,4 +1,4 @@
-import app from '../app/app';
+import app from '../../../app/app';
 
 describe('Service: RequestConfig', function () {
 
@@ -14,6 +14,7 @@ describe('Service: RequestConfig', function () {
   beforeEach(angular.mock.inject(function (RequestConfig) {
     rconf = RequestConfig;
     rconf.setEndpointURL(defaultEndpoint);
+    rconf.setLabelLanguage(defaultLabelLang);
   }));
 
   it('should exist', function () {

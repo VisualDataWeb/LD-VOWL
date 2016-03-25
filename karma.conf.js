@@ -1,5 +1,13 @@
+var webpack = require('webpack');
 var webpackConfig = require('./webpack.config.js');
 webpackConfig.entry = {};
+webpackConfig.plugins.push(new webpack.DefinePlugin({
+  __aerobatic__: {
+    settings: {
+      useSessionStorage: false
+    }
+  }
+}));
 
 // Karma configuration
 // Generated on Thu Jan 21 2016 23:04:36 GMT+0100 (CET)
@@ -60,5 +68,5 @@ module.exports = function (config) {
     webpackMiddleware: {
       noInfo: true
     }
-  })
+  });
 };
