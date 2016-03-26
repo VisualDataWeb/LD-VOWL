@@ -9,6 +9,16 @@ webpackConfig.plugins.push(new webpack.DefinePlugin({
   }
 }));
 
+webpackConfig.module.postLoaders = [];
+webpackConfig.module.postLoaders.push(
+  {
+    test: /\.js$/,
+    exclude: /(test|node_modules|bower_components)\//,
+    loader: 'istanbul-instrumenter'
+  }
+);
+
+
 // Karma configuration
 // Generated on Thu Jan 21 2016 23:04:36 GMT+0100 (CET)
 
@@ -20,12 +30,12 @@ module.exports = function (config) {
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ['jasmine', 'chai'],
+    frameworks: ['jasmine'],
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['progress'],
+    reporters: ['progress', 'coverage'],
 
     // web server port
     port: 9876,
@@ -59,14 +69,27 @@ module.exports = function (config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      './app/core/bootstrap.js': ['webpack'],
+      './app/core/bootstrap.js': ['webpack', 'coverage'],
       './test/test_index.js': ['webpack']
+    },
+
+    coverageReporter: {
+      type : 'html',
+      dir : 'coverage/'
     },
 
     webpack: webpackConfig,
 
     webpackMiddleware: {
       noInfo: true
-    }
+    },
+
+    plugins: [
+      'karma-jasmine',
+      'karma-phantomjs-launcher',
+      'karma-sourcemap-loader',
+      'karma-webpack',
+      'karma-coverage'
+    ]
   });
 };
