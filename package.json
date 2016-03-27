@@ -1,6 +1,6 @@
 {
   "name": "linked-data-vowl",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "Extract ontology information out of arbitrary SPARQL endpoints and visualize it using a slightly adjusted form of VOWL.",
   "main": "app/app.js",
   "dependencies": {

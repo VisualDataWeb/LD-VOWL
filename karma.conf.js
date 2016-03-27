@@ -6,7 +6,8 @@ webpackConfig.plugins.push(new webpack.DefinePlugin({
     settings: {
       useSessionStorage: false
     }
-  }
+  },
+  __VERSION__: JSON.stringify(require('./package.json').version)
 }));
 
 webpackConfig.module.postLoaders = [];

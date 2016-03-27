@@ -36,7 +36,7 @@ function routing($httpProvider, $routeProvider, $logProvider) {
     });
 
   // jshint ignore:start
-  $logProvider.debugEnabled(__LOGGING__);// eslint-disable-line no-undef
+  $logProvider.debugEnabled(__LOGGING__); // eslint-disable-line no-undef
   //jshint ignore:end
 
 } // end of routing()

@@ -126,6 +126,12 @@ img.logo {
   margin-right: 5px;
 }
 
+.app-name small {
+  font-size: 13px;
+  font-weight: bold;
+  color: #36c;
+}
+
 /* Responsive: Portrait tablets and up */
 @media screen and (min-width: 768px) {
   .container {

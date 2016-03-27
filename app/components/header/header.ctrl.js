@@ -13,6 +13,10 @@ function HeaderCtrl($scope, $location) {
 
   header.loading = false;
 
+  // jshint ignore:start
+  header.appVersion = (__VERSION__ !== undefined) ? __VERSION__ : '0.0'; // eslint-disable-line no-undef
+  // jshint ignore:end
+
   $scope.$on('pending-requests-changed', function(event, pending) {
     header.loading = pending > 0;
   });
