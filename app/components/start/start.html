@@ -1,9 +1,12 @@
 <div class="container">
   <div class="jumbotron">
-    <h1>Linked Data VOWL</h1>
+    <h1>LinkedDataVOWL</h1>
     <p>
-      Extracts ontologies out of arbitrary SPARQL endpoints and visualizes them in a node link graph using an slightly
-      adjusted form of <a href="http://vowl.visualdataweb.org/v2/" target="_blank">VOWL</a>.
+      Extracts ontologies out of arbitrary SPARQL endpoints and visualizes them in a node link graph using the
+      <a href="http://vowl.visualdataweb.org/v2/" target="_blank">
+        VOWL Notation
+      </a>
+      (with some modifications).
     </p>
   </div>
 
@@ -14,7 +17,7 @@
         <div class="col-sm-7">
           <input name="url" id="endpoint" ng-model="start.endpoint" type="url" class="form-control" title="endpoint"
                  uib-typeahead="url for url in start.endpoints | filter:$viewValue | limitTo:8" required
-                 ng-minlength="7" placeholder="Type in an URL or select some from the dropdown list"/>
+                 ng-minlength="7" typeahead-min-length="0" placeholder="Type in an URL or select some from the list"/>
         </div>
         <div class="col-sm-3">
           <button type="button" class="btn btn-primary" ng-click="start.showGraph()"
