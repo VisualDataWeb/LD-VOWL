@@ -1,5 +1,9 @@
 'use strict';
 
+/**
+ * @Name RequestConfig
+ * @param {$cookies} $cookies
+ */
 function requestConfig($cookies) {
 
   'ngInject';
@@ -23,6 +27,24 @@ function requestConfig($cookies) {
   self.init = function () {
     $cookies.put(cookiePrefix + 'endpoint', endpointURL);
     $cookies.put(cookiePrefix + 'proxy', useLocalProxy);
+
+    // SPARQL limit
+    let cookieLimit = $cookies.get(cookiePrefix + 'limit');
+    if (typeof cookieLimit !== 'undefined') {
+      limit = parseInt(cookieLimit);
+    } else {
+      $cookies.put(cookiePrefix + 'limit', limit.toString());
+    }
+
+    // Properties ordered ?
+    let cookieOrdered = $cookies.get(cookiePrefix + 'ordered');
+    if (typeof cookieOrdered !== 'undefined') {
+      propertiesOrdered = (cookieOrdered === 'true');
+    } else {
+      // save current state
+      let ordered = (propertiesOrdered) ? 'true'  : 'false';
+      $cookies.put(cookiePrefix + 'ordered', ordered);
+    }
   };
 
   /**
@@ -86,6 +108,7 @@ function requestConfig($cookies) {
 
   self.setLimit = function (newLimit) {
     limit = (typeof newLimit === 'number' && newLimit > 0) ? newLimit : limit;
+    $cookies.put(cookiePrefix + 'limit', limit.toString());
   };
 
   self.getTimout = function () {
@@ -121,6 +144,8 @@ function requestConfig($cookies) {
 
   self.setPropertiesOrdered = function (ordered) {
     propertiesOrdered = ordered;
+    let flag = (ordered) ? 'true' : 'false';
+    $cookies.put(cookiePrefix + 'ordered', flag);
   };
 
   self.switchFormat = function () {

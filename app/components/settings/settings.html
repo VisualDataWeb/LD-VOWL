@@ -1,42 +1,62 @@
 <div class="container">
-  <h2>General</h2>
-  <form class="form-horizontal well">
 
-    <div class="form-group">
-      <label class="control-label col-sm-2" for="lang">Language</label>
+  <h2>SPARQL</h2>
+
+  <form name="extractionForm" class="form-horizontal well" role="form" novalidate>
+    <div class="form-group" ng-class="{ 'has-error' : extractionForm.limit.$invalid && !extractionForm.limit.$pristine }">
+      <label class="control-label col-sm-2" for="lang">Labels</label>
       <div class="col-sm-4">
         <select class="form-control" name="lang" id="lang" ng-model="vm.currentLanguage"
-                ng-change="vm.updateLabelLanguage()"
                 ng-options="language.id as language.name for language in vm.availableLanguages">
         </select>
       </div>
 
       <label for="limit" class="col-sm-2 control-label">Limit</label>
       <div class="col-sm-4">
-        <input class="form-control" id="limit" type="number" ng-model="vm.currentLimit" />
+        <input class="form-control" name="limit" id="limit" type="number" ng-model="vm.currentLimit" min="1" required/>
+        <p ng-show="extractionForm.limit.$invalid && !extractionForm.limit.$pristine" class="help-block">
+          must be greater 0!
+        </p>
       </div>
-    </div><!-- /.form-group -->
+    </div>
 
     <div class="form-group">
       <div class="col-lg-offset-2 col-sm-10">
         <div class="checkbox">
           <label>
-            <input type="checkbox" ng-model="vm.propsOrdered" ng-change="vm.updatePropsOrdered()">
+            <input type="checkbox" name="ordered" ng-model="vm.propsOrdered">
             fetch properties ordered
           </label>
         </div>
       </div>
     </div><!-- /.form-group -->
+
+    <div class="form-group">
+      <div class="col-sm-12">
+        <div class= "pull-right">
+          <button type="button" class="btn btn-primary"
+                  ng-click="vm.saveExtractionSettings(); extractionForm.$setPristine()"
+                  ng-disabled="!(extractionForm.lang.$dirty || extractionForm.limit.$dirty
+                                || extractionForm.ordered.$dirty) || extractionForm.$invalid">
+            <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
   </form>
 
   <h2>Blacklists</h2>
-  <form class="form-horizontal well">
+  <form name="lists" class="form-horizontal well" role="form" novalidate>
     <div class="form-group">
-      <label class="control-label col-sm-2">Lists</label>
+      <label class="control-label col-sm-2">
+        Lists
+      </label>
       <div class="col-sm-2">
         <div class="checkbox">
           <label>
-            <input type="checkbox" ng-model="vm.enabled.RDF" ng-change="vm.restoreDefaults()">
+            <input type="checkbox" name="rdf" ng-model="vm.enabled.RDF"
+                   ng-change="vm.restoreListDefaults(); bl.$setPristine()">
             RDF
           </label>
         </div>
@@ -45,7 +65,8 @@
       <div class="col-sm-2">
         <div class="checkbox">
           <label>
-            <input type="checkbox" ng-model="vm.enabled.RDFS" ng-change="vm.restoreDefaults()">
+            <input type="checkbox" name="rdfs" ng-model="vm.enabled.RDFS"
+                   ng-change="vm.restoreListDefaults(); bl.$setPristine()">
             RDFS
           </label>
         </div>
@@ -54,7 +75,8 @@
       <div class="col-sm-2">
         <div class="checkbox">
           <label>
-            <input type="checkbox" ng-model="vm.enabled.OWL" ng-change="vm.restoreDefaults()">
+            <input type="checkbox" name="owl" ng-model="vm.enabled.OWL"
+                   ng-change="vm.restoreListDefaults(); bl.$setPristine()">
             OWL
           </label>
         </div>
@@ -63,7 +85,8 @@
       <div class="col-sm-2">
         <div class="checkbox">
           <label>
-            <input type="checkbox" ng-model="vm.enabled.SKOS" ng-change="vm.restoreDefaults()">
+            <input type="checkbox" name="skos" ng-model="vm.enabled.SKOS"
+                   ng-change="vm.restoreListDefaults(); bl.$setPristine()">
             SKOS
           </label>
         </div>
@@ -80,11 +103,11 @@
     </div>
   </form>
 
-  <form class="form-horizontal well">
+  <form class="form-horizontal well" name="bl" role="form" novalidate>
     <div class="form-group">
       <label for="classBlacklist" class="control-label col-sm-2">Classes</label>
       <div class="col-sm-10">
-        <textarea class="form-control" id="classBlacklist" rows="6" ng-model="vm.classBlacklistInput">
+        <textarea class="form-control" id="classBlacklist" name="clazz" rows="6" ng-model="vm.classBlacklistInput">
         </textarea>
       </div>
     </div>
@@ -92,7 +115,7 @@
     <div class="form-group">
       <label class="control-label col-sm-2" for="propBlacklist">Properties</label>
       <div class="col-sm-10">
-        <textarea class="form-control" id="propBlacklist" rows="6" ng-model="vm.propertyBlacklistInput">
+        <textarea class="form-control" id="propBlacklist" name="prop" rows="6" ng-model="vm.propertyBlacklistInput">
         </textarea>
       </div>
     </div>
@@ -100,11 +123,16 @@
     <div class="form-group">
       <div class="col-sm-12">
         <div class= "pull-right">
-          <button type="button" class="btn btn-default" ng-click="vm.restoreDefaults()">
+          <button type="button" class="btn btn-default" ng-click="vm.restoreDefaults(); bl.$setPristine()"
+                  ng-disabled="bl.clazz.$pristine && bl.prop.$pristine && vm.enabled.RDF && vm.enabled.RDFS &&
+                                vm.enabled.OWL && !vm.enabled.SKOS">
             <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
             Restore Defaults
           </button>
-          <button type="button" class="btn btn-primary" ng-click="vm.save()">
+          <button type="button" class="btn btn-primary"
+                  ng-click="vm.saveBlacklists(); bl.$setPristine(); lists.$setPristine()"
+                  ng-disabled="!(lists.rdf.$dirty || lists.rdfs.$dirty || lists.owl.$dirty || lists.skos.$dirty ||
+                                bl.clazz.$dirty || bl.prop.$dirty) || bl.$invalid">
             <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
             Save
           </button>

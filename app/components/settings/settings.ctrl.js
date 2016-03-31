@@ -39,10 +39,10 @@ function settingsCtrl($log, $cookies, PREFIX, PROPERTY_BLACKLIST, CLASS_BLACKLIS
     cookieFlag['OWL'] = $cookies.get(cookiePrefix + 'blacklist_owl');
     cookieFlag['SKOS'] = $cookies.get(cookiePrefix + 'blacklist_skos');
 
-    vm.enabled['RDF'] =  (cookieFlag['RDF'] !== undefined) ? (cookieFlag['RDF'] === 'true') : true;
-    vm.enabled['RDFS'] =  (cookieFlag['RDFS'] !== undefined) ? (cookieFlag['RDFS'] === 'true') : true;
-    vm.enabled['OWL'] =  (cookieFlag['OWL'] !== undefined) ? (cookieFlag['OWL'] === 'true') : true;
-    vm.enabled['SKOS'] =  (cookieFlag['SKOS'] !== undefined) ? (cookieFlag['SKOS'] === 'true') : false;
+    vm.enabled['RDF'] = (cookieFlag['RDF'] !== undefined) ? (cookieFlag['RDF'] === 'true') : true;
+    vm.enabled['RDFS'] = (cookieFlag['RDFS'] !== undefined) ? (cookieFlag['RDFS'] === 'true') : true;
+    vm.enabled['OWL'] = (cookieFlag['OWL'] !== undefined) ? (cookieFlag['OWL'] === 'true') : true;
+    vm.enabled['SKOS'] = (cookieFlag['SKOS'] !== undefined) ? (cookieFlag['SKOS'] === 'true') : false;
 
     vm.classBlacklistInput = classItems.join(vm.separator);
     vm.propertyBlacklistInput = propertyItems.join(vm.separator);
@@ -65,8 +65,13 @@ function settingsCtrl($log, $cookies, PREFIX, PROPERTY_BLACKLIST, CLASS_BLACKLIS
   /**
    * Save Blacklists for RDFS and OWL.
    */
-  vm.save = function () {
-
+  vm.saveExtractionSettings = function () {
+    vm.updateLabelLanguage();
+    vm.updatePropsOrdered();
+    RequestConfig.setLimit(vm.currentLimit);
+  };
+  
+  vm.saveBlacklists = function () {
     var input = vm.propertyBlacklistInput.replace(/(\r\n|\n|\r|\s)/gm,'');
     var items = input.split(',');
 
@@ -82,8 +87,6 @@ function settingsCtrl($log, $cookies, PREFIX, PROPERTY_BLACKLIST, CLASS_BLACKLIS
     Properties.clearAll();
     Requests.clear();
 
-    RequestConfig.setLimit(vm.currentLimit);
-
     const rdfState = (vm.enabled['RDF']) ? 'true' : 'false';
     const rdfsState = (vm.enabled['RDFS']) ? 'true' : 'false';
     const owlState = (vm.enabled['OWL']) ? 'true' : 'false';
@@ -93,12 +96,29 @@ function settingsCtrl($log, $cookies, PREFIX, PROPERTY_BLACKLIST, CLASS_BLACKLIS
     $cookies.put(cookiePrefix + 'blacklist_rdfs', rdfsState);
     $cookies.put(cookiePrefix + 'blacklist_owl', owlState);
     $cookies.put(cookiePrefix + 'blacklist_skos', skosState);
+
+    // save inputs
+    $cookies.put(cookiePrefix + 'class_blacklist', vm.classBlacklistInput);
+    $cookies.put(cookiePrefix + 'property_blacklist', vm.propertyBlacklistInput);
   };
 
   /**
    * Reset all settings to its default values.
    */
   vm.restoreDefaults = function () {
+    vm.enabled['RDF'] = true;
+    vm.enabled['RDFS'] = true;
+    vm.enabled['OWL'] = true;
+    vm.enabled['SKOS'] = false;
+    
+    vm.restoreListDefaults();
+  };
+
+
+  /**
+   * Restore blacklists to predefined list.
+   */
+  vm.restoreListDefaults = function () {
     let propertyItems = [];
     for (let pVoc in PROPERTY_BLACKLIST) {
       if (vm.enabled[pVoc] && PROPERTY_BLACKLIST.hasOwnProperty(pVoc)) {

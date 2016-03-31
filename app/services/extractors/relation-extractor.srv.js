@@ -11,7 +11,7 @@ class RelationExtractor extends Extractor {
   /**
    * Creates a RelationExtractor.
    */
-  constructor($http, $q, $log, PREFIX, PROPERTY_BLACKLIST, QueryFactory, RequestConfig, Nodes, Properties, Promises) {
+  constructor($cookies, $http, $q, $log, PREFIX, PROPERTY_BLACKLIST, QueryFactory, RequestConfig, Nodes, Properties, Promises) {
 
     'ngInject';
 
@@ -19,6 +19,7 @@ class RelationExtractor extends Extractor {
     super();
 
     this.blacklist = [];
+    this.$cookies = $cookies;
     this.$http = $http;
     this.$q = $q;
     this.$log = $log;
@@ -27,11 +28,20 @@ class RelationExtractor extends Extractor {
     this.nodes = Nodes;
     this.props = Properties;
     this.promises = Promises;
-
-    for (var type in PROPERTY_BLACKLIST) {
-      if (PROPERTY_BLACKLIST.hasOwnProperty(type) && type !== 'SKOS') {
-        for (var i = 0; i < PROPERTY_BLACKLIST[type].length; i++) {
-          this.blacklist.push(PREFIX[type] + PROPERTY_BLACKLIST[type][i]);
+    
+    let blacklistStr = $cookies.get('ldvowl_property_blacklist');
+    
+    if (typeof blacklistStr !== 'undefined') {
+      // use last blacklist
+      let classInput = blacklistStr.replace(/(\r\n|\n|\r|\s)/gm,'');
+      this.setBlacklist(classInput.split(','));
+    } else {
+      // create a new blacklist
+      for (var type in PROPERTY_BLACKLIST) {
+        if (PROPERTY_BLACKLIST.hasOwnProperty(type) && type !== 'SKOS') {
+          for (var i = 0; i < PROPERTY_BLACKLIST[type].length; i++) {
+            this.blacklist.push(PREFIX[type] + PROPERTY_BLACKLIST[type][i]);
+          }
         }
       }
     }

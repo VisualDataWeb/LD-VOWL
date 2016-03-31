@@ -10,7 +10,7 @@ class ClassExtractor extends Extractor {
 
   /**
    * Create a new ClassExtractor.
-   *
+   * @param {$cookies} $cookies
    * @param {$http} $http
    * @param $q
    * @param {$log} $log
@@ -21,7 +21,7 @@ class ClassExtractor extends Extractor {
    * @param Nodes
    * @param Promises
    */
-  constructor ($http, $q, $log, PREFIX, CLASS_BLACKLIST, RequestConfig, QueryFactory, Nodes, Promises) {
+  constructor ($cookies, $http, $q, $log, PREFIX, CLASS_BLACKLIST, RequestConfig, QueryFactory, Nodes, Promises) {
 
     'ngInject';
 
@@ -36,12 +36,21 @@ class ClassExtractor extends Extractor {
     this.queryFactory = QueryFactory;
     this.nodes = Nodes;
     this.promises = Promises;
+    
+    //TODO move cookie name into a constant
+    let blacklistStr = $cookies.get('ldvowl_class_blacklist');
 
-    // set up blacklists
-    for (var type in CLASS_BLACKLIST) {
-      if (CLASS_BLACKLIST.hasOwnProperty(type) && type !== 'SKOS') {
-        for (var i = 0; i < CLASS_BLACKLIST[type].length; i++) {
-          this.blacklist.push(PREFIX[type] + CLASS_BLACKLIST[type][i]);
+    if (typeof blacklistStr !== 'undefined') {
+      // use last blacklist
+      let classInput = blacklistStr.replace(/(\r\n|\n|\r|\s)/gm,'');
+      this.setBlacklist(classInput.split(','));
+    } else {
+      // set up new blacklists
+      for (var type in CLASS_BLACKLIST) {
+        if (CLASS_BLACKLIST.hasOwnProperty(type) && type !== 'SKOS') {
+          for (var i = 0; i < CLASS_BLACKLIST[type].length; i++) {
+            this.blacklist.push(PREFIX[type] + CLASS_BLACKLIST[type][i]);
+          }
         }
       }
     }

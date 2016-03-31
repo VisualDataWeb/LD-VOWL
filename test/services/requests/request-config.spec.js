@@ -39,6 +39,8 @@ describe('Service: RequestConfig', function () {
     let newLimit = 20;
     rconf.setLimit(newLimit);
     expect(rconf.getLimit()).toBe(newLimit);
+    rconf.setLimit(defaultLimit);
+    expect(rconf.getLimit()).toBe(defaultLimit);
   });
 
   it('should not be possible to set negative limit', function () {
