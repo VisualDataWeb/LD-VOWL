@@ -20,7 +20,7 @@
                  ng-minlength="7" typeahead-min-length="0" placeholder="Type in an URL or select some from the list"/>
         </div>
         <div class="col-sm-3">
-          <button type="button" class="btn btn-primary" ng-click="start.showGraph()"
+          <button type="button" class="btn btn-primary" id="showGraph" ng-click="start.showGraph()"
                   ng-disabled="endpointForm.url.$dirty && endpointForm.url.$invalid">
             Show Graph &raquo;
           </button>

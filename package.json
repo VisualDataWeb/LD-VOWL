@@ -53,6 +53,7 @@
     "ng-annotate-loader": "0.0.10",
     "node-sass": "^3.4.2",
     "phantomjs": "^1.9.19",
+    "protractor": "^3.2.2",
     "sass-loader": "^3.1.2",
     "style-loader": "^0.13.0",
     "url-loader": "^0.5.7",
@@ -64,6 +65,7 @@
     "host": "webpack-dev-server --host 0.0.0.0 --content-base app --inline --hot",
     "proxy": "node ../anti-cors-proxy/index.js",
     "test": "karma start",
+    "e2etest": "protractor protractor.conf.js",
     "lint": "eslint . --ext .js || true",
     "deploy": "NODE_ENV=production webpack -p --config webpack.production.config.js"
   },
