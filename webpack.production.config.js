@@ -3,6 +3,7 @@
 var webpack = require('webpack');
 var ngAnnotatePlugin = require('ng-annotate-webpack-plugin');
 var ExtractPlugin = require('extract-text-webpack-plugin');
+var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 var APP = __dirname + '/app';
 
@@ -36,7 +37,7 @@ module.exports = {
         loader: 'url-loader?limit=10000&minetype=application/font-woff&name=fonts/[name].[ext]' },
       { test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'file-loader?name=img/[name].[ext]' },
       { test: /\.css$/, loader: ExtractPlugin.extract('style', 'css') },
-      { test: /\.(jpg|png|gif)$/, loader: 'file-loader?name=img/[name].[ext]'}
+      { test: /\.(jpg|png|gif|ico)$/, loader: 'file-loader?name=img/[name].[ext]'}
     ]
   },
   plugins: [
@@ -58,7 +59,13 @@ module.exports = {
 
     new ExtractPlugin('styles.css'),
 
-    new webpack.optimize.CommonsChunkPlugin('vendors', 'js/vendors.js')
+    new webpack.optimize.CommonsChunkPlugin('vendors', 'js/vendors.js'),
+
+    new HtmlWebpackPlugin({
+      title: 'LD-VOWL',
+      template: 'index.ejs',
+      favicon: __dirname + '/app/favicon.ico',
+    })
   ],
   output: {
     path: __dirname + '/dist',
