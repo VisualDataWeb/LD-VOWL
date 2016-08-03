@@ -39,7 +39,7 @@ function filters($cookies, $log) {
     var cookieLoopFlag = $cookies.get(cookiePrefix + 'include_loops');
 
     if (cookieLoopFlag !== undefined) {
-      includeLoops= cookieLoopFlag;
+      includeLoops = cookieLoopFlag;
     }
 
     return (includeLoops === 'true');

@@ -5,6 +5,7 @@ import header from './header/header.module';
 import settings from './settings/settings.module';
 import sidebar from './sidebar/sidebar.module';
 import start from './start/start.module';
+import about from './about/about.module';
 
-export default angular.module('components', [graph, header, settings, sidebar, start])
+export default angular.module('components', [graph, header, settings, sidebar, start, about])
                       .name;

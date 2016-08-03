@@ -1,6 +1,7 @@
 import startTemplate from './components/start/start.html';
 import settingsTemplate from './components/settings/settings.html';
 import graphTemplate from './components/graph/graph.html';
+import aboutTemplate from './components/about/about.html';
 
 function routing($httpProvider, $routeProvider, $logProvider) {
 
@@ -30,6 +31,12 @@ function routing($httpProvider, $routeProvider, $logProvider) {
       template: graphTemplate,
       controller: 'GraphCtrl',
       controllerAs: 'vm'
+    })
+    .when('/about', {
+      title: 'About',
+      template: aboutTemplate,
+      controller: 'AboutCtrl',
+      controllerAs: 'about'
     })
     .otherwise({
       redirectTo: '/'

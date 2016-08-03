@@ -2,31 +2,31 @@
 
   <div class="checkbox">
     <label for="showLiterals">
-      <input id="showLiterals" type="checkbox" ng-model="vm.extractTypes" ng-change="vm.toggleTypes()">
-      Show datatypes
+      <input id="showLiterals" type="checkbox" ng-model="vm.filterTypes" ng-change="vm.toggleTypes()">
+      datatypes
     </label>
   </div>
 
   <div class="checkbox">
     <label for="includeLoops">
-      <input id="includeLoops" type="checkbox" ng-model="vm.includeLoops" ng-change="vm.toggleLoops()">
-      Show property loops
+      <input id="includeLoops" type="checkbox" ng-model="vm.filterLoops" ng-change="vm.toggleLoops()">
+      property loops
     </label>
   </div>
 
   <div class="checkbox">
     <label for="includeSubclassRelations">
-      <input id="includeSubclassRelations" type="checkbox" ng-model="vm.includeSubclassRelations"
+      <input id="includeSubclassRelations" type="checkbox" ng-model="vm.filterSubclassRelations"
              ng-change="vm.toggleSubclassRelations()">
-      Show subclass relations
+      subclass relations
     </label>
   </div>
 
   <div class="checkbox">
     <label for="includeDisjointNode">
-      <input id="includeDisjointNode" type="checkbox" ng-model="vm.includeDisjointNode"
+      <input id="includeDisjointNode" type="checkbox" ng-model="vm.filterDisjointNodes"
              ng-change="vm.toggleDisjointNode()">
-      Show disjoint classes
+      class disjointness
     </label>
   </div>
 

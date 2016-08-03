@@ -25,10 +25,11 @@ function graphCtrl($scope, $q, $log, Filters, ClassExtractor, RelationExtractor,
   vm.numberOfProps = 5;
   vm.numberOfPrefixes = 3;
 
-  vm.extractTypes = Filters.getIncludeLiterals();
-  vm.includeLoops = Filters.getIncludeLoops();
-  vm.includeDisjointNode = Filters.getIncludeDisjointNode();
-  vm.includeSubclassRelations = Filters.getIncludeSubclassRelations();
+  vm.filterTypes = !Filters.getIncludeLiterals();
+  vm.filterLoops = !Filters.getIncludeLoops();
+  vm.filterDisjointNodes = !Filters.getIncludeDisjointNode();
+  vm.filterSubclassRelations = !Filters.getIncludeSubclassRelations();
+
   vm.differentColors = Prefixes.getDifferentColors();
 
   // jshint ignore:start
@@ -91,25 +92,25 @@ function graphCtrl($scope, $q, $log, Filters, ClassExtractor, RelationExtractor,
   };
 
   vm.toggleTypes = function () {
-    vm.extractTypes = Filters.toggleLiterals();
-    if (vm.extractTypes) {
+    vm.filterTypes = !Filters.toggleLiterals();
+    if (vm.filterTypes) {
       vm.loadTypes();
     }
   };
 
   vm.toggleLoops = function () {
-    vm.includeLoops = Filters.toggleLoops();
-    if (vm.includeLoops) {
+    vm.filterLoops = !Filters.toggleLoops();
+    if (vm.filterLoops) {
       vm.loadLoops();
     }
   };
 
   vm.toggleDisjointNode = function () {
-    vm.includeDisjointNode = Filters.toggleDisjointNode();
+    vm.filterDisjointNodes = !Filters.toggleDisjointNode();
   };
 
   vm.toggleSubclassRelations = function() {
-    vm.includeSubclassRelations = Filters.toggleSubclassRelations();
+    vm.includeSubclassRelations = !Filters.toggleSubclassRelations();
   };
 
   vm.toggleDifferentColors = function () {
@@ -173,7 +174,7 @@ function graphCtrl($scope, $q, $log, Filters, ClassExtractor, RelationExtractor,
         }
 
         // optionally extract types referring to instances of the classes
-        if (vm.extractTypes) {
+        if (vm.filterTypes) {
           vm.loadTypes();
         }
 
@@ -202,7 +203,7 @@ function graphCtrl($scope, $q, $log, Filters, ClassExtractor, RelationExtractor,
     // for each pair of classes search relation and check equality
     for (let end = 0; end < vm.classes.length; end++) {
       for (let start = 0; start < vm.classes.length; start++) {
-        if (vm.includeLoops || start !== end) {
+        if (vm.filterLoops || start !== end) {
           var origin = vm.classes[start];
           var target = vm.classes[end];
 

@@ -1,18 +1,18 @@
 <div class="container">
 
-  <h2>SPARQL</h2>
+  <h2>SPARQL Queries</h2>
 
   <form name="extractionForm" class="form-horizontal well" role="form" novalidate>
     <div class="form-group" ng-class="{ 'has-error' : extractionForm.limit.$invalid && !extractionForm.limit.$pristine }">
-      <label class="control-label col-sm-2" for="lang">Labels</label>
+      <label class="control-label col-sm-3" for="lang">Label Language</label>
       <div class="col-sm-4">
         <select class="form-control" name="lang" id="lang" ng-model="vm.currentLanguage"
                 ng-options="language.id as language.name for language in vm.availableLanguages">
         </select>
       </div>
 
-      <label for="limit" class="col-sm-2 control-label">Limit</label>
-      <div class="col-sm-4">
+      <label for="limit" class="col-sm-2 control-label">Default Limit</label>
+      <div class="col-sm-3">
         <input class="form-control" name="limit" id="limit" type="number" ng-model="vm.currentLimit" min="1" required/>
         <p ng-show="extractionForm.limit.$invalid && !extractionForm.limit.$pristine" class="help-block">
           must be greater 0!
@@ -21,11 +21,11 @@
     </div>
 
     <div class="form-group">
-      <div class="col-lg-offset-2 col-sm-10">
+      <div class="col-lg-offset-3 col-sm-10">
         <div class="checkbox">
           <label>
             <input type="checkbox" name="ordered" ng-model="vm.propsOrdered">
-            fetch properties ordered
+            fetch properties in descending order of their usage
           </label>
         </div>
       </div>
@@ -49,8 +49,8 @@
   <h2>Blacklists</h2>
   <form name="lists" class="form-horizontal well" role="form" novalidate>
     <div class="form-group">
-      <label class="control-label col-sm-2">
-        Lists
+      <label class="control-label col-sm-3">
+        Predefined Lists
       </label>
       <div class="col-sm-2">
         <div class="checkbox">
@@ -94,7 +94,7 @@
     </div>
 
     <div class="form-group" style="margin-bottom: 0;">
-      <div class="col-sm-offset-2 col-sm-10">
+      <div class="col-sm-offset-3 col-sm-9">
         <uib-alert type="warning" style="margin-bottom: 0;">
           <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>
           Any manual changes below will be overwritten!
@@ -105,16 +105,16 @@
 
   <form class="form-horizontal well" name="bl" role="form" novalidate>
     <div class="form-group">
-      <label for="classBlacklist" class="control-label col-sm-2">Classes</label>
-      <div class="col-sm-10">
+      <label for="classBlacklist" class="control-label col-sm-3">Classes</label>
+      <div class="col-sm-9">
         <textarea class="form-control" id="classBlacklist" name="clazz" rows="6" ng-model="vm.classBlacklistInput">
         </textarea>
       </div>
     </div>
 
     <div class="form-group">
-      <label class="control-label col-sm-2" for="propBlacklist">Properties</label>
-      <div class="col-sm-10">
+      <label class="control-label col-sm-3" for="propBlacklist">Properties</label>
+      <div class="col-sm-9">
         <textarea class="form-control" id="propBlacklist" name="prop" rows="6" ng-model="vm.propertyBlacklistInput">
         </textarea>
       </div>
