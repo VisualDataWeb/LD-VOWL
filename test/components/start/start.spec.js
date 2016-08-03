@@ -10,7 +10,7 @@ describe('Controller: StartCtrl', function () {
   let Properties;
   let Requests;
 
-  let defaultEndpointURL = 'http://dbpedia.org/sparql';
+  let defaultEndpointURL = '';
   let nonProxyEndpoints = 30;
   let proxyOnlyEndpoints = 30;
 
@@ -44,7 +44,7 @@ describe('Controller: StartCtrl', function () {
     expect(StartCtrl.proxyAvailable).toBeTruthy();
   });
 
-  it('should be on the DBpedia endpoint', function () {
+  it('should be have an empty endpoint input', function () {
     expect(StartCtrl.endpoint).toBe(defaultEndpointURL);
   });
 
@@ -78,7 +78,6 @@ describe('Controller: StartCtrl', function () {
       expect(Nodes.clearAll).not.toHaveBeenCalled();
       expect(Properties.clearAll).not.toHaveBeenCalled();
       expect(Requests.clear).not.toHaveBeenCalled();
-      expect($location.path).toHaveBeenCalledWith('graph');
     });
 
     it('should clear data if endpoint has changed', function () {

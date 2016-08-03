@@ -11,7 +11,7 @@ function requestConfig($cookies) {
   var cookiePrefix = 'ldvowl_';
   var localProxyURL = 'http://localhost:8080/sparql';
 
-  var endpointURL = $cookies.get(cookiePrefix + 'endpoint') || 'http://dbpedia.org/sparql';
+  var endpointURL = $cookies.get(cookiePrefix + 'endpoint') || '';
   var useLocalProxy = $cookies.get(cookiePrefix + 'proxy') || 'false';
   var limit = 10;
   var sparqlTimeout = 30000;

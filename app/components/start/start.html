@@ -15,13 +15,14 @@
       <div class="form-group">
         <label class="control-label col-sm-2" for="endpoint">Endpoint</label>
         <div class="col-sm-7">
-          <input name="url" id="endpoint" ng-model="start.endpoint" type="url" class="form-control" title="endpoint"
+          <input name="url" id="endpoint" ng-model="start.endpoint" type="url" class="form-control"
+                 title="SPARQL endpoint URL"
                  uib-typeahead="url for url in start.endpoints | filter:$viewValue | limitTo:8" required
                  ng-minlength="7" typeahead-min-length="0" placeholder="Type in an URL or select some from the list"/>
         </div>
         <div class="col-sm-3">
           <button type="button" class="btn btn-primary" id="showGraph" ng-click="start.showGraph()"
-                  ng-disabled="endpointForm.url.$dirty && endpointForm.url.$invalid">
+                  ng-disabled="endpointForm.$invalid">
             Show Graph &raquo;
           </button>
         </div>

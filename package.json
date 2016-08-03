@@ -1,6 +1,6 @@
 {
   "name": "ld-vowl",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "description": "Extract ontology information out of arbitrary SPARQL endpoints and visualize it using a slightly adjusted form of VOWL.",
   "main": "app/app.js",
   "dependencies": {

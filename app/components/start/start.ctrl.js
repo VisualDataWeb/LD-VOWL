@@ -117,7 +117,7 @@ function startCtrl($log, $location, Nodes, Properties, Requests, RequestConfig, 
   start.endpoints = (start.proxyAvailable) ? start.nonProxyEndpoints.concat(start.proxyOnlyEndpoints)
                                             : start.nonProxyEndpoints;
 
-  start.endpoint = RequestConfig.getEndpointURL() || start.endpoints[0];
+  start.endpoint = RequestConfig.getEndpointURL() || '';
 
   start.useLocalProxy = RequestConfig.getUseLocalProxy();
 
