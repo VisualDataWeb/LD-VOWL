@@ -1,6 +1,6 @@
 # LD-VOWL
 
-LD-VOWL (LinkedDataVOWL) extracts ontology information out of arbitrary SPARQL endpoints and visualizes the extracted information using the VOWL notation (with minor modifications).
+LD-VOWL (LinkedDataVOWL) extracts ontology information out of arbitrary SPARQL endpoints and shows the extracted information in an overview visualization using the VOWL notation (with minor modifications).
 
 ## Requirements
 
