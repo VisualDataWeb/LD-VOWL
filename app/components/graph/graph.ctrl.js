@@ -33,7 +33,7 @@ function graphCtrl($scope, $q, $log, Filters, ClassExtractor, RelationExtractor,
   vm.differentColors = Prefixes.getDifferentColors();
 
   // jshint ignore:start
-  vm.showEndpointUrl = (__aerobatic__.settings.showEndpointURL === 'true'); // eslint-disable-line no-undef
+  vm.showEndpointUrl = __SHOW_ENDPOINT__; // eslint-disable-line no-undef
   // jshint ignore:end
 
   vm.endpointURL = RequestConfig.getEndpointURL();

@@ -35,6 +35,8 @@ module.exports = {
       new webpack.DefinePlugin({
         __LOGGING__: true,
         __PROXY__: true,
+        __SESSION_STORAGE__: true,
+        __SHOW_ENDPOINT__: true,
         __VERSION__: JSON.stringify(require('./package.json').version)
       })
   ],

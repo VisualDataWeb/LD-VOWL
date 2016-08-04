@@ -20,7 +20,7 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
   that.altSuffixRegEx = /(:[^:]*)$/;
 
   // jshint ignore:start
-  that.useSessionStorage = (__aerobatic__.settings.useSessionStorage === 'true'); // eslint-disable-line no-undef
+  that.useSessionStorage = __SESSION_STORAGE__; // eslint-disable-line no-undef
   // jshint ignore:end
 
   that.initMap = function () {

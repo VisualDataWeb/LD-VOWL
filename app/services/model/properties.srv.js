@@ -12,7 +12,7 @@ function properties($interval, $log, $rootScope, RequestConfig) {
   self.PLACEHOLDER_PROP_URI = 'http://my-placeholder-prop/unknown';
 
   // jshint ignore:start
-  self.useSessionStorage = (__aerobatic__.settings.useSessionStorage === 'true'); // eslint-disable-line no-undef
+  self.useSessionStorage = __SESSION_STORAGE__; // eslint-disable-line no-undef
   // jshint ignore:end
 
   self.properties = [];

@@ -2,11 +2,6 @@ var webpack = require('webpack');
 var webpackConfig = require('./webpack.config.js');
 webpackConfig.entry = {};
 webpackConfig.plugins.push(new webpack.DefinePlugin({
-  __aerobatic__: {
-    settings: {
-      useSessionStorage: false
-    }
-  },
   __VERSION__: JSON.stringify(require('./package.json').version)
 }));
 

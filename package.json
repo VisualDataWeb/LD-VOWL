@@ -1,6 +1,6 @@
 {
   "name": "ld-vowl",
-  "version": "0.9.4",
+  "version": "0.9.5",
   "description": "Extract ontology information out of arbitrary SPARQL endpoints and visualize it using a slightly adjusted form of VOWL.",
   "main": "app/app.js",
   "dependencies": {
@@ -74,31 +74,8 @@
     "lint": "eslint . --ext .js || true",
     "deploy": "NODE_ENV=production webpack -p --config webpack.production.config.js"
   },
-  "keywords": [
-    "Linked Data",
-    "SPARQL",
-    "VOWL"
-  ],
+  "keywords": ["Linked Data", "SPARQL", "Visualization", "VOWL"],
   "author": "Marc Weise <weisemc@studi.informatik.uni-stuttgart.de>",
   "private": true,
-  "license": "MIT",
-  "_aerobatic": {
-    "router": [
-      {
-        "module": "basic-auth",
-        "path": "/",
-        "options": {
-          "username": "$BASIC_AUTH_USERNAME",
-          "password": "$BASIC_AUTH_PASSWORD"
-        }
-      },
-      {
-        "module": "client-settings",
-        "options": {
-          "showEndpointURL": "$SHOW_ENDPOINT_URL",
-          "useSessionStorage": "$USE_SESSION_STORAGE"
-        }
-      }
-    ]
-  }
+  "license": "MIT"
 }
