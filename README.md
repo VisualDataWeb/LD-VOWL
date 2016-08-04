@@ -4,19 +4,18 @@ LinkedDataVOWL extracts ontology information out of arbitrary SPARQL endpoints a
 
 ## Requirements
 
-LinkedDataVOWL needs Node.js to be built.
+LinkedDataVOWL needs [Node.js](https://nodejs.org/) to be built.
 
 ## Setup
 
-1. Download and install Node.js.
-2. Clone this repository running `git clone https://github.com/VisualDataWeb/LD-VOWL.git`
-3. Move into the root directory of LD-VOWL
-4. Run `npm install` to install the dependencies.
-5. Run `npm run-script start` to start webpack development server
+1. Download and install [Node.js](https://nodejs.org/en/download/).
+2. Clone this repository running `git clone https://github.com/VisualDataWeb/LD-VOWL.git`.
+3. Run `npm install` in the root directory of LD-VOWL to install the dependencies.
+4. Run `npm run-script start` to start a local webpack development server on port 8080 or run `npm run-script deploy` for a production build.
 
 ## Tests
 
-In order to run the unit tests, type `npm run-script test`.
+In order to run the unit tests, run `npm run-script test`.
 
 ## License
 
@@ -24,4 +23,4 @@ LinkedDataVOWL is licensed under the MIT License. See LICENSE.txt for more detai
 
 ## Demo
 
-A public demo is available at http://ldvowl.visualdataweb.org/
+A public demo is available at [http://ldvowl.visualdataweb.org/](http://ldvowl.visualdataweb.org/).

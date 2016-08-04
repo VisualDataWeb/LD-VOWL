@@ -93,14 +93,14 @@ function graphCtrl($scope, $q, $log, Filters, ClassExtractor, RelationExtractor,
 
   vm.toggleTypes = function () {
     vm.filterTypes = !Filters.toggleLiterals();
-    if (vm.filterTypes) {
+    if (!vm.filterTypes) {
       vm.loadTypes();
     }
   };
 
   vm.toggleLoops = function () {
     vm.filterLoops = !Filters.toggleLoops();
-    if (vm.filterLoops) {
+    if (!vm.filterLoops) {
       vm.loadLoops();
     }
   };
@@ -174,7 +174,7 @@ function graphCtrl($scope, $q, $log, Filters, ClassExtractor, RelationExtractor,
         }
 
         // optionally extract types referring to instances of the classes
-        if (vm.filterTypes) {
+        if (!vm.filterTypes) {
           vm.loadTypes();
         }
 
@@ -203,7 +203,7 @@ function graphCtrl($scope, $q, $log, Filters, ClassExtractor, RelationExtractor,
     // for each pair of classes search relation and check equality
     for (let end = 0; end < vm.classes.length; end++) {
       for (let start = 0; start < vm.classes.length; start++) {
-        if (vm.filterLoops || start !== end) {
+        if (!vm.filterLoops || start !== end) {
           var origin = vm.classes[start];
           var target = vm.classes[end];
 
