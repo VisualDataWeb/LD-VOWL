@@ -23,4 +23,4 @@ LD-VOWL is licensed under the MIT License. See LICENSE.txt for more details.
 
 ## Demo
 
-A public demo is available at [http://ldvowl.visualdataweb.org/](http://ldvowl.visualdataweb.org).
+A public demo is available at [http://ldvowl.visualdataweb.org](http://ldvowl.visualdataweb.org/).
