@@ -1,10 +1,10 @@
 # LD-VOWL
 
-LinkedDataVOWL extracts ontology information out of arbitrary SPARQL endpoints and visualizes the extracted information using VOWL with some modifications.
+LD-VOWL (LinkedDataVOWL) extracts ontology information out of arbitrary SPARQL endpoints and visualizes the extracted information using the VOWL notation (with minor modifications).
 
 ## Requirements
 
-LinkedDataVOWL needs [Node.js](https://nodejs.org/) to be built.
+LD-VOWL requires [Node.js](https://nodejs.org/) to be built.
 
 ## Setup
 
@@ -19,8 +19,8 @@ In order to run the unit tests, run `npm run-script test`.
 
 ## License
 
-LinkedDataVOWL is licensed under the MIT License. See LICENSE.txt for more details.
+LD-VOWL is licensed under the MIT License. See LICENSE.txt for more details.
 
 ## Demo
 
-A public demo is available at [http://ldvowl.visualdataweb.org/](http://ldvowl.visualdataweb.org/).
+A public demo is available at [http://ldvowl.visualdataweb.org/](http://ldvowl.visualdataweb.org).
