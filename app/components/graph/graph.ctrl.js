@@ -14,9 +14,10 @@
  * @param Requests
  * @param Prefixes
  * @param StopWatch
+ * @param Data
  */
 function graphCtrl($scope, $q, $log, Filters, ClassExtractor, RelationExtractor, TypeExtractor, DetailExtractor,
-                           RequestConfig, Requests, Prefixes, StopWatch) {
+                           RequestConfig, Requests, Prefixes, StopWatch, Data) {
   'ngInject';
 
   /* jshint validthis: true */
@@ -127,6 +128,19 @@ function graphCtrl($scope, $q, $log, Filters, ClassExtractor, RelationExtractor,
         RelationExtractor.requestClassClassRelation(currentClass.class.value, currentClass);
       }
     }
+  };
+
+  /**
+   * First clear all loaded data, then restart Loading
+   */
+  vm.restartLoading = function () {
+    Data.clearAll();
+    vm.classes = [];
+    StopWatch.stop();
+
+    $log.warn('[Graph] Restart loading...');
+
+    vm.startLoading(true);
   };
 
   /**

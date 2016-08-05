@@ -388,11 +388,12 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
    * Removes all nodes from the graph.
    */
   that.clearAll = function () {
-    classUriIdMap = new Map();
-    nodes = new Map();
-    equivalentClasses = new Map();
+    classUriIdMap.clear();
+    nodes.clear();
+    equivalentClasses.clear();
     subClassSet.clear();
     Prefixes.clear();
+    $log.warn('[Nodes] cleared all nodes and prefixes!');
   };
 
   /**

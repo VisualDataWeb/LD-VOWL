@@ -5,13 +5,12 @@
  *
  * @param $log
  * @param $location
- * @param Nodes
- * @param Properties
  * @param Requests
  * @param RequestConfig
  * @param Promises
+ * @param {Data} Data
  */
-function startCtrl($log, $location, Nodes, Properties, Requests, RequestConfig, Promises) {
+function startCtrl($log, $location, Data, Requests, RequestConfig) {
 
   'ngInject';
 
@@ -140,19 +139,12 @@ function startCtrl($log, $location, Nodes, Properties, Requests, RequestConfig, 
 
       // clear loaded data if endpoint has changed
       if (lastEndpoint !== start.endpoint && start.endpoint !== undefined && start.endpoint.length > 0) {
-        Promises.rejectAll();
-
-        Nodes.clearAll();
-        Properties.clearAll();
-        Requests.clear();
-
-        $log.warn('[Start] Cleared all saved data!');
+        Data.clearAll();
 
         // change endpoint
         RequestConfig.setEndpointURL(start.endpoint);
 
-        Nodes.initMap();
-        Properties.initProperties();
+        Data.initMaps();
       }
 
       RequestConfig.setUseLocalProxy(start.useLocalProxy);
