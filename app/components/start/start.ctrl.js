@@ -5,12 +5,12 @@
  *
  * @param $log
  * @param $location
+ * @param Data
+ * @param View
  * @param Requests
  * @param RequestConfig
- * @param Promises
- * @param {Data} Data
  */
-function startCtrl($log, $location, Data, Requests, RequestConfig) {
+function startCtrl($log, $location, Data, View, Requests, RequestConfig) {
 
   'ngInject';
 
@@ -140,6 +140,8 @@ function startCtrl($log, $location, Data, Requests, RequestConfig) {
       // clear loaded data if endpoint has changed
       if (lastEndpoint !== start.endpoint && start.endpoint !== undefined && start.endpoint.length > 0) {
         Data.clearAll();
+
+        View.reset();
 
         // change endpoint
         RequestConfig.setEndpointURL(start.endpoint);
