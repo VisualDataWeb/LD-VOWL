@@ -18,7 +18,7 @@ import d3 from 'd3';
  *
  * @returns {{restrict: string, scope: {data: string, onClick: string}, link: link}}
  */
-function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geometry, Utils, Requests) {
+function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geometry, Utils, Requests, View) {
 
   'ngInject';
 
@@ -76,6 +76,9 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
       scope.cardinalSpline = {};
       scope.loopSpline = {};
       scope.linearLine = {};
+
+      scope.translate = View.getTranslate();
+      scope.scale = View.getScale();
 
       scope.color = d3.scale.linear().domain([1, Prefixes.size()])
         .interpolate(d3.interpolateHsl)
@@ -299,6 +302,13 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
 
       scope.redraw = function () {
         root.attr('transform', 'translate(' + d3.event.translate + ')' + 'scale(' + d3.event.scale + ')');
+
+        // save current view
+        View.setTranslate(d3.event.translate);
+        View.setScale(d3.event.scale);
+
+        scope.scale = d3.event.scale;
+        scope.translate = d3.event.translate;
       };
 
       /**
@@ -694,10 +704,18 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
           return;
         }
 
+        // restore view
+        root.attr('transform', 'translate(' + scope.translate + ')' + 'scale(' + scope.scale + ')');
+
+        // set up zoom
         var zoom = d3.behavior.zoom()
-                    .duration(150)
                     .scaleExtent([0.1,2.0])
+                    .duration(150)
                     .on('zoom', scope.redraw);
+
+        zoom.translate(scope.translate)
+          .scale(scope.scale);
+
         svg.call(zoom);
 
         scope.maxValue = 0;

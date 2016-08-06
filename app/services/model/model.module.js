@@ -7,6 +7,7 @@ import Requests from './requests.srv';
 import Properties from './properties.srv';
 import Filters from './extraction-filters.srv';
 import Data from './data.srv';
+import View from './view.srv';
 
 // create a new module, register the services and return the name
 export default angular.module('services.model', [])
@@ -16,4 +17,5 @@ export default angular.module('services.model', [])
   .service('Properties', Properties)
   .service('Filters', Filters)
   .service('Data', Data)
+  .service('View', View)
   .name;
