@@ -14,10 +14,11 @@ import d3 from 'd3';
  * @param Filters
  * @param {Geometry} Geometry
  * @param Utils
+ * @param Requests
  *
  * @returns {{restrict: string, scope: {data: string, onClick: string}, link: link}}
  */
-function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geometry, Utils) {
+function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geometry, Utils, Requests) {
 
   'ngInject';
 
@@ -29,6 +30,7 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
     },
     link: function (scope, element, attrs) {
       var margin = parseInt(attrs.margin) || 20;
+      var width = 0;
       var height = parseInt(attrs.height) || $window.innerHeight;
 
       var colorRange = [d3.rgb('#3366CC'), d3.rgb('#EE2867')];
@@ -43,6 +45,12 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
 
       var root = svg.append('g');
 
+      let notification = svg.append('g')
+                            .attr('id', 'notification');
+      let notificationText = notification.append('text')
+                              .attr('class', 'notification')
+                              .style('opacity', 0.0);
+
       var lastUpdate = null;
 
       var minUpdateInterval = 1500;
@@ -50,7 +58,8 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
       // Browser onresize event
       $window.onresize = function () {
         height = $window.innerHeight;
-        svg.attr('height', height-60);
+        svg.attr('height', Math.max(height - 60, 0));
+        scope.drawPlaceholder(scope.data, width, height);
         scope.$apply();
       };
 
@@ -79,7 +88,8 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
         'showTypes': Filters.getIncludeLiterals(),
         'showLoops': Filters.getIncludeLoops(),
         'showDisjointNode': Filters.getIncludeDisjointNode(),
-        'showSubclassRelations': Filters.getIncludeSubclassRelations()
+        'showSubclassRelations': Filters.getIncludeSubclassRelations(),
+        'loading': (Requests.getPendingRequests() > 0)
       };
 
       scope.$watch(function () {
@@ -169,6 +179,11 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
 
       scope.$on('properties-changed', function () {
         scope.render(scope.data);
+      });
+
+      scope.$on('pending-requests-changed', function(event, pending) {
+        scope.data.loading = (pending > 0);
+        scope.drawPlaceholder(scope.data, width, height);
       });
 
       scope.lineColor = d3.scale.log()
@@ -624,6 +639,43 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
       };
 
       /**
+       * Draws or redraws a placeholder on the graph while classes are loaded or no endpoint is selected.
+       */
+      scope.drawPlaceholder = function (data, width, height) {
+        if (data.nodes.size === 0) {
+          $log.debug(`[Graph] Redraw placeholder! Loading: ${scope.data.loading}`);
+          let boxHeight = 35;
+          let transitionDuration = 750;
+
+          if (scope.data.loading) {
+            let boxWidth = 200;
+            let centerX = (width - boxWidth) / 2;
+            let centerY = Math.max(((height - boxHeight) / 2), 50);
+
+            notificationText.text('Loading classes...')
+              .attr('x', centerX + 5)
+              .attr('y', centerY - 24)
+              .transition()
+                .duration(transitionDuration)
+                .style('opacity', 1.0);
+          } else {
+            let boxWidth = 350;
+            let centerX = (width - boxWidth) / 2;
+            let centerY = Math.max(((height - boxHeight) / 2), 50);
+
+            notificationText.text('No SPARQL endpoint selected!')
+              .attr('x', centerX + 5)
+              .attr('y', centerY - 24)
+              .transition()
+                .duration(transitionDuration)
+                .style('opacity', 1.0);
+          }
+        } else {
+          notificationText.attr('display', 'none');
+        }
+      };
+
+      /**
        * Function which creates the graph.
        *
        * @param data
@@ -738,7 +790,9 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
         } // end of if data.properties are defined
 
         // set up dimensions
-        var width = d3.select(element[0]).node().offsetWidth - margin;
+        width = d3.select(element[0]).node().offsetWidth - margin;
+
+        scope.drawPlaceholder(data, width, height);
 
         // create force layout
         scope.force = d3.layout.force()
@@ -782,7 +836,7 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
           });
 
         svg.attr('width', width)
-          .attr('height', height - 60);
+          .attr('height', Math.max(height - 60, 0));
 
         scope.nodesToDraw.forEach(function (node) {
           node.radius = scope.calcRadius(node);

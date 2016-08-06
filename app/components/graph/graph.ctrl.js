@@ -140,13 +140,18 @@ function graphCtrl($scope, $q, $log, Filters, ClassExtractor, RelationExtractor,
 
     $log.warn('[Graph] Restart loading...');
 
-    vm.startLoading(true);
+    vm.startLoading();
   };
 
   /**
    * Start loading data requesting classes. For each class request referring types and search class-class relations.
    */
   vm.startLoading = function () {
+    if (vm.endpointURL === undefined || vm.endpointURL === '') {
+      // do not try to query an empty url
+      return;
+    }
+
     StopWatch.start();
     ClassExtractor.requestClasses().then(function extractForClasses(newClasses) {
 
@@ -156,7 +161,7 @@ function graphCtrl($scope, $q, $log, Filters, ClassExtractor, RelationExtractor,
       if (newClasses.length === 0) {
         $log.debug('[Graph] No new classes!');
       } else {
-        for (var i = 0; i < newClasses.length; i++) {
+        for (let i = 0; i < newClasses.length; i++) {
           vm.classes.push(newClasses[i]);
         }
       }

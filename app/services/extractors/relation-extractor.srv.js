@@ -11,7 +11,8 @@ class RelationExtractor extends Extractor {
   /**
    * Creates a RelationExtractor.
    */
-  constructor($cookies, $http, $q, $log, PREFIX, PROPERTY_BLACKLIST, QueryFactory, RequestConfig, Nodes, Properties, Promises) {
+  constructor($cookies, $http, $q, $log, PREFIX, PROPERTY_BLACKLIST, QueryFactory, RequestConfig, Nodes, Properties,
+              Promises) {
 
     'ngInject';
 
