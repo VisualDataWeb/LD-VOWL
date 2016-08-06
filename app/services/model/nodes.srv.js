@@ -393,7 +393,7 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
     equivalentClasses.clear();
     subClassSet.clear();
     Prefixes.clear();
-    $log.warn('[Nodes] cleared all nodes and prefixes!');
+    $log.warn('[Nodes] Cleared all nodes and prefixes!');
   };
 
   /**

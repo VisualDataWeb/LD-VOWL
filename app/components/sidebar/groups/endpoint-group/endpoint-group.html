@@ -4,6 +4,7 @@
       <span class="glyphicon glyphicon-link" aria-hidden="true"></span>
       URL:
     </strong>
+    <span ng-show="vm.endpointURL.length === 0">None</span>
     <a href="{{vm.endpointURL}}" target="_blank">{{vm.endpointURL}}</a>
   </p>
 
@@ -35,7 +36,7 @@
     <span ng-show="failedRequests === 0">None</span>
   </p>
 
-  <div class="text-center" ng-if="pendingRequests === 0">
+  <div class="text-center" ng-if="pendingRequests === 0 && vm.endpointURL.length > 0">
     <button type="button" class="btn btn-warning" ng-click="vm.restartLoading()">
       <span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
       Reload
