@@ -135,7 +135,7 @@ function startCtrl($log, $location, Data, View, Requests, RequestConfig) {
    */
   start.showGraph = function () {
 
-      var lastEndpoint = RequestConfig.getEndpointURL();
+      const lastEndpoint = RequestConfig.getEndpointURL();
 
       // clear loaded data if endpoint has changed
       if (lastEndpoint !== start.endpoint && start.endpoint !== undefined && start.endpoint.length > 0) {
@@ -157,6 +157,9 @@ function startCtrl($log, $location, Data, View, Requests, RequestConfig) {
 
         // move to the graph view
         $location.path('graph');
+
+        // $location url-encodes parameters automatically
+        $location.search('endpointURL', start.endpoint);
       } else {
         $log.error('[Start] Please enter an url for the SPARQL endpoint!');
       }
