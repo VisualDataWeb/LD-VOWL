@@ -4,14 +4,14 @@
 
   <form name="extractionForm" class="form-horizontal well" role="form" novalidate>
     <div class="form-group" ng-class="{ 'has-error' : extractionForm.limit.$invalid && !extractionForm.limit.$pristine }">
-      <label class="control-label col-sm-3" for="lang">Language of labels</label>
+      <label class="control-label col-sm-3" for="lang">Language of Labels</label>
       <div class="col-sm-4">
         <select class="form-control" name="lang" id="lang" ng-model="vm.currentLanguage"
                 ng-options="language.id as language.name for language in vm.availableLanguages">
         </select>
       </div>
 
-      <label for="limit" class="col-sm-2 control-label">Number of classes</label>
+      <label for="limit" class="col-sm-2 control-label">Number of Classes</label>
       <div class="col-sm-3">
         <input class="form-control" name="limit" id="limit" type="number" ng-model="vm.currentLimit" min="1" required/>
         <p ng-show="extractionForm.limit.$invalid && !extractionForm.limit.$pristine" class="help-block">
@@ -50,7 +50,7 @@
   <form name="lists" class="form-horizontal well" role="form" novalidate>
     <div class="form-group">
       <label class="control-label col-sm-3">
-        Predefined lists
+        Predefined Lists
       </label>
       <div class="col-sm-2">
         <div class="checkbox">
