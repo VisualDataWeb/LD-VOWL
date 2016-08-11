@@ -18,12 +18,12 @@
           <input name="url" id="endpoint" ng-model="start.endpoint" type="url" class="form-control"
                  title="SPARQL endpoint URL"
                  uib-typeahead="url for url in start.endpoints | filter:$viewValue | limitTo:8" required
-                 ng-minlength="7" typeahead-min-length="0" placeholder="Type in an URL or select some from the list"/>
+                 ng-minlength="7" typeahead-min-length="0" placeholder="Type in a URL or select one from the list"/>
         </div>
         <div class="col-sm-3">
           <button type="button" class="btn btn-primary" id="showGraph" ng-click="start.showGraph()"
                   ng-disabled="endpointForm.$invalid">
-            Show Graph &raquo;
+            Visualize &raquo;
           </button>
         </div>
       </div>
