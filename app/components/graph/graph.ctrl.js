@@ -17,9 +17,10 @@
  * @param StopWatch
  * @param Data
  * @param View
+ * @param Promises
  */
 function graphCtrl($scope, $q, $location, $log, Filters, ClassExtractor, RelationExtractor, TypeExtractor,
-                   DetailExtractor, Requests, RequestConfig, Prefixes, StopWatch, Data, View) {
+                   DetailExtractor, Requests, RequestConfig, Prefixes, StopWatch, Data, View, Promises) {
   'ngInject';
 
   /* jshint validthis: true */
@@ -134,6 +135,14 @@ function graphCtrl($scope, $q, $location, $log, Filters, ClassExtractor, Relatio
   };
 
   /**
+   * Stop the extraction by rejecting all promises.
+   */
+  vm.stopLoading = function () {
+    Promises.rejectAll();
+    StopWatch.stop();
+  };
+
+  /**
    * First clear all loaded data, then restart Loading
    */
   vm.restartLoading = function () {
@@ -159,7 +168,7 @@ function graphCtrl($scope, $q, $location, $log, Filters, ClassExtractor, Relatio
       // do not try to query an empty url
       return;
     } else {
-      if (vm.endpointURL != RequestConfig.getEndpointURL()) {
+      if (vm.endpointURL !== RequestConfig.getEndpointURL()) {
         Data.clearAll();
         RequestConfig.setEndpointURL(vm.endpointURL);
         Data.initMaps();

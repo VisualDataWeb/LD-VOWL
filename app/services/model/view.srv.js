@@ -8,6 +8,7 @@ function viewService() {
   let scale;
   let translate;
 
+  /* jshint validthis: true */
   let that = this;
 
   that.getScale = function() {
