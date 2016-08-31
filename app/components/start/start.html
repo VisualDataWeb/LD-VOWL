@@ -2,19 +2,12 @@
   <div class="jumbotron">
     <h1>LD-VOWL</h1>
     <p>
-      Extracts ontology information out of SPARQL endpoints and displays the extracted information in an overview visualization using the
-      <a href="http://vowl.visualdataweb.org" target="_blank">
+      Extract ontology information from SPARQL endpoints and display the extracted information in an overview visualization using the
+      <a href="http://vowl.visualdataweb.org/v2/" target="_blank">
         VOWL Notation
       </a>
       (with minor modifications).
     </p>
-
-    <p><strong>Endpoint requirements:</strong></p>
-    <ul>
-      <li>speaks SPARQL</li>
-      <li>returns JSON</li>
-      <li>allows CORS</li>
-    </ul>
   </div>
 
   <div class="well">
@@ -25,12 +18,12 @@
           <input name="url" id="endpoint" ng-model="start.endpoint" type="url" class="form-control"
                  title="SPARQL endpoint URL"
                  uib-typeahead="url for url in start.endpoints | filter:$viewValue | limitTo:8" required
-                 ng-minlength="7" typeahead-min-length="0" placeholder="Type in an URL or select some from the list"/>
+                 ng-minlength="7" typeahead-min-length="0" placeholder="Type in an URL or select one from the list"/>
         </div>
         <div class="col-sm-3">
           <button type="button" class="btn btn-primary" id="showGraph" ng-click="start.showGraph()"
                   ng-disabled="endpointForm.$invalid">
-            Show Graph &raquo;
+            Visualize &raquo;
           </button>
         </div>
       </div>
@@ -40,7 +33,8 @@
           <uib-alert  type="info" close="start.closeEndpointAlert()" style="margin-bottom: 0;">
             <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
             A list of endpoints can be found
-            <a class="alert-link" href="http://sparqles.ai.wu.ac.at/availability" target="_blank">here</a>.
+            <a class="alert-link" href="http://sparqles.ai.wu.ac.at/availability" target="_blank">here</a>.<br/>
+            <small>Endpoint requirements: 1) speaks SPARQL, 2) returns JSON, 3) allows CORS.</small>
           </uib-alert>
         </div>
       </div>

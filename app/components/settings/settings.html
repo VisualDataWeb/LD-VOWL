@@ -1,17 +1,17 @@
 <div class="container">
 
-  <h2>SPARQL Queries</h2>
+  <h2>Retrieval Options</h2>
 
   <form name="extractionForm" class="form-horizontal well" role="form" novalidate>
     <div class="form-group" ng-class="{ 'has-error' : extractionForm.limit.$invalid && !extractionForm.limit.$pristine }">
-      <label class="control-label col-sm-3" for="lang">Label Language</label>
+      <label class="control-label col-sm-3" for="lang">Language of Labels</label>
       <div class="col-sm-4">
         <select class="form-control" name="lang" id="lang" ng-model="vm.currentLanguage"
                 ng-options="language.id as language.name for language in vm.availableLanguages">
         </select>
       </div>
 
-      <label for="limit" class="col-sm-2 control-label">Default Limit</label>
+      <label for="limit" class="col-sm-2 control-label">Number of Classes</label>
       <div class="col-sm-3">
         <input class="form-control" name="limit" id="limit" type="number" ng-model="vm.currentLimit" min="1" required/>
         <p ng-show="extractionForm.limit.$invalid && !extractionForm.limit.$pristine" class="help-block">
@@ -25,7 +25,7 @@
         <div class="checkbox">
           <label>
             <input type="checkbox" name="ordered" ng-model="vm.propsOrdered">
-            fetch properties in descending order of their usage
+            retrieve properties in descending order of their usage frequency
           </label>
         </div>
       </div>
