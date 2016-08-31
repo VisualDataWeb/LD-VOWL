@@ -673,7 +673,7 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
             let centerX = (width - boxWidth) / 2;
             let centerY = Math.max(((height - boxHeight) / 2), 50);
 
-            notificationText.text('No SPARQL endpoint selected!')
+            notificationText.text('Given SPARQL endpoint not accessible.')
               .attr('x', centerX + 5)
               .attr('y', centerY - 24)
               .transition()
