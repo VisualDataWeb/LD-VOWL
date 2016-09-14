@@ -24,6 +24,11 @@ function slider($rootScope) {
             scope.value = parseInt(ui.value);
             $rootScope.$broadcast(attrs.model + '-changed', ui.value);
           });
+        },
+
+        // this function is needed to set the initial value, otherwise slider will always be at zero in the beginning
+        create: function() {
+          $(this).slider('value', scope.value);
         }
       });
     } // end pf link()

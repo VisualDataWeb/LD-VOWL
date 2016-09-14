@@ -5,13 +5,12 @@
  *
  * @param $log
  * @param $location
- * @param Nodes
- * @param Properties
+ * @param Data
+ * @param View
  * @param Requests
  * @param RequestConfig
- * @param Promises
  */
-function startCtrl($log, $location, Nodes, Properties, Requests, RequestConfig, Promises) {
+function startCtrl($log, $location, Data, View, Requests, RequestConfig) {
 
   'ngInject';
 
@@ -136,23 +135,18 @@ function startCtrl($log, $location, Nodes, Properties, Requests, RequestConfig, 
    */
   start.showGraph = function () {
 
-      var lastEndpoint = RequestConfig.getEndpointURL();
+      const lastEndpoint = RequestConfig.getEndpointURL();
 
       // clear loaded data if endpoint has changed
       if (lastEndpoint !== start.endpoint && start.endpoint !== undefined && start.endpoint.length > 0) {
-        Promises.rejectAll();
+        Data.clearAll();
 
-        Nodes.clearAll();
-        Properties.clearAll();
-        Requests.clear();
-
-        $log.warn('[Start] Cleared all saved data!');
+        View.reset();
 
         // change endpoint
         RequestConfig.setEndpointURL(start.endpoint);
 
-        Nodes.initMap();
-        Properties.initProperties();
+        Data.initMaps();
       }
 
       RequestConfig.setUseLocalProxy(start.useLocalProxy);
@@ -163,6 +157,9 @@ function startCtrl($log, $location, Nodes, Properties, Requests, RequestConfig, 
 
         // move to the graph view
         $location.path('graph');
+
+        // $location url-encodes parameters automatically
+        $location.search('endpointURL', start.endpoint);
       } else {
         $log.error('[Start] Please enter an url for the SPARQL endpoint!');
       }

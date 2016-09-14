@@ -36,22 +36,20 @@ function queryFactory() {
     // CLASS QUERIES
 
     getClassQuery: function (limit, offset) {
-
       // check parameters
       limit = (typeof limit === 'number' && limit > 0) ? limit : defaultLimit;
       offset = (typeof offset === 'number' && offset >= 0) ? offset : defaultOffset;
 
       // build query and return it
-      var query = prefixes() +
-        'SELECT DISTINCT ?class (count(?sub) AS ?instanceCount) ' +
-        'WHERE { ' +
-          '?sub a ?class. ' +
-        '} ' +
-        'GROUP BY ?class ' +
-        'ORDER BY DESC(?instanceCount) ' +
-        'LIMIT ' + limit + ' ' +
-        'OFFSET ' + offset;
-      return query;
+      return prefixes() +
+        `SELECT DISTINCT ?class (count(?sub) AS ?instanceCount) ` +
+        `WHERE { ` +
+          `?sub a ?class. ` +
+        `} ` +
+        `GROUP BY ?class ` +
+        `ORDER BY DESC(?instanceCount) ` +
+        `LIMIT ${limit} ` +
+        `OFFSET ${offset}`;
     },
 
     // PROPERTY QUERIES
@@ -59,13 +57,12 @@ function queryFactory() {
     getLabelQuery: function (uri, labelLang) {
       labelLang = labelLang || defaultLang;
 
-      var query = prefixes() +
-      'SELECT (SAMPLE (?lbl) AS ?label) ' +
-      'WHERE { ' +
-        '<' + uri + '> rdfs:label ?lbl. ' +
-        "FILTER (langMatches(lang(?lbl), '" + labelLang + "'))" +
-      '}';
-      return query;
+      return prefixes() +
+      `SELECT (SAMPLE (?lbl) AS ?label) ` +
+      `WHERE { ` +
+        `<${uri}> rdfs:label ?lbl. ` +
+        `FILTER (langMatches(lang(?lbl), '${labelLang} ')) ` +
+      `}`;
     },
 
     // alternative without SAMPLE
@@ -83,112 +80,103 @@ function queryFactory() {
     getPreferredLabelQuery: function (uri, labelLang) {
       labelLang = labelLang || defaultLang;
 
-      var query = prefixes() +
-          'SELECT ?label ' +
-          'WHERE { ' +
-            '<' + uri + '> skos:prefLabel ?label . ' +
-            "FILTER (langMatches(lang(?label), '" + labelLang + "')) " +
-          '}';
-      return query;
+      return prefixes() +
+        `SELECT ?label ` +
+        `WHERE { ` +
+          `<${uri}> skos:prefLabel ?label . ` +
+          `FILTER (langMatches(lang(?label), '${labelLang}')) ` +
+        `}`;
     },
 
     getInstanceReferringTypesQuery: function (classURI, limit) {
       limit = (typeof limit === 'number' && limit > 0) ? limit : defaultLimit;
 
-      var typeQuery = prefixes() +
-        'SELECT (COUNT(?val) AS ?valCount) ?valType ' +
-        'WHERE { ' +
-          '?instance a <' + classURI + '> . ' +
-          '?instance ?prop ?val . ' +
-          'BIND (datatype(?val) AS ?valType) . ' +
-        '} ' +
-        'GROUP BY ?valType ' +
-        'LIMIT ' + limit;
-      return typeQuery;
+      return prefixes() +
+        `SELECT (COUNT(?val) AS ?valCount) ?valType ` +
+        `WHERE { ` +
+          `?instance a <${classURI}> . ` +
+          `?instance ?prop ?val . ` +
+          `BIND (datatype(?val) AS ?valType) . ` +
+        `} ` +
+        `GROUP BY ?valType ` +
+        `ORDER BY DESC(?valCount) ` +
+        `LIMIT ${limit}`;
     },
 
     // RELATION queries
 
     getOrderedClassClassRelationQuery: function (originClass, targetClass, limit, offset) {
-      var query = prefixes() +
-          'SELECT (count(?originInstance) as ?count) ?prop ' +
-          'WHERE { ' +
-            '?originInstance a <' + originClass + '> . ' +
-            '?targetInstance a <' + targetClass + '> . ' +
-            '?originInstance ?prop ?targetInstance . ' +
-          '} ' +
-          'GROUP BY ?prop ' +
-          'ORDER BY DESC(?count) ' +
-          'LIMIT ' + limit + ' ' +
-          'OFFSET ' + offset;
-      return query;
+      return prefixes() +
+          `SELECT (count(?originInstance) as ?count) ?prop ` +
+          `WHERE { ` +
+            `?originInstance a <${originClass}> . ` +
+            `?targetInstance a <${targetClass}> . ` +
+            `?originInstance ?prop ?targetInstance . ` +
+          `} ` +
+          `GROUP BY ?prop ` +
+          `ORDER BY DESC(?count) ` +
+          `LIMIT ${limit} ` +
+          `OFFSET ${offset}`;
     },
 
     getUnorderedClassClassRelationQuery: function (originClass, targetClass, limit, offset) {
-      var query  = prefixes() +
-        'SELECT DISTINCT ?prop ' +
-        'WHERE { ' +
-          '?originInstance a <' + originClass + '> . ' +
-          '?targetInstance a <' + targetClass + '> . ' +
-          '?originInstance ?prop ?targetInstance . ' +
-        '} ' +
-        'LIMIT ' + limit + ' ' +
-        'OFFSET ' + offset;
-      return query;
+      return prefixes() +
+        `SELECT DISTINCT ?prop ` +
+        `WHERE { ` +
+          `?originInstance a <${originClass}> . ` +
+          `?targetInstance a <${targetClass}> . ` +
+          `?originInstance ?prop ?targetInstance . ` +
+        `} ` +
+        `LIMIT ${limit} ` +
+        `OFFSET ${offset} `;
     },
 
     getOrderedClassTypeRelationQuery: function (classURI, typeURI, limit = 5, offset = 0) {
-      const query = prefixes() +
-        'SELECT (count(?instance) AS ?count) ?prop ' +
-        'WHERE { ' +
+      return prefixes() +
+        `SELECT (count(?instance) AS ?count) ?prop ` +
+        `WHERE { ` +
           `?instance a <${classURI}> . ` +
-          '?instance ?prop ?val . ' +
+          `?instance ?prop ?val . ` +
           `FILTER (datatype(?val) = <${typeURI}>) ` +
-        '} ' +
-        'GROUP BY ?prop ' +
-        'ORDER BY DESC(?count) ' +
+        `} ` +
+        `GROUP BY ?prop ` +
+        `ORDER BY DESC(?count) ` +
         `LIMIT ${limit} ` +
         `OFFSET ${offset}`;
-
-        return query;
     },
 
     getUnorderedClassTypeRelationQuery: function (classURI, typeURI, limit = 5, offset = 0) {
-      const query = prefixes() +
-        'SELECT DISTINCT ?prop ' +
-        'WHERE { ' +
+      return prefixes() +
+        `SELECT DISTINCT ?prop ` +
+        `WHERE { ` +
         `?instance a <${classURI}> . ` +
-        '?instance ?prop ?val . ' +
+        `?instance ?prop ?val . ` +
         `FILTER (datatype(?val) = <${typeURI}>) ` +
-        '} ' +
+        `} ` +
         `LIMIT ${limit} ` +
         `OFFSET ${offset}`;
-
-      return query;
     },
 
     // INSTANCE QUERIES
 
     getNumberOfCommonInstancesQuery: function (classURI1, classURI2) {
-      var query = prefixes() +
-        'SELECT (count(?commonInstance) AS ?commonInstanceCount) ' +
-        'WHERE { ' +
-          '?commonInstance a <' + classURI1 + '>. ' +
-          '?commonInstance a <' + classURI2 + '>. ' +
-        '}';
-      return query;
+      return prefixes() +
+        `SELECT (count(?commonInstance) AS ?commonInstanceCount) ` +
+        `WHERE { ` +
+          `?commonInstance a <${classURI1}>. ` +
+          `?commonInstance a <${classURI2}>. ` +
+        `}`;
     },
 
     // DETAILS QUERIES
 
     getCommentQuery: function (uri) {
-      var commentQuery = prefixes() +
-        'SELECT ?comment ' +
-        'WHERE { ' +
-          '<' + uri + '> rdfs:comment ?comment . ' +
-        '} ' +
-        'LIMIT 1';
-        return commentQuery;
+      return prefixes() +
+        `SELECT ?comment ` +
+        `WHERE { ` +
+          `<${uri}> rdfs:comment ?comment . ` +
+        `} ` +
+        `LIMIT 1`;
     }
 
   }; // end of public API to return

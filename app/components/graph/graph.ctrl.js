@@ -4,19 +4,23 @@
  *
  * @param $scope
  * @param {$q} $q
+ * @param {$location} $location
  * @param {$log} $log
  * @param Filters
  * @param {ClassExtractor} ClassExtractor
  * @param {RelationExtractor} RelationExtractor
  * @param TypeExtractor
  * @param DetailExtractor
- * @param RequestConfig
  * @param Requests
+ * @param RequestConfig
  * @param Prefixes
  * @param StopWatch
+ * @param Data
+ * @param View
+ * @param Promises
  */
-function graphCtrl($scope, $q, $log, Filters, ClassExtractor, RelationExtractor, TypeExtractor, DetailExtractor,
-                           RequestConfig, Requests, Prefixes, StopWatch) {
+function graphCtrl($scope, $q, $location, $log, Filters, ClassExtractor, RelationExtractor, TypeExtractor,
+                   DetailExtractor, Requests, RequestConfig, Prefixes, StopWatch, Data, View, Promises) {
   'ngInject';
 
   /* jshint validthis: true */
@@ -36,7 +40,8 @@ function graphCtrl($scope, $q, $log, Filters, ClassExtractor, RelationExtractor,
   vm.showEndpointUrl = __SHOW_ENDPOINT__; // eslint-disable-line no-undef
   // jshint ignore:end
 
-  vm.endpointURL = RequestConfig.getEndpointURL();
+  vm.requestedEndpoint = $location.search()['endpointURL'];
+  vm.endpointURL = (vm.requestedEndpoint !== undefined) ? vm.requestedEndpoint : RequestConfig.getEndpointURL();
   vm.data = {};
   vm.data.nodes = [];
 
@@ -130,9 +135,50 @@ function graphCtrl($scope, $q, $log, Filters, ClassExtractor, RelationExtractor,
   };
 
   /**
+   * Stop the extraction by rejecting all promises.
+   */
+  vm.stopLoading = function () {
+    Promises.rejectAll();
+    StopWatch.stop();
+  };
+
+  /**
+   * First clear all loaded data, then restart Loading
+   */
+  vm.restartLoading = function () {
+    Data.clearAll();
+    vm.classes = [];
+    StopWatch.stop();
+
+    $log.warn('[Graph] Restart loading...');
+
+    vm.startLoading();
+  };
+
+  /**
    * Start loading data requesting classes. For each class request referring types and search class-class relations.
    */
   vm.startLoading = function () {
+    if (vm.endpointURL === undefined || vm.endpointURL === '') {
+      Data.clearAll();
+      RequestConfig.setEndpointURL();
+      Data.initMaps();
+      View.reset();
+
+      // do not try to query an empty url
+      return;
+    } else {
+      if (vm.endpointURL !== RequestConfig.getEndpointURL()) {
+        Data.clearAll();
+        RequestConfig.setEndpointURL(vm.endpointURL);
+        Data.initMaps();
+        View.reset();
+      }
+
+      // insert endpoint URL if missing
+      $location.search('endpointURL', vm.endpointURL);
+    }
+
     StopWatch.start();
     ClassExtractor.requestClasses().then(function extractForClasses(newClasses) {
 
@@ -142,7 +188,7 @@ function graphCtrl($scope, $q, $log, Filters, ClassExtractor, RelationExtractor,
       if (newClasses.length === 0) {
         $log.debug('[Graph] No new classes!');
       } else {
-        for (var i = 0; i < newClasses.length; i++) {
+        for (let i = 0; i < newClasses.length; i++) {
           vm.classes.push(newClasses[i]);
         }
       }

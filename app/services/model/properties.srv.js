@@ -303,7 +303,7 @@ function properties($interval, $log, $rootScope, RequestConfig) {
   };
 
   self.clearAll = function () {
-    self.properties = [];
+    self.properties.length = 0;
     self.needsUpdate = true;
     self.startStorageUpdate();
   };

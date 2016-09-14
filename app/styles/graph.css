@@ -96,3 +96,9 @@ circle {
   stroke: #000;
   stroke-width: 1px;
 }
+
+text.notification {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 24px;
+  fill: grey;
+}
