@@ -5,9 +5,9 @@
  *
  * @param {$log} $log
  * @param {Nodes} Nodes
- * @param {Properties} Properties
+ * @param Properties
  * @param {Requests} Requests
- * @param {Promises} Promises
+ * @param Promises
  */
 function dataService($log, Nodes, Properties, Requests, Promises) {
 

@@ -22,7 +22,7 @@ function slider($rootScope) {
         slide: function (event, ui) {
           scope.$apply(function () {
             scope.value = parseInt(ui.value);
-            $rootScope.$broadcast(attrs.model + '-changed', ui.value);
+            $rootScope.$broadcast(attrs.id + '-changed', ui.value);
           });
         },
 

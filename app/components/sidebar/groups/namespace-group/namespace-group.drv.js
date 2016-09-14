@@ -4,6 +4,9 @@ export default function namespaceGroup() {
 
   return {
     restrict: 'E',
+    scope: {},
+    controller: 'NamespaceGroupCtrl',
+    controllerAs: 'vm',
     template: namespaceGroupTemplate
   };
 

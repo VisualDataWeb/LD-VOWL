@@ -1,10 +1,10 @@
-import graphSettingsGroupTemplate from './graph-settings-group.html';
-
 export default function graphSettingsGroup() {
 
   return {
     restrict: 'E',
-    template: graphSettingsGroupTemplate
+    controller: 'GraphSettingsCtrl',
+    controllerAs: 'vm',
+    template: require('./graph-settings-group.html')
   };
 
 }

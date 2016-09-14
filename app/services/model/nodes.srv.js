@@ -1,5 +1,11 @@
-'use strict';
-
+/**
+ * @Name Nodes
+ *
+ * @param $log
+ * @param Properties
+ * @param Prefixes
+ * @param RequestConfig
+ */
 function nodesService($log, Properties, Prefixes, RequestConfig) {
 
   'ngInject';

@@ -1,19 +1,19 @@
 <div>
-  <p ng-if="prefixes.length === 0">
+  <p ng-if="vm.prefixes.length === 0">
     No prefixes found.
   </p>
-  <p ng-if="prefixes.length > 0">
+  <p ng-if="vm.prefixes.length > 0">
     <strong>Class Prefixes</strong>
-    <strong ng-if="vm.numberOfPrefixes < prefixes.length">
-      ({{ vm.numberOfPrefixes}} of {{ prefixes.length }})
+    <strong ng-if="vm.numberOfPrefixes < vm.prefixes.length">
+      ({{ vm.numberOfPrefixes}} of {{ vm.prefixes.length }})
     </strong>
-    <strong ng-if="vm.numberOfPrefixes >= prefixes.length">
-      ({{ prefixes.length }}):
+    <strong ng-if="vm.numberOfPrefixes >= vm.prefixes.length">
+      ({{ vm.prefixes.length }}):
     </strong>
   </p>
-  <div class="prop-list" style="max-height: 140px;" ng-if="prefixes.length > 0">
+  <div class="prop-list" style="max-height: 140px;" ng-if="vm.prefixes.length > 0">
     <table class="table table-condensed">
-      <tr ng-repeat="pre in prefixes | limitTo: vm.numberOfPrefixes">
+      <tr ng-repeat="pre in vm.prefixes | limitTo: vm.numberOfPrefixes">
         <td>
           <button type="button" class="btn btn-default btn-xs" ng-model="pre.classification" uib-btn-checkbox
                   btn-checkbox-true="'intern'" btn-checkbox-false="'extern'" ng-click="vm.updatePrefixes()">
@@ -31,7 +31,7 @@
 
       </tr>
     </table>
-    <button ng-hide="prefixes.length <= vm.numberOfPrefixes" type="button" class="btn btn-link"
+    <button ng-hide="vm.prefixes.length <= vm.numberOfPrefixes" type="button" class="btn btn-link"
             ng-click="vm.incNumberOfPrefixes()">
       show more ...
     </button>

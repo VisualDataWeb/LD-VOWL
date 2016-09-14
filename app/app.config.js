@@ -12,6 +12,9 @@ function routing($httpProvider, $routeProvider, $logProvider) {
   $httpProvider.defaults.useXDomain = true;
   delete $httpProvider.defaults.headers.common['X-Requested-With'];
 
+  // apply changes in the next $digest cycle (around 10 milliseconds later, depending on the browser)
+  $httpProvider.useApplyAsync();
+
   // set up routes
   $routeProvider
     .when('/', {

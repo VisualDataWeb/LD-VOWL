@@ -15,6 +15,7 @@ import d3 from 'd3';
  * @param {Geometry} Geometry
  * @param Utils
  * @param Requests
+ * @param View
  *
  * @returns {{restrict: string, scope: {data: string, onClick: string}, link: link}}
  */
@@ -62,6 +63,8 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
         scope.drawPlaceholder(scope.data, width, height);
         scope.$apply();
       };
+
+      scope.paused = false;
 
       scope.propDistance = 100;
       scope.dtPropDistance = 50;
@@ -158,6 +161,17 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
           }
         }
       }, true);
+
+      scope.$on('toggled-layout', function (event, paused) {
+        scope.paused = paused;
+        if (scope.force !== undefined) {
+          if (paused) {
+            scope.force.stop();
+          } else {
+            scope.force.resume();
+          }
+        }
+      });
 
       scope.$on('prefixes-changed', function () {
         scope.color = d3.scale.linear().domain([1, Prefixes.size()])
@@ -365,6 +379,35 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
         scope.node = nodeContainer.selectAll('.node')
           .data(nodes);
 
+        const drag = d3.behavior.drag()
+          .on('dragstart', function dragstart(d) {
+            d.fixed = true;
+
+            if (scope.paused) {
+              scope.force.stop();
+            } else {
+              // when layout is NOT paused, it must be resumed, otherwise all other nodes will stay at its place
+              scope.force.resume();
+            }
+
+            // needed to make panning and dragging of nodes work
+            d3.event.sourceEvent.stopPropagation();
+          })
+          .on('drag', function dragmove(d) {
+            d.px += d3.event.dx;
+            d.py += d3.event.dy;
+            d.x += d3.event.dx;
+            d.y += d3.event.dy;
+            scope.tick();
+          })
+          .on('dragend', function dragend(d) {
+            d.fixed = false;
+            scope.tick();
+            if (!scope.paused) {
+              scope.force.resume();
+            }
+          });
+
         scope.node.enter()
           .append('g')
           .classed('node', true)
@@ -380,7 +423,7 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
             return (d.type === 'class' || d.type === 'property') && !(Prefixes.isInternal(d.uri));
           })
           .classed('disjointNode', function (d) { return d.type === 'disjointNode'; })
-          .call(scope.force.drag);
+          .call(drag);
 
         scope.node.exit().remove();
 
@@ -847,12 +890,6 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
           .gravity(0.03)
           .size([width, height]);
 
-        // needed to make panning and dragging of nodes work
-        scope.force.drag()
-          .on('dragstart', function () {
-            d3.event.sourceEvent.stopPropagation();
-          });
-
         svg.attr('width', width)
           .attr('height', Math.max(height - 60, 0));
 
@@ -871,12 +908,14 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
 
         scope.force.start();
 
-        scope.force.on('tick', function() {
-          scope.link.attr('d', scope.recalculateLines);
-          scope.directLink.attr('d', scope.recalculateDirectLines);
-          scope.node.attr('transform', function(d) { return 'translate(' + d.x + ',' + d.y + ')'; });
-        });
+        scope.force.on('tick', scope.tick);
       }; // end of scope.render()
+
+      scope.tick = function () {
+        scope.link.attr('d', scope.recalculateLines);
+        scope.directLink.attr('d', scope.recalculateDirectLines);
+        scope.node.attr('transform', function(d) { return 'translate(' + d.x + ',' + d.y + ')'; });
+      };
     } // end of link()
   }; // end of returned directive
 } // end of NodeLinkGraph()

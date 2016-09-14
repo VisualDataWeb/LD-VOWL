@@ -1,11 +1,12 @@
 'use strict';
 
-function settingsCtrl($log, $cookies, PREFIX, PROPERTY_BLACKLIST, CLASS_BLACKLIST, RequestConfig, Nodes, Properties,
-                      Requests, ClassExtractor, RelationExtractor) {
+function settingsCtrl($log, $cookies, PREFIX, PROPERTY_BLACKLIST, CLASS_BLACKLIST, RequestConfig, Data, ClassExtractor,
+                      RelationExtractor) {
+
   'ngInject';
 
   /* jshint validthis: true */
-  var vm = this;
+  const vm = this;
 
   const cookiePrefix = 'ldvowl_';
 
@@ -83,9 +84,7 @@ function settingsCtrl($log, $cookies, PREFIX, PROPERTY_BLACKLIST, CLASS_BLACKLIS
     ClassExtractor.setBlacklist(classItems);
 
     // delete all loaded data
-    Nodes.clearAll();
-    Properties.clearAll();
-    Requests.clear();
+    Data.clearAll();
 
     const rdfState = (vm.enabled['RDF']) ? 'true' : 'false';
     const rdfsState = (vm.enabled['RDFS']) ? 'true' : 'false';
