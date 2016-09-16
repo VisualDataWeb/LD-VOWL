@@ -1,11 +1,17 @@
-'use strict';
-
+/**
+ * @Name Properties
+ *
+ * @param $interval
+ * @param $log
+ * @param $rootScope
+ * @param RequestConfig
+ */
 function properties($interval, $log, $rootScope, RequestConfig) {
 
   'ngInject';
 
   /* jshint validthis: true */
-  var self = this;
+  const self = this;
 
   self.SUBCLASS_URI = 'http://my-own-sub-class';
   self.DISJOINT_PROP_URI = 'http://my-own-disjoint-prop';
@@ -16,6 +22,12 @@ function properties($interval, $log, $rootScope, RequestConfig) {
   // jshint ignore:end
 
   self.properties = [];
+
+  self.intermediateIdMap = new Map();
+  self.sourceTargetPropertyMap = new Map();
+  self.sourceTargetSubclassMap = new Map();
+  self.sourceTargetDisjointMap = new Map();
+
   self.needsUpdate = false;
   self.updateInterval = 5000;
   self.storageUpdate = undefined;
@@ -34,6 +46,9 @@ function properties($interval, $log, $rootScope, RequestConfig) {
 
         if (savedItems !== undefined && savedItems.length > 0) {
           $log.debug('[Properties] Re-use ' + savedItems.length + ' properties from session storage!');
+          savedItems.forEach(prop => {
+            return self.intermediateIdMap.set(prop.intermediate, prop);
+          });
           self.properties = savedItems;
         } else {
           $log.debug('[Properties] No saved properties in session storage!');
@@ -106,20 +121,25 @@ function properties($interval, $log, $rootScope, RequestConfig) {
    */
   self.existsBetween = function (sourceId, targetId, considerSubclasses = false, considerDisjoint = false) {
     if (typeof sourceId === 'string' && typeof targetId === 'string') {
-      for (var i = 0; i < self.properties.length; i++) {
-        var currentProp = self.properties[i];
 
-        // possible match
-        if (currentProp.source === sourceId && currentProp.target === targetId) {
-          if (currentProp.type !== 'subClassProperty' && currentProp.type !== 'disjointProperty') {
-            return currentProp.uri;
-          } else if (currentProp.type === 'subClassProperty' && considerSubclasses) {
-            return currentProp.uri;
-          } else if (currentProp.type === 'disjointProperty' && considerDisjoint) {
-            return currentProp.uri;
-          }
-        } // end pf possible match
-      } // end of for loop
+      const property = self.sourceTargetPropertyMap.get(`${sourceId} - ${targetId}`);
+      if (property !== undefined && property.uri !== undefined) {
+        return property.uri;
+      }
+
+      if (considerSubclasses) {
+        const subClassProperty = self.sourceTargetSubclassMap.get(`${sourceId} - ${targetId}`);
+        if (subClassProperty !== undefined && subClassProperty.uri !== undefined) {
+          return subClassProperty.uri;
+        }
+      }
+
+      if (considerDisjoint) {
+        const disjointProperty = self.sourceTargetDisjointMap.get(`${sourceId} - ${targetId}`);
+        if (disjointProperty !== undefined && disjointProperty.uri !== undefined) {
+          return disjointProperty.uri;
+        }
+      }
     } // end of legal parameters
     return false;
   };
@@ -147,7 +167,7 @@ function properties($interval, $log, $rootScope, RequestConfig) {
 
       // only add it, if it doesn't already exist
       if (!self.existsBetween(source, target)) {
-        var newProperty = {};
+        let newProperty = {};
 
         newProperty.source = source;
         newProperty.intermediate = intermediate;
@@ -160,6 +180,8 @@ function properties($interval, $log, $rootScope, RequestConfig) {
         newProperty.ordered = ordered;
 
         self.properties.push(newProperty);
+        self.intermediateIdMap.set(intermediate, newProperty);
+        self.sourceTargetPropertyMap.set(`${source} - ${target}`, newProperty);
       } else {
         self.addURI(source, target, uri, value);
       }
@@ -172,13 +194,14 @@ function properties($interval, $log, $rootScope, RequestConfig) {
 
   /**
    * Adds a new sub class property.
+   *
    * @param {string} source - the id of the source node
    * @param {string} intermediate - the id of the intermediate node
    * @param {string} target - the id of the target node
    */
   self.addSubClassProperty = function (source, intermediate, target) {
     if (typeof source === 'string' && typeof intermediate === 'string' && typeof target === 'string') {
-      var newSubClassProp = {};
+      const newSubClassProp = {};
 
       newSubClassProp.source = source;
       newSubClassProp.intermediate = intermediate;
@@ -190,6 +213,8 @@ function properties($interval, $log, $rootScope, RequestConfig) {
       newSubClassProp.type = 'subClassProperty';
 
       self.properties.push(newSubClassProp);
+      self.sourceTargetSubclassMap.set(`${source} - ${target}`, newSubClassProp);
+      self.intermediateIdMap.set(intermediate, newSubClassProp);
 
       self.needsUpdate = true;
     } else {
@@ -201,15 +226,16 @@ function properties($interval, $log, $rootScope, RequestConfig) {
   self.addDisjointProp = function (source, target) {
     // sub class and disjoint props are added first, so this must be one of these set relations
     if (!self.existsBetween(source, target, true, true)) {
-      var disjointProp = {};
-
-      disjointProp.source = source;
-      disjointProp.target = target;
-      disjointProp.value = 1;
-      disjointProp.uri = self.DISJOINT_PROP_URI;
-      disjointProp.type = 'disjointProperty';
+      const disjointProp = {
+        source: source,
+        target: target,
+        value: 1,
+        uri: self.DISJOINT_PROP_URI,
+        type: 'disjointProperty'
+      };
 
       self.properties.push(disjointProp);
+      self.sourceTargetDisjointMap.set(`${source} - ${target}`, disjointProp);
 
       self.needsUpdate = true;
     }
@@ -271,16 +297,7 @@ function properties($interval, $log, $rootScope, RequestConfig) {
    * @returns {*}
    */
   self.getByNodeId = function (intermediateNodeId) {
-    var searchedProperty = null;
-    // TODO a better way would be to create a map with intermediate id as keys
-    for (var i = 0; i < self.properties.length; i++) {
-      var currentProperty = self.properties[i];
-      if (currentProperty.intermediate === intermediateNodeId) {
-        searchedProperty = currentProperty;
-        break;
-      }
-    }
-    return searchedProperty;
+    return self.intermediateIdMap.get(intermediateNodeId);
   };
 
   /**
@@ -292,7 +309,7 @@ function properties($interval, $log, $rootScope, RequestConfig) {
    */
   self.getIntermediateId = function (sourceId, targetId) {
     var intermediateId = '';
-    for (var i = 0; i<self.properties.length; i++) {
+    for (let i = 0; i < self.properties.length; i++) {
       var currentProp = self.properties[i];
       if (currentProp.source === sourceId && currentProp.target === targetId) {
         intermediateId = currentProp.intermediate;
@@ -304,32 +321,22 @@ function properties($interval, $log, $rootScope, RequestConfig) {
 
   self.clearAll = function () {
     self.properties.length = 0;
+
+    // clear maps
+    self.intermediateIdMap.clear();
+    self.sourceTargetPropertyMap.clear();
+    self.sourceTargetSubclassMap.clear();
+    self.sourceTargetDisjointMap.clear();
+
     self.needsUpdate = true;
     self.startStorageUpdate();
   };
 
-  self.addURI = function (sourceIndex, targetIndex, uriToAdd, value) {
-    if (value === undefined) {
-      value = 1;
-    }
+  self.addURI = function (sourceIndex, targetIndex, uriToAdd, value = 1) {
+    const currentProp = self.sourceTargetPropertyMap.get(`${sourceIndex} - ${targetIndex}`);
 
-    var index = -1;
-    for (var i = 0; i < self.properties.length; i++) {
-      var currentProperty = self.properties[i];
-
-      // find property between source and target, which is NOT a subclass property
-      if (currentProperty.source === sourceIndex && currentProperty.target === targetIndex &&
-          currentProperty.type === 'property') {
-        index = i;
-        break;
-      }
-    }
-
-    if (index > -1) {
-      var currentProp = self.properties[index];
-
+    if (currentProp !== undefined) {
       if (currentProp.uri === self.PLACEHOLDER_PROP_URI) {
-
         $log.debug(`[Properties] Remove placeholder of property '${currentProp.uri}'!`);
 
         // do not add it, replace the placeholder information
@@ -338,23 +345,17 @@ function properties($interval, $log, $rootScope, RequestConfig) {
         currentProp.props = [];
         currentProp.props.push({uri: uriToAdd, value: value});
       } else {
-
-        // search for new uri is already in there
-        var exists = false;
-        for (var j = 0; j < currentProp.props.length; j++) {
-          if (currentProp.props[j].uri === uriToAdd) {
-            exists = true;
-            break;
-          }
-        }
+        const exists = currentProp.props.some(prop => prop.uri === uriToAdd);
 
         // uri to add doesn't exist, so it can be added
         if (!exists) {
-          var p = {uri: uriToAdd, value: value};
-          self.properties[index].props.push(p);
-          self.properties[index].value++;
+          const p = {uri: uriToAdd, value: value};
+          currentProp.props.push(p);
+          currentProp.value++;
         }
       }
+    } else {
+      $log.error(`[Properties] Could not find property between ${sourceIndex} and ${targetIndex}!`);
     }
   };
 
@@ -389,6 +390,7 @@ function properties($interval, $log, $rootScope, RequestConfig) {
           $log.debug(`[Properties] Remove node '${currentProp.intermediate}'.`);
           nodesToRemove.push(currentProp.intermediate);
           self.properties.splice(i, 1);
+          self.intermediateIdMap.delete(currentProp.intermediate);
           continue;
         } else {
           currentProp.source = classId1;
@@ -397,11 +399,12 @@ function properties($interval, $log, $rootScope, RequestConfig) {
 
       if (currentProp.target === classId2) {
         if (currentProp.type === 'subClassProperty' &&
-            self.existsBetween(currentProp.source, classId1, true, false) === self.SUBCLASS_URI) {
+          self.existsBetween(currentProp.source, classId1, true, false) === self.SUBCLASS_URI) {
 
           $log.debug(`[Properties] Remove node '${currentProp.intermediate}'.`);
           nodesToRemove.push(currentProp.intermediate);
           self.properties.splice(i, 1);
+          self.intermediateIdMap.delete(currentProp.intermediate);
           continue;
         } else {
           currentProp.target = classId1;

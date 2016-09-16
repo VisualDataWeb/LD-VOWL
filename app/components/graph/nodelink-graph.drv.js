@@ -280,22 +280,29 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
 
           $log.debug(`[Graph] Selected property '${d.uri}'.`);
 
-          // get relation and nodes involved
-          var prop = Properties.getByNodeId(d.id);
-          var sourceNode = Nodes.getById(prop.source);
-          var targetNode = Nodes.getById(prop.target);
-
           // create message and store basic information
           message.item = {};
           message.item.id = d.id;
           message.item.type = d.type;
 
-          // add source and target node information
-          if (sourceNode !== undefined) {
-            message.item.sourceName = sourceNode.name;
-            message.item.sourceURI = sourceNode.uri;
-            message.item.targetName = targetNode.name;
-            message.item.targetURI = targetNode.uri;
+          // get relation and nodes involved
+          const prop = Properties.getByNodeId(d.id);
+          if (prop !== undefined) {
+            const sourceNode = Nodes.getById(prop.source);
+            const targetNode = Nodes.getById(prop.target);
+
+            // add source and target node information
+            if (sourceNode !== undefined) {
+              message.item.sourceName = sourceNode.name;
+              message.item.sourceURI = sourceNode.uri;
+            }
+
+            if (targetNode !== undefined) {
+              message.item.targetName = targetNode.name;
+              message.item.targetURI = targetNode.uri;
+            }
+          } else {
+            $log.error(`[Graph] Could not find property by id '${d.id}'!`);
           }
 
           message.item.ordered = true;

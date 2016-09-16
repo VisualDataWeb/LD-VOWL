@@ -2,9 +2,9 @@
  * @Name FilterGroupCtrl
  *
  * @param Filters
- * @param SchemaExtractor
+ * @param TBoxExtractor
  */
-function filterGroupCtrl(Filters, SchemaExtractor) {
+function filterGroupCtrl(Filters, TBoxExtractor) {
 
   'ngInject';
 
@@ -29,14 +29,14 @@ function filterGroupCtrl(Filters, SchemaExtractor) {
   vm.toggleTypes = function () {
     vm.filterTypes = !Filters.toggleLiterals();
     if (!vm.filterTypes) {
-      SchemaExtractor.extractDataTypes();
+      TBoxExtractor.extractDataTypes();
     }
   };
 
   vm.toggleLoops = function () {
     vm.filterLoops = !Filters.toggleLoops();
     if (!vm.filterLoops) {
-      SchemaExtractor.extractRelationLoops();
+      TBoxExtractor.extractRelationLoops();
     }
   };
 

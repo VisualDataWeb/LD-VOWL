@@ -1,5 +1,9 @@
-'use strict';
-
+/**
+ * @Name Prefixes
+ *
+ * @param $rootScope
+ * @param $log
+ */
 function prefixesService($rootScope, $log) {
 
   'ngInject';
@@ -9,7 +13,7 @@ function prefixesService($rootScope, $log) {
   var differentColors = true;
 
   /* jshint validthis: true */
-  var that = this;
+  const that = this;
 
   /**
    * Add a new prefix.
@@ -98,11 +102,9 @@ function prefixesService($rootScope, $log) {
    * @returns {boolean}
    */
   that.isInternal = function (uri) {
-
-    var internal = false;
-    for (var i = 0; i < prefixes.length; i++) {
-
-      var pre = prefixes[i];
+    let internal = false;
+    for (let i = 0; i < prefixes.length; i++) {
+      let pre = prefixes[i];
 
       if (pre.classification === 'intern' && uri.indexOf(pre.prefix) !== -1) {
         internal = true;
