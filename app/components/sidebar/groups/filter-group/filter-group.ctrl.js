@@ -10,8 +10,6 @@ function filterGroupCtrl(Filters, TBoxExtractor) {
 
   const vm = this;
 
-  vm.numberOfProps = 5;
-
   vm.filterTypes = !Filters.getIncludeLiterals();
   vm.filterLoops = !Filters.getIncludeLoops();
   vm.filterDisjointNodes = !Filters.getIncludeDisjointNode();
@@ -20,11 +18,6 @@ function filterGroupCtrl(Filters, TBoxExtractor) {
   // jshint ignore:start
   vm.showEndpointUrl = __SHOW_ENDPOINT__; // eslint-disable-line no-undef
   // jshint ignore:end
-
-
-  vm.incNumberOfProps = function () {
-    vm.numberOfProps += 5;
-  };
 
   vm.toggleTypes = function () {
     vm.filterTypes = !Filters.toggleLiterals();

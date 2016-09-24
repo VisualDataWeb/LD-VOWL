@@ -279,9 +279,9 @@ function properties($interval, $log, $rootScope, RequestConfig) {
    * @returns {*}
    */
   self.getByURI = function (uriToSearchFor) {
-    var prop = null;
-    for (var i=0; i<self.properties.length; i++) {
-      var currentProp = self.properties[i];
+    let prop = null;
+    for (let i = 0; i < self.properties.length; i++) {
+      let currentProp = self.properties[i];
       if (currentProp.uri === uriToSearchFor) {
         prop = currentProp;
         break;

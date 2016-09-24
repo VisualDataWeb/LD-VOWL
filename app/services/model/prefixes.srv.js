@@ -29,7 +29,7 @@ function prefixesService($rootScope, $log) {
       }
 
       var existingPrefix;
-      for (var i = 0; i < prefixes.length; i++) {
+      for (let i = 0; i < prefixes.length; i++) {
         prefixes[i].classification = 'extern';
         if (prefixes[i].prefix === pre.prefix) {
           existingPrefix = prefixes[i];
@@ -70,7 +70,7 @@ function prefixesService($rootScope, $log) {
    * Removes all prefixes.
    */
   that.clear = function () {
-    prefixes = [];
+    prefixes.length = 0;
     colorNumber = 1;
     $rootScope.$broadcast('prefixes-changed', 0);
   };
@@ -90,9 +90,11 @@ function prefixesService($rootScope, $log) {
    * @param newPrefixes - array of the new prefixes
    */
   that.setPrefixes = function (newPrefixes) {
-    prefixes = newPrefixes;
+    if (newPrefixes !== undefined && newPrefixes.length !== undefined) {
+      prefixes = newPrefixes;
 
-    $rootScope.$broadcast('prefixes-changed', prefixes.length);
+      $rootScope.$broadcast('prefixes-changed', prefixes.length);
+    }
   };
 
   /**
@@ -103,6 +105,7 @@ function prefixesService($rootScope, $log) {
    */
   that.isInternal = function (uri) {
     let internal = false;
+
     for (let i = 0; i < prefixes.length; i++) {
       let pre = prefixes[i];
 
@@ -121,11 +124,11 @@ function prefixesService($rootScope, $log) {
    * @returns {number} the number of the color to use
    */
   that.getColor = function (uri) {
-    var colorNumber = 1;
+    let colorNumber = 1;
 
     if (differentColors) {
-      for (var i = 0; i < prefixes.length; i++) {
-        var pre = prefixes[i];
+      for (let i = 0; i < prefixes.length; i++) {
+        let pre = prefixes[i];
 
         if (pre.classification !== 'intern' && uri.indexOf(pre.prefix) !== -1) {
           colorNumber = pre.color;

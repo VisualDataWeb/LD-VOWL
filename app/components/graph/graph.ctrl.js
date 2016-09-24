@@ -1,7 +1,6 @@
 /**
  * @Name GraphCtrl
  *
- * @param $scope
  * @param {$location} $location
  * @param {$log} $log
  * @param TBoxExtractor
@@ -10,18 +9,14 @@
  * @param Data
  * @param View
  */
-function graphCtrl($scope, $location, $log, TBoxExtractor, DetailExtractor, RequestConfig, Data, View) {
+function graphCtrl($location, $log, TBoxExtractor, DetailExtractor, RequestConfig, Data, View) {
 
   'ngInject';
 
   /* jshint validthis: true */
   const vm = this;
 
-  vm.data = {};
-  vm.data.nodes = [];
-
-  // TODO avoid $scope, use controllerAs syntax instead
-  $scope.selected = {
+  vm.selected = {
     uri: 'none',
     name: '',
     type: '',
@@ -29,14 +24,12 @@ function graphCtrl($scope, $location, $log, TBoxExtractor, DetailExtractor, Requ
     props: []
   };
 
-  $scope.showSelection = false;
+  vm.showSelection = false;
 
-  $scope.onClick = function(item) {
-    $scope.$apply(function () {
-      $scope.selected = item;
-      DetailExtractor.requestCommentForClass(item.id);
-      $scope.showSelection = true;
-    });
+  vm.onClick = function(item) {
+    vm.selected = item;
+    DetailExtractor.requestCommentForClass(item.id);
+    vm.showSelection = true;
   };
 
   /**
@@ -66,6 +59,8 @@ function graphCtrl($scope, $location, $log, TBoxExtractor, DetailExtractor, Requ
       Data.initMaps();
       View.reset();
 
+      $log.warn(`[Graph] Endpoint URL is empty!`);
+
       // do not try to query an empty url
     } else {
       if (endpointURL !== RequestConfig.getEndpointURL()) {
@@ -77,6 +72,8 @@ function graphCtrl($scope, $location, $log, TBoxExtractor, DetailExtractor, Requ
 
       // insert endpoint URL if missing
       $location.search('endpointURL', endpointURL);
+
+      $log.debug(`[Graph] Start to extract TBox information from '${endpointURL}'...`);
 
       TBoxExtractor.startTBoxExtraction();
     }

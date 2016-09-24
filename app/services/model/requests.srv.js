@@ -5,7 +5,7 @@ function requests($rootScope, StopWatch) {
   'ngInject';
 
   /* jshint validthis: true */
-  var that = this;
+  const that = this;
 
   that.promises = [];
 

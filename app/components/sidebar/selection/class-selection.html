@@ -1,38 +1,38 @@
 <!-- for selected classes -->
-<div ng-show="selected !== undefined && selected.type === 'class'">
+<div ng-if="vm.selected !== undefined && vm.selected.type === 'class'">
 
   <p>
-    <strong>Type:</strong> {{selected.type}}
+    <strong>Type:</strong> {{ vm.selected.type }}
   </p>
 
   <p>
     <strong>URI:</strong>
-    <a href="{{selected.uri}}" target="_blank">
-      {{ selected.uri }}
+    <a href="{{vm.selected.uri}}" target="_blank">
+      {{ vm.selected.uri }}
       <span class="glyphicon glyphicon-new-window"></span>
     </a>
   </p>
 
-  <p ng-hide="selected.name === ''">
+  <p ng-if="vm.selected.name !== ''">
     <strong>Label:</strong> {{selected.name}}
   </p>
 
   <!-- for a single equivalentURI -->
   <p ng-if="selected.equivalentURIs !== undefined && selected.equivalentURIs.length === 1">
     <strong>Equivalent Class:</strong>
-    <a href="{{selected.equivalentURIs[0]}}" target="_blank">
-      {{selected.equivalentURIs[0] | uriLabel}}
+    <a href="{{vm.selected.equivalentURIs[0]}}" target="_blank">
+      {{vm.selected.equivalentURIs[0] | uriLabel}}
       <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>
     </a>
   </p>
 
   <!-- for multiple equivalent URIs -->
-  <div ng-if="selected.equivalentURIs !== undefined && selected.equivalentURIs.length > 1">
+  <div ng-if="vm.selected.equivalentURIs !== undefined && vm.selected.equivalentURIs.length > 1">
     <p>
       <strong>Equivalent Classes:</strong>
     </p>
     <ul>
-      <li ng-repeat="equivURI in selected.equivalentURIs | limitTo: vm.numberOfProps">
+      <li ng-repeat="equivURI in vm.selected.equivalentURIs | limitTo: vm.numberOfProps">
         <a href="{{equiv}}" target="_blank">
           {{equivURI | uriLabel}}
           <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>
@@ -40,7 +40,7 @@
       </li>
     </ul>
 
-    <button ng-hide="selected.equivalentURIs.length <= vm.numberOfProps" type="button" class="btn btn-link"
+    <button ng-if="vm.selected.equivalentURIs.length >= vm.numberOfProps" type="button" class="btn btn-link"
             ng-click="vm.incNumberOfProps()">
       show more ...
     </button>
@@ -48,11 +48,11 @@
 
   <p>
     <strong># Instances:</strong>
-    {{selected.value | number}}
+    {{vm.selected.value | number}}
   </p>
 
-  <p ng-hide="selected.comment === undefined" class="comment">
+  <p ng-hide="vm.selected.comment === undefined" class="comment">
     <strong>Comment:</strong>
-    <span>{{ selected.comment }}</span>
+    <span>{{ vm.selected.comment }}</span>
   </p>
 </div>

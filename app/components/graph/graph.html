@@ -4,18 +4,18 @@
 
     <!-- Graph view -->
     <div class="col-sm-9 col-md-10 main">
-      <div id="graph" node-link-graph margin="10" on-click="onClick(item)">
+      <div id="graph" node-link-graph margin="10" on-click="vm.onClick(item)">
       </div>
     </div>
 
     <!-- Sidebar for details -->
     <div class="col-sm-3 col-md-2 sidebar">
       <uib-accordion>
-        <uib-accordion-group is-open="showSelection">
+        <uib-accordion-group is-open="vm.showSelection">
           <uib-accordion-heading>
             <span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span> Selection
           </uib-accordion-heading>
-          <selection-group></selection-group>
+          <selection-group selected-item="vm.selected"></selection-group>
         </uib-accordion-group>
 
         <uib-accordion-group is-open="false">

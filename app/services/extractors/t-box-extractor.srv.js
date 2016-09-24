@@ -80,9 +80,9 @@ function tBoxExtractor($q, $log, Data, Filters, StopWatch, Promises, ClassExtrac
   self.extractDataTypes = function () {
     $log.debug(`[Schema Extractor] Loading referring data types for ${self.classes.length} classes...`);
 
-    for (let i = 0; i < self.classes.length; i++) {
-      TypeExtractor.requestReferringTypes(self.classes[i]);
-    }
+    self.classes.forEach(function (clazz) {
+      TypeExtractor.requestReferringTypes(clazz);
+    });
   };
 
   /**
@@ -109,12 +109,11 @@ function tBoxExtractor($q, $log, Data, Filters, StopWatch, Promises, ClassExtrac
    * Load loop relations, this means class-class relation from one class to itself.
    */
   self.extractRelationLoops = function () {
-    for (let i = 0; i < self.classes.length; i++) {
-      let currentClass = self.classes[i];
-      if (currentClass.class !== undefined && currentClass.class.hasOwnProperty('value')) {
-        RelationExtractor.requestClassClassRelation(currentClass.class.value, currentClass);
+    self.classes.forEach(function (clazz) {
+      if (clazz.class !== undefined && clazz.class.hasOwnProperty('value')) {
+        RelationExtractor.requestClassClassRelation(clazz.class.value, clazz);
       }
-    }
+    });
   };
 
   /**

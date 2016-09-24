@@ -1,4 +1,5 @@
 function namespaceGroupCtrl($scope, $log, Prefixes) {
+
   'ngInject';
 
   const vm = this;
@@ -9,14 +10,14 @@ function namespaceGroupCtrl($scope, $log, Prefixes) {
 
   $scope.$on('prefixes-changed', function () {
     $log.debug('[Namespaces] Prefixes have changed, update them...');
-    $scope.prefixes = Prefixes.getPrefixes();
+    vm.prefixes = Prefixes.getPrefixes();
   });
 
   /**
    * Update the prefixes to the current ones
    */
   vm.updatePrefixes = function () {
-    Prefixes.setPrefixes($scope.prefixes);
+    Prefixes.setPrefixes(vm.prefixes);
   };
 
   /**

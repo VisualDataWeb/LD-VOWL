@@ -2,9 +2,24 @@
   "name": "ld-vowl",
   "version": "1.1.1",
   "description": "Extract ontology information out of arbitrary SPARQL endpoints and visualize it using a slightly adjusted form of VOWL.",
-  "keywords": ["Linked Data", "SPARQL", "Visualization", "VOWL"],
-  "homepage": "http://ldvowl.visualdataweb.org/",
+  "author": "Marc Weise <weisemc@studi.informatik.uni-stuttgart.de>",
+  "scripts": {
+    "start": "webpack-dev-server --content-base app --inline --hot --open",
+    "host": "webpack-dev-server --host 0.0.0.0 --content-base app --inline --hot",
+    "test": "karma start",
+    "e2etest": "protractor protractor.conf.js",
+    "lint": "eslint . --ext .js || true",
+    "deploy": "NODE_ENV=production webpack -p --config webpack.production.config.js"
+  },
   "main": "app/app.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VisualDataWeb/LD-VOWL"
+  },
+  "bugs": {
+    "url": "https://github.com/VisualDataWeb/LD-VOWL/issues"
+  },
+  "keywords": ["Linked Data", "SPARQL", "Visualization", "VOWL"],
   "dependencies": {
     "angular": "1.4.8",
     "angular-animate": "1.4.8",
@@ -68,15 +83,7 @@
     "webpack": "~1.12.9",
     "webpack-dev-server": "~1.14.0"
   },
-  "scripts": {
-    "start": "webpack-dev-server --content-base app --inline --hot --open",
-    "host": "webpack-dev-server --host 0.0.0.0 --content-base app --inline --hot",
-    "test": "karma start",
-    "e2etest": "protractor protractor.conf.js",
-    "lint": "eslint . --ext .js || true",
-    "deploy": "NODE_ENV=production webpack -p --config webpack.production.config.js"
-  },
-  "author": "Marc Weise <weisemc@studi.informatik.uni-stuttgart.de>",
   "private": true,
+  "homepage": "http://ldvowl.visualdataweb.org/",
   "license": "MIT"
 }
