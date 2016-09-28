@@ -321,8 +321,8 @@ class RelationExtractor extends Extractor {
             var commonCount = parseInt(bindings[0].commonInstanceCount.value);
 
             if (commonCount !== undefined) {
-              self.$log.debug(`[Relations] Classes '${classURI1}' (${count1}) and '${classURI2}' (${count2}) have
-              '${commonCount}' common instances!`);
+              self.$log.debug(`[Relations] Classes '${classURI1}' (${count1}) and '${classURI2}' (${count2}) have ` +
+                `'${commonCount}' common instances!`);
 
               if ((commonCount === count1) && (commonCount === count2)) {
                 self.$log.debug(`[Relations] Merge class '${classId1}' and '${classId2}'...`);
@@ -392,7 +392,8 @@ class RelationExtractor extends Extractor {
 
                   const subClassPropNodeId = self.nodes.addNode(subClassPropNode);
 
-                  self.$log.debug(`Node between parent ${classId1} and child ${classId2} is '${subClassPropNodeId}'.`);
+                  self.$log.debug(`[Relations] Node between parent ${classId1} and child ${classId2} is ` +
+                    `'${subClassPropNodeId}'.`);
 
                   // create a property
                   self.props.addSubClassProperty(classId2, subClassPropNodeId, classId1);

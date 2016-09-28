@@ -144,6 +144,7 @@ class ClassExtractor extends Extractor {
           }
         }, function (err) {
           self.$log.error(err);
+          // TODO check whether this was because of CORS
           deferred.reject(self.classIds);
         })
         .finally(function () {

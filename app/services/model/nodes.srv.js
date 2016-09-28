@@ -14,6 +14,8 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
   var nodes = new Map();
   let equivalentClasses = new Map();
 
+  const classDatatypesMap = new Map();
+
   var subClassSet = new Set();
 
   /* jshint validthis: true */
@@ -90,6 +92,42 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
     } else {
       $log.error(`[Nodes] Can not update storage, local or session storage is not supported by your browser!`);
     }
+  };
+
+  that.addDatatypeForClass = function(dataTypeNode, classId) {
+    if (typeof dataTypeNode !== 'object' || dataTypeNode.uri === undefined || dataTypeNode.type === undefined) {
+      $log.error(`[Nodes] Unable to add data type node, illegal argument for node!`);
+      return '';
+    }
+
+    if (typeof classId !== 'string') {
+      $log.error(`[Nodes] Unable to add data type node, illegal argument for class id!`);
+      return '';
+    }
+
+    let newId = '';
+    const connTypes = classDatatypesMap.get(classId);
+    if (connTypes !== undefined && connTypes.length > 0 && connTypes.indexOf(dataTypeNode.uri) !== -1) {
+        $log.warn(`[Nodes] There already is a data type '${dataTypeNode.uri}' connected to class '${classId}'!`);
+    } else {
+
+      // doesn't exist yet, so its okay to add it
+      if (connTypes === undefined) {
+        classDatatypesMap.set(classId, [dataTypeNode.uri]);
+      } else {
+        classDatatypesMap.set(classId, connTypes.concat([dataTypeNode.uri]));
+      }
+
+      newId = dataTypeNode.type + nodes.size;
+      dataTypeNode.id = newId;
+      nodes.set(newId, dataTypeNode);
+
+      $log.debug(`[Nodes] Add new data type node '${dataTypeNode.uri}'.`);
+
+      that.updateStorage();
+    }
+
+    return newId;
   };
 
   /**
@@ -397,6 +435,7 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
     classUriIdMap.clear();
     nodes.clear();
     equivalentClasses.clear();
+    classDatatypesMap.clear();
     subClassSet.clear();
     Prefixes.clear();
     $log.warn('[Nodes] Cleared all nodes and prefixes!');

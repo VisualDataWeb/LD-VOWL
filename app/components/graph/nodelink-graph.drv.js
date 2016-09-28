@@ -1,5 +1,3 @@
-'use strict';
-
 import angular from 'angular';
 import d3 from 'd3';
 
@@ -213,13 +211,89 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
                           .domain([5, 6, 7, 8, 9])
                           .range(['#777', '#666', '#555', '#333', '#000']);
 
-      scope.getArrowHeads = function () {
-        var arrowHeads = [];
+      scope.cardinalSpline = d3.svg.line()
+        .x(function (d) { return (d !== undefined) ? d.x : 0; })
+        .y(function(d) { return (d !== undefined) ? d.y : 0; })
+        .interpolate('cardinal');
 
-        for (var lwidth = 1; lwidth <= 5; lwidth++) {
-          arrowHeads.push({id: 'Arrow' + lwidth, class: 'arrow', size: 10-lwidth});
-          arrowHeads.push({id: 'hoveredArrow' + lwidth, class: 'hovered', size: 10-lwidth});
-          arrowHeads.push({id: 'subclassArrow' + lwidth, class: 'subclass', size: 10-lwidth});
+      scope.loopSpline = d3.svg.line()
+        .x(function (d) { return d.x; })
+        .y(function (d) { return d.y; })
+        .interpolate('cardinal')
+        .tension(0);
+
+      scope.linearLine = d3.svg.line()
+        .x(function (d) { return d.x; })
+        .y(function (d) { return d.y; })
+        .interpolate('linear');
+
+      scope.drag = d3.behavior.drag()
+        .on('dragstart', function dragstart(d) {
+          d.fixed = true;
+
+          if (scope.paused) {
+            scope.force.stop();
+          } else {
+            // when layout is NOT paused, it must be resumed, otherwise all other nodes will stay at its place
+            scope.force.resume();
+          }
+
+          // needed to make panning and dragging of nodes work
+          d3.event.sourceEvent.stopPropagation();
+        })
+        .on('drag', function dragmove(d) {
+          d.px += d3.event.dx;
+          d.py += d3.event.dy;
+          d.x += d3.event.dx;
+          d.y += d3.event.dy;
+          scope.tick();
+        })
+        .on('dragend', function dragend(d) {
+          d.fixed = false;
+          scope.tick();
+          if (!scope.paused) {
+            scope.force.resume();
+          }
+        });
+
+      /** --- Functions --- */
+
+      scope.filterNodes = function(n) {
+        let acceptNode = false;
+        if (n.type === 'property' && n.hasOwnProperty('isLoopNode') && n.isLoopNode) {
+
+          // only add if loops should be shown
+          if (scope.data.showLoops) {
+            acceptNode = true;
+          }
+        } else if (n.type === 'type' || n.type === 'datatypeProperty') {
+
+          // only add if types should be shown
+          if (scope.data.showTypes) {
+            acceptNode = true;
+          }
+        } else if (n.type === 'disjointNode') {
+          if (scope.data.showDisjointNode) {
+            acceptNode = true;
+          }
+        } else if (n.type === 'subClassProperty') {
+          if (scope.data.showSubclassRelations) {
+            acceptNode = true;
+          }
+        } else {
+          acceptNode = true;
+        }
+
+        return acceptNode;
+      };
+
+      scope.getArrowHeads = function () {
+        let arrowHeads = [];
+
+        for (let lwidth = 1; lwidth <= 5; lwidth++) {
+          arrowHeads.push({id: 'Arrow' + lwidth, class: 'arrow', size: 10 - lwidth});
+          arrowHeads.push({id: 'hoveredArrow' + lwidth, class: 'hovered', size: 10 - lwidth});
+          arrowHeads.push({id: 'subclassArrow' + lwidth, class: 'subclass', size: 10 - lwidth});
         }
 
         return arrowHeads;
@@ -251,6 +325,35 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
 
       scope.calcPropHighlightOffset = function (d) {
         return (-1) * (scope.calcPropHighlightBoxWidth(d) / 2);
+      };
+
+      scope.linkDistance = function (d) {
+        var distance;
+        if ((d.target !== undefined && d.target.isLoopNode) || (d.source !== undefined && d.source.isLoopNode)) {
+
+          // loops
+          distance = scope.loopDistance;
+        } else {
+
+          // non-loops
+          if (d.type === 'datatypeProperty') {
+            distance = scope.dtPropDistance;
+          } else if (d.type === 'disjointProperty') {
+            distance = scope.disjointPropDistance;
+          } else {
+            distance = scope.propDistance;
+          }
+
+          // add radius to source and target
+          if (d.source !== undefined && d.source.radius !== undefined) {
+            distance += d.source.radius;
+          }
+          if (d.target !== undefined && d.target.radius !== undefined) {
+            distance += d.target.radius;
+          }
+        }
+
+        return distance;
       };
 
       /**
@@ -386,35 +489,6 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
         scope.node = nodeContainer.selectAll('.node')
           .data(nodes);
 
-        const drag = d3.behavior.drag()
-          .on('dragstart', function dragstart(d) {
-            d.fixed = true;
-
-            if (scope.paused) {
-              scope.force.stop();
-            } else {
-              // when layout is NOT paused, it must be resumed, otherwise all other nodes will stay at its place
-              scope.force.resume();
-            }
-
-            // needed to make panning and dragging of nodes work
-            d3.event.sourceEvent.stopPropagation();
-          })
-          .on('drag', function dragmove(d) {
-            d.px += d3.event.dx;
-            d.py += d3.event.dy;
-            d.x += d3.event.dx;
-            d.y += d3.event.dy;
-            scope.tick();
-          })
-          .on('dragend', function dragend(d) {
-            d.fixed = false;
-            scope.tick();
-            if (!scope.paused) {
-              scope.force.resume();
-            }
-          });
-
         scope.node.enter()
           .append('g')
           .classed('node', true)
@@ -430,25 +504,9 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
             return (d.type === 'class' || d.type === 'property') && !(Prefixes.isInternal(d.uri));
           })
           .classed('disjointNode', function (d) { return d.type === 'disjointNode'; })
-          .call(drag);
+          .call(scope.drag);
 
         scope.node.exit().remove();
-
-        scope.cardinalSpline = d3.svg.line()
-          .x(function (d) { return (d !== undefined) ? d.x : 0; })
-          .y(function(d) { return (d !== undefined) ? d.y : 0; })
-          .interpolate('cardinal');
-
-        scope.loopSpline = d3.svg.line()
-          .x(function (d) { return d.x; })
-          .y(function (d) { return d.y; })
-          .interpolate('cardinal')
-          .tension(0);
-
-        scope.linearLine = d3.svg.line()
-          .x(function (d) { return d.x; })
-          .y(function (d) { return d.y; })
-          .interpolate('linear');
 
         // draw a ring for equivalent classes
         nodeContainer.selectAll('.equivalent')
@@ -685,23 +743,17 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
       };
 
       scope.findNode = function (nodeId) {
-        var node;
-
-        for (var i = 0; i < scope.nodesToDraw.length; i++) {
-          var currentNode = scope.nodesToDraw[i];
-          if (currentNode.id !== undefined && currentNode.id === nodeId) {
-            node = currentNode;
-            break;
-          }
-        }
-
-        return node;
+        return scope.nodesToDraw.find(function (node) {
+          return node.id === nodeId;
+        });
       };
 
       /**
        * Draws or redraws a placeholder on the graph while classes are loaded or no endpoint is selected.
        */
       scope.drawPlaceholder = function (data, width, height) {
+
+        // only show it if there are no nodes
         if (data.nodes.size === 0) {
           $log.debug(`[Graph] Redraw placeholder! Loading: ${scope.data.loading}`);
           let boxHeight = 35;
@@ -723,7 +775,39 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
             let centerX = (width - boxWidth) / 2;
             let centerY = Math.max(((height - boxHeight) / 2), 50);
 
-            notificationText.text('Given SPARQL endpoint not accessible.')
+            const resultCodes = Requests.getStatus();
+
+            let message;
+            if (resultCodes.length > 0) {
+              console.error(resultCodes[0]);
+              switch (resultCodes[0]) {
+                case -1:
+                  message = 'Given SPARQL endpoint is not accessable.';
+                  break;
+
+                case 400:
+                  message = 'Given SPARQL endpoint does not understand query.';
+                  break;
+
+                case 404:
+                  message = 'Given SPARQL endpoint could not be found!';
+                  break;
+
+                case 500:
+                  message = 'Given SPARQL endpoint returned an error.';
+                  break;
+
+                case 503:
+                  message = 'Given SPARQL endpoint is temporally unavailable.';
+                  break;
+
+                default:
+                  message = `Extraction failed with unknown error '${resultCodes[0]}'.`;
+                  break;
+              }
+            }
+
+            notificationText.text(message)
               .attr('x', centerX + 5)
               .attr('y', centerY - 24)
               .transition()
@@ -770,45 +854,19 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
 
         scope.maxValue = 0;
 
-        scope.nodesToDraw = [];
-        var links = [];
-        var bilinks = [];
-        var directLinks = [];
-
-        for (var n of data.nodes.values()) {
-          var currentValue = n.value;
-
-          if (currentValue > scope.maxValue) {
-            scope.maxValue = currentValue;
+        scope.nodesToDraw = Array.from(data.nodes.values()).map(function (currentNode) {
+          if (currentNode.value > scope.maxValue) {
+            scope.maxValue = currentNode.value;
           }
+          return currentNode;
+        }).filter(scope.filterNodes);
 
-          if (n.type === 'property' && n.hasOwnProperty('isLoopNode') && n.isLoopNode) {
-
-            // only add if loops should be shown
-            if (data.showLoops) {
-              scope.nodesToDraw.push(n);
-            }
-          } else if (n.type === 'type' || n.type === 'datatypeProperty') {
-
-            // only add if types should be shown
-            if (data.showTypes) {
-              scope.nodesToDraw.push(n);
-            }
-          } else if (n.type === 'disjointNode') {
-            if (data.showDisjointNode) {
-              scope.nodesToDraw.push(n);
-            }
-          } else if (n.type === 'subClassProperty') {
-            if (data.showSubclassRelations) {
-              scope.nodesToDraw.push(n);
-            }
-          } else {
-            scope.nodesToDraw.push(n);
-          }
-        } // end of for all nodes
+        let links = [];
+        let bilinks = [];
+        let directLinks = [];
 
         if (data.properties !== undefined) {
-          data.properties.forEach(function (link) {
+          data.properties.forEach(function processLinks(link) {
 
             // do not add filtered elements
             if ((link.source === link.target && !data.showLoops) ||
@@ -866,34 +924,7 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
         scope.force = d3.layout.force()
           .charge(-500)
           .linkStrength(1.0)
-          .linkDistance(function (d) {
-            var distance;
-            if ((d.target !== undefined && d.target.isLoopNode) || (d.source !== undefined && d.source.isLoopNode)) {
-
-              // loops
-              distance = scope.loopDistance;
-            } else {
-
-              // non-loops
-              if (d.type === 'datatypeProperty') {
-                distance = scope.dtPropDistance;
-              } else if (d.type === 'disjointProperty') {
-                distance = scope.disjointPropDistance;
-              } else {
-                distance = scope.propDistance;
-              }
-
-              // add radius to source and target
-              if (d.source !== undefined && d.source.radius !== undefined) {
-                distance += d.source.radius;
-              }
-              if (d.target !== undefined && d.target.radius !== undefined) {
-                distance += d.target.radius;
-              }
-            }
-
-            return distance;
-          })
+          .linkDistance(scope.linkDistance)
           .gravity(0.03)
           .size([width, height]);
 

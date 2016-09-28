@@ -61,7 +61,7 @@ function queryFactory() {
       `SELECT (SAMPLE (?lbl) AS ?label) ` +
       `WHERE { ` +
         `<${uri}> rdfs:label ?lbl. ` +
-        `FILTER (langMatches(lang(?lbl), '${labelLang} ')) ` +
+        `FILTER (langMatches(lang(?lbl), '${labelLang}')) ` +
       `}`;
     },
 

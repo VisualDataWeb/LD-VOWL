@@ -1,5 +1,6 @@
-'use strict';
 /**
+ * @Name TypeExtractor
+ * TODO rename to DataTypeExtractor
  *
  * @param $http
  * @param $q
@@ -56,22 +57,32 @@ function typeExtractor($http, $q, $log, RequestConfig, QueryFactory, Nodes, Prop
 
               // check whether type has a valid URI
               if (typeof typeURI === 'string' && typeURI.length > 5 && typeURI.match(/^http.*/)) {
-                var newNode = {};
-                newNode.uri = typeURI;
-                newNode.type = 'type';
-                newNode.value = 1;
-                var typeId = Nodes.addNode(newNode);
+                const newDataTypeNode = {
+                  uri: typeURI,
+                  type: 'type',
+                  value: 1
+                };
 
-                // connect this node with placeholder intermediate node until the relation is found
-                var intermediateNode = {};
-                intermediateNode.uri = Properties.PLACEHOLDER_PROP_URI;
-                intermediateNode.type = 'datatypeProperty';
-                intermediateNode.value = 1;
-                var intermediateId = Nodes.addNode(intermediateNode);
+                // a data type should only occur once per class, so it must be checked whether there is already a
+                // connected node BEFORE adding a new one
+                const typeId = Nodes.addDatatypeForClass(newDataTypeNode, classId);
 
-                Properties.addProperty(classId, intermediateId, typeId, Properties.PLACEHOLDER_PROP_URI);
+                if (typeId !== '') {
+                  // connect this node with placeholder intermediate node until the relation is found
+                  const intermediateNode = {
+                    uri: Properties.PLACEHOLDER_PROP_URI,
+                    type: 'datatypeProperty',
+                    value: 1
 
-                RelationExtractor.requestClassTypeRelation(classId, intermediateId, typeId);
+                  };
+                  const intermediateId = Nodes.addNode(intermediateNode);
+
+                  Properties.addProperty(classId, intermediateId, typeId, Properties.PLACEHOLDER_PROP_URI);
+
+                  RelationExtractor.requestClassTypeRelation(classId, intermediateId, typeId);
+                } else {
+                  $log.warn(`[Referring Types] Data type '${typeURI}' is already connected to class '${classId}'.`);
+                }
               } else {
                 $log.warn(`[Referring Types] '${typeURI}' is not a valid URI! Data type was ignored.`);
               }

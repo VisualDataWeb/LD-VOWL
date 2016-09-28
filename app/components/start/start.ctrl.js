@@ -15,14 +15,14 @@ function startCtrl($log, $location, Data, View, Requests, RequestConfig) {
   'ngInject';
 
   /* jshint validthis: true */
-  var start = this;
+  const start = this;
 
   // most SPARQL Endpoints are taken from http://sparqles.ai.wu.ac.at/
 
   start.nonProxyEndpoints = [
     'http://dbpedia.org/sparql', // about dbpedia, works without proxy
     'http://ldf.fi/ww1lod/sparql', // about WW1, works without proxy, good candidate for user study
-    'http://apps.morelab.deusto.es/labman/sparql', // works, fast
+    'http://apps.morelab.deusto.es/labman/sparql', // TODO does not work anymore (CORS)
 
     'http://lod.springer.com/sparql', // about scientific publications @ springer, no relations (504 Gateway Timeout)
     'http://transparency.270a.info/sparql', // about corruption, works without proxy
@@ -62,7 +62,7 @@ function startCtrl($log, $location, Data, View, Requests, RequestConfig) {
     'http://data.nobelprize.org/sparql', // works, rather slow
     'http://data.oceandrilling.org/sparql', // no errors, class-to-class rather slow
     'http://vocabulary.semantic-web.at/PoolParty/sparql/OpenData', // no errors, very abstract data set
-    'http://data.utpl.edu.ec/ecuadorresearch/lod/sparql' // feq errors, dense graph, abstract data set
+    'http://data.utpl.edu.ec/ecuadorresearch/lod/sparql' // few errors, dense graph, abstract data set
   ];
 
   start.proxyOnlyEndpoints =  [
