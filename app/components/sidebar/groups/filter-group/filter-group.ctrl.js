@@ -19,6 +19,9 @@ function filterGroupCtrl(Filters, TBoxExtractor) {
   vm.showEndpointUrl = __SHOW_ENDPOINT__; // eslint-disable-line no-undef
   // jshint ignore:end
 
+  /**
+   * Toggle whether data types should be shown in the graph.
+   */
   vm.toggleTypes = function () {
     vm.filterTypes = !Filters.toggleLiterals();
     if (!vm.filterTypes) {
@@ -26,6 +29,9 @@ function filterGroupCtrl(Filters, TBoxExtractor) {
     }
   };
 
+  /**
+   * Toggle whether property loops should be shown in the graph.
+   */
   vm.toggleLoops = function () {
     vm.filterLoops = !Filters.toggleLoops();
     if (!vm.filterLoops) {
@@ -33,10 +39,16 @@ function filterGroupCtrl(Filters, TBoxExtractor) {
     }
   };
 
+  /**
+   * Toggle whether disjoint nodes should be shown in the graph.
+   */
   vm.toggleDisjointNode = function () {
     vm.filterDisjointNodes = !Filters.toggleDisjointNode();
   };
 
+  /**
+   * Toggle whether sub class relations should be shown in the graph.
+   */
   vm.toggleSubclassRelations = function() {
     vm.includeSubclassRelations = !Filters.toggleSubclassRelations();
   };

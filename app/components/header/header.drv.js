@@ -1,3 +1,12 @@
+/**
+ * @ngdoc directive
+ * @name header
+ * @module components.header
+ *
+ * @description
+ *
+ * The directive showing name and version of LD-VOWL.
+ */
 export default function header() {
 
   return {

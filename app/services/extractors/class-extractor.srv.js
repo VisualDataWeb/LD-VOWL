@@ -69,7 +69,7 @@ class ClassExtractor extends Extractor {
       return deferred.promise;
     }
 
-    self.classIds = [];
+    let classIds = [];
 
     let limit = this.reqConfig.getLimit() || 10;
 
@@ -107,26 +107,26 @@ class ClassExtractor extends Extractor {
                   node.active = false;
                   var newClassId = self.nodes.addNode(node);
 
-                  self.classIds.push(newClassId);
+                  classIds.push(newClassId);
 
                   if (bindings[i].class !== undefined && bindings[i].class.value !== undefined) {
                     self.requestClassLabel(newClassId, currentClassURI);
                   }
                 } else {
-                  self.$log.debug(`[Classes] Class '${currentClassURI} is either blacklisted or has an invalid URI!`);
+                  self.$log.debug(`[Classes] Class '${currentClassURI}' is either blacklisted or has an invalid URI!`);
                   fetchMore++;
                 }
               }
 
               if (fetchMore === 0) {
-                deferred.resolve(self.classIds);
+                deferred.resolve(classIds);
               } else {
                 self.$log.debug(`[Classes] Fetch ${fetchMore} more classes!`);
                 doQuery(false, offset + limit, fetchMore);
               }
             } else {
               self.$log.debug('[Classes] No further classes found!');
-              deferred.resolve(self.classIds);
+              deferred.resolve(classIds);
             }
           } else {
             self.$log.error(response);
@@ -139,13 +139,18 @@ class ClassExtractor extends Extractor {
               // switch back and surrender
               self.reqConfig.switchFormat();
               self.$log.error('[Classes] Okay, I surrender...');
-              deferred.resolve(self.classIds);
+              deferred.resolve(classIds);
             }
           }
-        }, function (err) {
-          self.$log.error(err);
+        }, function handleErrorExtractingClasses(err) {
+          if (err.config.timeout.$$state.value === 'canceled') {
+            self.$log.warn('[Class Extractor] Class extraction was canceled!');
+          } else {
+            self.$log.error(err);
+          }
+
           // TODO check whether this was because of CORS
-          deferred.reject(self.classIds);
+          deferred.reject(classIds);
         })
         .finally(function () {
           self.promises.removePromise(promiseId);
@@ -158,20 +163,19 @@ class ClassExtractor extends Extractor {
   }
 
   requestClassLabel (classId, classURI) {
-    var self = this;
+    const self = this;
 
     var canceller = self.$q.defer();
     const promiseId = self.promises.addPromise(canceller);
 
-    var labelLang = this.reqConfig.getLabelLanguage();
-    var labelQuery = this.queryFactory.getLabelQuery(classURI, labelLang);
-    var requestURL = this.reqConfig.getRequestURL();
+    const labelLang = this.reqConfig.getLabelLanguage();
+    const labelQuery = this.queryFactory.getLabelQuery(classURI, labelLang);
+    const requestURL = this.reqConfig.getRequestURL();
 
     self.$log.debug(`[Class Label] Send request for '${classURI}'...`);
 
     this.$http.get(requestURL, this.reqConfig.forQuery(labelQuery, canceller))
       .then(function handleExtractedClassLabel(response) {
-
         if (response === undefined || response.data === undefined || response.data.results === undefined) {
           return;
         }
@@ -187,8 +191,17 @@ class ClassExtractor extends Extractor {
           self.$log.debug(`[Class Label] Found None for '${classURI}'.`);
           self.requestClassSkosLabel(classId, classURI);
         }
-      },function (err) {
-        self.$log.error(err);
+      }, function handleErrorExtractingClassLabel(err) {
+        if (err.status !== undefined && err.status === 400) {
+          if (typeof err.data === 'string' && err.data.indexOf(`syntax error at 'SAMPLE'`) !== -1) {
+            self.$log.warn(`[Class Extractor] Endpoint does not understand query with 'SAMPLE'!`);
+          } else {
+            self.$log.error('[Class Extractor] Endpoint returned bad request on retrieving class labels');
+            self.$log.error(err);
+          }
+        } else {
+          self.$log.error(err);
+        }
       })
       .finally(function () {
         self.promises.removePromise(promiseId);

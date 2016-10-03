@@ -1,6 +1,15 @@
 import namespaceGroupTemplate from './namespace-group.html';
 
-export default function namespaceGroup() {
+/**
+ * @ngdoc directive
+ * @name namespaceGroup
+ * @module components.sidebar.groups.namespace
+ *
+ * @description
+ *
+ * This directive represents the accordion group showing the class namespaces.
+ */
+const namespaceGroup = function() {
 
   return {
     restrict: 'E',
@@ -10,4 +19,6 @@ export default function namespaceGroup() {
     template: namespaceGroupTemplate
   };
 
-}
+};
+
+export default namespaceGroup;

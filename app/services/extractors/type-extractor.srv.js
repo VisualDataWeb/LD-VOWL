@@ -25,7 +25,7 @@ function typeExtractor($http, $q, $log, RequestConfig, QueryFactory, Nodes, Prop
     const promiseId = Promises.addPromise(canceller);
 
     var classURI = Nodes.getURIById(classId);
-    var query = QueryFactory.getInstanceReferringTypesQuery(classURI, 5);
+    const query = QueryFactory.getInstanceReferringTypesQuery(classURI, 5);
     var requestURL = RequestConfig.getRequestURL();
 
     // avoid loading types multiple times
@@ -50,10 +50,10 @@ function typeExtractor($http, $q, $log, RequestConfig, QueryFactory, Nodes, Prop
 
           $log.debug(`[Referring Types] Found ${bindings.length} for '${classURI}'.`);
 
-          for (var j = 0; j < bindings.length; j++) {
-            if (bindings[j].valType !== undefined && bindings[j].valType.hasOwnProperty('value')) {
+          for (let i = 0; i < bindings.length; i++) {
+            if (bindings[i].valType !== undefined && bindings[i].valType.hasOwnProperty('value')) {
 
-              let typeURI = bindings[j].valType.value;
+              let typeURI = bindings[i].valType.value;
 
               // check whether type has a valid URI
               if (typeof typeURI === 'string' && typeURI.length > 5 && typeURI.match(/^http.*/)) {
@@ -93,7 +93,7 @@ function typeExtractor($http, $q, $log, RequestConfig, QueryFactory, Nodes, Prop
         }
 
         Nodes.setTypesLoaded(classId);
-      }, function (err) {
+      }, function handleErrorExtractingReferringTypes(err) {
         if (err !== undefined && err.hasOwnProperty('status')) {
           if (err.status === 500 &&  err.hasOwnProperty('data') && err.data.search('estimated execution time') !== -1) {
             $log.debug('[Referring Types] Request would take to long!');

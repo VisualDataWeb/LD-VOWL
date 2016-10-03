@@ -139,12 +139,12 @@ class RelationExtractor extends Extractor {
             self.$log.debug(`[Relations] None between '${originClassURI}' and '${targetClassURI}'.`);
           }
         }
-      }, function (err) {
+      }, function handleClassClassRelationExtractionError(err) {
         if (err !== undefined && err.hasOwnProperty('status')) {
           if (err.status === -1) {
             if (err.config !== undefined && err.config.timeout !== undefined &&
                 err.config.timeout.$$state !== undefined && err.config.timeout.$$state.value === 'canceled') {
-              self.$log.warn('[Relations] Request was canceled!');
+              self.$log.debug('[Relations] Class-class relation request was canceled!');
             } else {
               self.$log.warn('[Relations] No results, likely because of CORS.');
             }
@@ -187,10 +187,17 @@ class RelationExtractor extends Extractor {
         } else {
           self.$log.debug(`[Property Label] Found None for '${uri}'.`);
         }
-      }, function (err) {
+      }, function handleExtractedPropertyLabelError(err) {
         if (err.status === -1 && err.config !== undefined && err.config.timeout !== undefined &&
             err.config.timeout.$$state.value === 'canceled') {
-          self.$log.warn('[Relations] Request was canceled!');
+          self.$log.debug('[Relations] Property label request was canceled!');
+        } else if (err.status === 400) {
+          if (typeof err.data === 'string' && err.data.indexOf(`syntax error at 'SAMPLE'`) !== -1) {
+            self.$log.warn(`[Relation Extractor] Endpoint does not understand query with 'SAMPLE'!`);
+          } else {
+            self.$log.error(`[Relation Extractor] Endpoint returned bad request when retrieving property label.`);
+            self.$log.error(err);
+          }
         } else {
           self.$log.error(err);
         }
@@ -429,8 +436,14 @@ class RelationExtractor extends Extractor {
             }
           }
         }
-      }, function (err) {
-        self.$log.error(err);
+      }, function handleCommonInstancesError(err) {
+        if (err.config !== undefined && err.config.timeout !== undefined && err.config.timeout.$$state !== undefined &&
+            err.config.timeout.$$state.value === 'canceled') {
+          self.$log.debug('[Relation Extractor] Common instances query was cancelled.');
+        } else {
+          self.$log.error(err);
+        }
+
         deferred.reject(err);
       }) // end of then()
     .finally(function () {

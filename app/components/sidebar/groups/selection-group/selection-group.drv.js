@@ -1,6 +1,14 @@
 import selectionGroupTemplate from './selection-group.html';
 
-export default function selectionGroup() {
+/**
+ * @ngdoc directive
+ * @name selectionGroup
+ * @description
+ *
+ * This directive represents the selection group in the sidebar accordion which shows details about the selected graph
+ * elements.
+ */
+const selectionGroup = function() {
 
   return {
     restrict: 'E',
@@ -13,4 +21,6 @@ export default function selectionGroup() {
     template: selectionGroupTemplate
   };
 
-}
+};
+
+export default selectionGroup;

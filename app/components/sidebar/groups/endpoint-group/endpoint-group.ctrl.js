@@ -4,6 +4,8 @@ function endpointGroupCtrl($scope, $location, Requests, RequestConfig) {
 
   const vm = this;
 
+  vm.showEndpointUrl = true;
+
   vm.requestedEndpoint = $location.search()['endpointURL'];
   vm.endpointURL = (vm.requestedEndpoint !== undefined) ? vm.requestedEndpoint : RequestConfig.getEndpointURL();
 

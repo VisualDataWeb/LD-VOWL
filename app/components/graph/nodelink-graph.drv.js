@@ -2,7 +2,9 @@ import angular from 'angular';
 import d3 from 'd3';
 
 /**
- * @Name NodeLinkGraph
+ * @ngdoc directive
+ * @name NodeLinkGraph
+ * @module components.graph
  *
  * @param $window
  * @param $log
@@ -15,7 +17,9 @@ import d3 from 'd3';
  * @param Requests
  * @param View
  *
- * @returns {{restrict: string, scope: {data: string, onClick: string}, link: link}}
+ * @description
+ *
+ * This is the directive which shows the node link graph using D3.
  */
 function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geometry, Utils, Requests, View) {
 
@@ -779,7 +783,6 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
 
             let message;
             if (resultCodes.length > 0) {
-              console.error(resultCodes[0]);
               switch (resultCodes[0]) {
                 case -1:
                   message = 'Given SPARQL endpoint is not accessable.';
@@ -805,6 +808,8 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
                   message = `Extraction failed with unknown error '${resultCodes[0]}'.`;
                   break;
               }
+            } else {
+              message = 'No classes found!';
             }
 
             notificationText.text(message)

@@ -16,9 +16,9 @@
         <label class="control-label col-sm-2" for="endpoint">Endpoint</label>
         <div class="col-sm-7">
           <input name="url" id="endpoint" ng-model="start.endpoint" type="url" class="form-control"
-                 title="SPARQL endpoint URL"
-                 uib-typeahead="url for url in start.endpoints | filter:$viewValue | limitTo:8" required
-                 ng-minlength="7" typeahead-min-length="0" placeholder="Type in an URL or select one from the list"/>
+                 title="SPARQL endpoint URL" required
+                 uib-typeahead="endpoint for endpoint in start.endpoints | filter:$viewValue | limitTo:8"
+                 ng-minlength="7" typeahead-min-length="0" placeholder="Type in an URL or select one from the list" />
         </div>
         <div class="col-sm-3">
           <button type="button" class="btn btn-primary" id="showGraph" ng-click="start.showGraph()"
@@ -43,7 +43,7 @@
         <div class="col-sm-offset-2 col-sm-10">
           <div class="checkbox">
             <label>
-              <input type="checkbox" ng-model="start.useLocalProxy" ng-change="start.updateUseLocalProxy()">
+              <input type="checkbox" ng-model="start.useProxy" ng-change="start.updateUseProxy()">
               Use local proxy
             </label>
           </div>

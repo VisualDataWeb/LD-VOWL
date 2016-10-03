@@ -6,6 +6,14 @@ import graphSettingsGroup from './graph-settings-group/graph-settings-group.modu
 import namespaceGroup from './namespace-group/namespace-group.module';
 import selectionGroup from './selection-group/selection-group.module';
 
+/**
+ * @ngdoc module
+ * @name components.sidebar.groups
+ *
+ * @description
+ *
+ * This module includes all groups for the sidebar accordion of the application.
+ */
 export default angular.module('sidebar.groups', [endpointGroup, filterGroup, graphSettingsGroup, namespaceGroup,
                               selectionGroup])
                       .name;

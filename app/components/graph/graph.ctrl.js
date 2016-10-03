@@ -68,6 +68,7 @@ function graphCtrl($location, $log, TBoxExtractor, DetailExtractor, RequestConfi
         RequestConfig.setEndpointURL(endpointURL);
         Data.initMaps();
         View.reset();
+        TBoxExtractor.clearClasses();
       }
 
       // insert endpoint URL if missing

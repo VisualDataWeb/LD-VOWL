@@ -1,32 +1,31 @@
-'use strict';
-
 /**
  * @Name RequestConfig
+ *
  * @param {$cookies} $cookies
  */
 function requestConfig($cookies) {
 
   'ngInject';
 
-  var cookiePrefix = 'ldvowl_';
-  var localProxyURL = 'http://localhost:8080/sparql';
+  const cookiePrefix = 'ldvowl_';
+  const proxyURL = 'http://cors-anywhere.herokuapp.com/';
 
-  var endpointURL = $cookies.get(cookiePrefix + 'endpoint') || '';
-  var useLocalProxy = $cookies.get(cookiePrefix + 'proxy') || 'false';
-  var limit = 10;
-  var sparqlTimeout = 30000;
-  var debug = 'on';
-  var labelLanguage = 'en';
-  var format = 'application/sparql-results+json';
+  let endpointURL = $cookies.get(cookiePrefix + 'endpoint') || '';
+  let useProxy = $cookies.get(cookiePrefix + 'proxy') || 'false';
+  let limit = 10;
+  let sparqlTimeout = 30000;
+  let debug = 'on';
+  let labelLanguage = 'en';
+  let format = 'application/sparql-results+json';
 
-  var propertiesOrdered = true;
+  let propertiesOrdered = true;
 
   /* jshint validthis: true */
   var self = this;
 
   self.init = function () {
     $cookies.put(cookiePrefix + 'endpoint', endpointURL);
-    $cookies.put(cookiePrefix + 'proxy', useLocalProxy);
+    $cookies.put(cookiePrefix + 'proxy', useProxy);
 
     // SPARQL limit
     let cookieLimit = $cookies.get(cookiePrefix + 'limit');
@@ -54,10 +53,10 @@ function requestConfig($cookies) {
    * @returns {*}
    */
   self.getRequestURL = function () {
-    var url;
+    let url;
 
-    if (self.getUseLocalProxy()) {
-      url = localProxyURL;
+    if (self.getUseProxy()) {
+      url = proxyURL + self.getEndpointURL();
     } else {
       endpointURL = self.getEndpointURL();
       url = endpointURL;
@@ -67,7 +66,7 @@ function requestConfig($cookies) {
   };
 
   self.getEndpointURL = function () {
-    var cookieEndpoint = $cookies.get(cookiePrefix + 'endpoint');
+    let cookieEndpoint = $cookies.get(cookiePrefix + 'endpoint');
     if (cookieEndpoint !== undefined) {
       endpointURL = cookieEndpoint;
     }
@@ -84,22 +83,22 @@ function requestConfig($cookies) {
    *
    * @returns {boolean}
    */
-  self.getUseLocalProxy = function () {
-    var cookieProxyFlag = $cookies.get(cookiePrefix + 'proxy');
+  self.getUseProxy = function () {
+    const cookieProxyFlag = $cookies.get(cookiePrefix + 'proxy');
     if (cookieProxyFlag !== undefined) {
-      useLocalProxy = cookieProxyFlag;
+      useProxy = cookieProxyFlag;
     }
-    return (useLocalProxy === 'true');
+    return (useProxy === 'true');
   };
 
   /**
-   * Set the flag whether a local proxy should be used or not and saves the flag into a cookie.
+   * Set the flag whether a proxy should be used or not and saves the flag into a cookie.
    *
    * @param useProxy - true if proxy should be used, false otherwise
    */
-  self.setUseLocalProxy = function (useProxy) {
-    useLocalProxy = (useProxy) ? 'true' : 'false';
-    $cookies.put(cookiePrefix + 'proxy', useLocalProxy);
+  self.setUseProxy = function (useProxy) {
+    useProxy = (useProxy) ? 'true' : 'false';
+    $cookies.put(cookiePrefix + 'proxy', useProxy);
   };
 
   self.getLimit = function () {
@@ -111,11 +110,11 @@ function requestConfig($cookies) {
     $cookies.put(cookiePrefix + 'limit', limit.toString());
   };
 
-  self.getTimout = function () {
+  self.getTimeout = function () {
     return sparqlTimeout;
   };
 
-  self.setTimout = function (newTimeout) {
+  self.setTimeout = function (newTimeout) {
     if (typeof newTimeout === 'number' && newTimeout > 0) {
       sparqlTimeout = newTimeout;
     }
@@ -148,6 +147,9 @@ function requestConfig($cookies) {
     $cookies.put(cookiePrefix + 'ordered', flag);
   };
 
+  /**
+   * Switch between different formats for the SPARQL requests.
+   */
   self.switchFormat = function () {
     if (format === 'application/sparql-results+json') {
       format = 'json';
@@ -161,14 +163,14 @@ function requestConfig($cookies) {
    * Returns a configuration object for the given SPARQL query
    */
   self.forQuery = function (query, canceller, jsonp) {
-    var config = {};
+    const config = {};
 
     config.params = {
       timeout: sparqlTimeout,
       debug: debug,
       format: format,
-      query: query,
-      ep: endpointURL
+      query: query
+      //ep: endpointURL
     };
 
     if (jsonp) {

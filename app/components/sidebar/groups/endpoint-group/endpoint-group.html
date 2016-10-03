@@ -4,17 +4,17 @@
       <span class="glyphicon glyphicon-link" aria-hidden="true"></span>
       URL:
     </strong>
-    <span ng-show="vm.endpointURL.length === 0">None</span>
+    <span ng-if="vm.endpointURL.length === 0">None</span>
     <a href="{{vm.endpointURL}}" target="_blank">{{vm.endpointURL}}</a>
   </p>
 
   <p>
     <span class="glyphicon glyphicon-refresh" ng-class="{'glyphicon-spin': vm.pendingRequests > 0}"></span>
     <strong>Pending Requests:</strong>
-      <span ng-hide="vm.pendingRequests === 0">
+      <span ng-if="vm.pendingRequests !== 0">
         {{vm.pendingRequests | number}}
       </span>
-    <span ng-show="vm.pendingRequests === 0">None</span>
+    <span ng-if="vm.pendingRequests === 0">None</span>
   </p>
 
   <p>
@@ -22,8 +22,8 @@
       <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
       Successful Requests:
     </strong>
-    <span ng-hide="vm.successfulRequests === 0">{{vm.successfulRequests | number}}</span>
-    <span ng-show="vm.successfulRequests === 0">None</span>
+    <span ng-if="vm.successfulRequests !== 0">{{vm.successfulRequests | number}}</span>
+    <span ng-if="vm.successfulRequests === 0">None</span>
   </p>
 
   <p ng-if="vm.failedRequests > 0">
@@ -31,9 +31,9 @@
       <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
       Failed Requests:
     </strong>
-    <span ng-hide="vm.failedRequests === 0">{{vm.failedRequests | number}}</span>
+    <span ng-if="vm.failedRequests !== 0">{{vm.failedRequests | number}}</span>
     <span>(Status: {{vm.errorStatus.join(', ')}})</span>
-    <span ng-show="vm.failedRequests === 0">None</span>
+    <span ng-if="vm.failedRequests === 0">None</span>
   </p>
 
   <div class="text-center" ng-if="vm.endpointURL.length > 0">
@@ -42,7 +42,7 @@
       Reload
     </button>
 
-    <button type="button" class="btn btn-danger" ng-click="vm.stop()" ng-hide="vm.pendingRequests === 0">
+    <button type="button" class="btn btn-danger" ng-click="vm.stop()" ng-if="vm.pendingRequests !== 0">
       <span class="glyphicon glyphicon-stop" aria-hidden="true"></span>
       Stop
     </button>

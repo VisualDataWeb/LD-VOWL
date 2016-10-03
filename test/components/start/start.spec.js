@@ -49,7 +49,7 @@ describe('Controller: StartCtrl', function () {
   });
 
   it('should not use a proxy', function() {
-    expect(StartCtrl.useLocalProxy).toBeFalsy();
+    expect(StartCtrl.useProxy).toBeFalsy();
   });
 
   it('should have an endpoint alert', function () {

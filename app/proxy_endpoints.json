@@ -1,0 +1,90 @@
+[
+  {
+    "name": "AemetLinkedData.es",
+    "url": "http://aemet.linkeddata.es/sparql"
+  },
+  {
+    "name": "Australian Climate Observations Reference Network - Surface Air Temperature (ACORN-SAT)",
+    "url": "http://lab.environment.data.gov.au/sparql"
+  },
+  {
+    "name": "ARAGÓN Open Data",
+    "url": "http://opendata.aragon.es/sparql"
+  },
+  {
+    "name": "B3Kat",
+    "url": "http://lod.b3kat.de/sparql"
+  },
+  {
+    "name": "BabelNet",
+    "url": "http://babelnet.org/sparql/"
+  },
+  {
+    "name": "Consorcio Regional de Transportes de Madrid",
+    "url": "http://crtm.linkeddata.es/sparql"
+  },
+  {
+    "name": "Context Data Cloud",
+    "url": "http://www.contextdatacloud.org:8890/sparql"
+  },
+  {
+    "name": "DATATURCYL",
+    "url": "http://visualdataweb.infor.uva.es/sparql"
+  },
+  {
+    "name": "DisGeNET",
+    "url": "http://rdf.disgenet.org/sparql/"
+  },
+  {
+    "name": "Drug Data from the Health Insurance Fund of Macedonia",
+    "url": "http://linkeddata.finki.ukim.mk/sparql"
+  },
+  {
+    "name": "Energy efficiency assessments and improvements",
+    "url": "http://www.ida.liu.se/projects/semtech/openrdf-sesame/repositories/energy"
+  },
+  {
+    "name": "FacetedDBLP",
+    "url": "http://dblp.l3s.de/d2r/sparql"
+  },
+  {
+    "name": "Global Change Information System",
+    "url": "http://data.globalchange.gov/sparql"
+  },
+  {
+    "name": "Greek WordNet",
+    "url": "http://wordnet.okfn.gr:8890/sparql/"
+  },
+  {
+    "name": "ImageSnippets",
+    "url": "http://www.imagesnippets.com/sparql/images"
+  },
+  {
+    "name": "Influence Tracker",
+    "url": "http://www.influencetracker.com:8890/sparql"
+  },
+  {
+    "name": "Italian Chamber of Deputies",
+    "url": "http://dati.camera.it/sparql"
+  },
+  {
+    "name": "JES & Co.",
+    "url": "http://sparql.jesandco.org:8890/sparql"
+  },
+  {
+    "name": "LinkLion",
+    "url": "http://www.linklion.org:8890/sparql"
+  },
+  {
+    "name": "Open Energy Information (OpenEI)",
+    "url": "http://en.openei.org/sparql"
+  },
+  {
+    "name": "OpenMobileNetwork",
+    "url": "http://www.openmobilenetwork.org:8890/sparql"
+  },
+  {
+    "name": "REEEP",
+    "url": "http://sparql.reeep.org/"
+  }
+]

@@ -240,14 +240,14 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
    * @returns {string}
    */
   that.getURIById = function (id) {
-    var uri = '';
+    let uri = '';
 
-    var searchedItem = nodes.get(id);
+    let searchedItem = nodes.get(id);
 
     if (searchedItem !== undefined && searchedItem.hasOwnProperty('uri')) {
       uri = searchedItem.uri;
     } else {
-      $log.error(`[Nodes] Can not resolve uri of '${id}'! Node doesn't exist!`);
+      $log.error(`[Nodes] Can not resolve uri of node with id '${id}'! This node doesn't exist!`);
     }
 
     return uri;

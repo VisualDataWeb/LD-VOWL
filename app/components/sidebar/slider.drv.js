@@ -1,6 +1,15 @@
 /* globals $ */
 require('jquery-ui');
 
+/**
+ * @ngdoc directive
+ * @name slider
+ * @module components.sidebar
+ *
+ * @description
+ *
+ * The directive which uses a jQuery slider to adjust the length of different edges in the force directed graph.
+ */
 function slider($rootScope) {
 
   'ngInject';
