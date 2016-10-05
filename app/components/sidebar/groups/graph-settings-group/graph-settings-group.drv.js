@@ -12,8 +12,10 @@ const graphSettingsGroup = function graphSettingsGroup() {
 
   return {
     restrict: 'E',
+    scope: {},
     controller: 'GraphSettingsCtrl',
-    controllerAs: 'vm',
+    controllerAs: 'graphSettings',
+    bindToController: true,
     template: require('./graph-settings-group.html')
   };
 

@@ -3,37 +3,56 @@
  *
  * @param Prefixes
  * @param $rootScope
+ * @param $log
  */
-function graphSettingsCtrl(Prefixes, $rootScope) {
+function graphSettingsCtrl(Prefixes, $rootScope, $log) {
 
   'ngInject';
 
   /* jshint validthis: true */
-  const vm = this;
+  const graphSettings = this;
 
-  vm.differentColors = Prefixes.getDifferentColors();
+  graphSettings.differentColors = Prefixes.getDifferentColors();
 
   // length of edges between classes
-  vm.ccEdgeLength = 80;
+  graphSettings.ccEdgeLength = 80;
 
   // length of edges between data type and class
-  vm.ctEdgeLength = 20;
+  graphSettings.ctEdgeLength = 20;
 
-  vm.layoutPaused = false;
+  graphSettings.layoutPaused = false;
+
+  graphSettings.setClassToClassEdgeLength = function (newValue) {
+    if (newValue === undefined) {
+      $log.error('[Graph Settings] New class to class edge length is undefined!');
+      return;
+    }
+    graphSettings.ccEdgeLength = newValue;
+    $rootScope.$broadcast('ccEdgeLength-changed', newValue);
+  };
+
+  graphSettings.setClassToDatatypeEdgeLength = function (newValue) {
+    if (newValue === undefined) {
+      $log.error('[Graph Settings] New class to data type edge length is undefined!');
+      return;
+    }
+    graphSettings.ctEdgeLength = newValue;
+    $rootScope.$broadcast('ctEdgeLength-changed', newValue);
+  };
 
   /**
    * Toggle whether different colors should be used for classes and properties of external namespaces.
    */
-  vm.toggleDifferentColors = function () {
-    vm.differentColors = Prefixes.toggleDifferentColors();
+  graphSettings.toggleDifferentColors = function () {
+    graphSettings.differentColors = Prefixes.toggleDifferentColors();
   };
 
   /**
    * Toggle (pause/resume) the force-directed layout of the graph.
    */
-  vm.toggleLayout = function () {
-    vm.layoutPaused = !vm.layoutPaused;
-    $rootScope.$broadcast('toggled-layout', vm.layoutPaused);
+  graphSettings.toggleLayout = function () {
+    graphSettings.layoutPaused = !graphSettings.layoutPaused;
+    $rootScope.$broadcast('toggled-layout', graphSettings.layoutPaused);
   };
 
 }

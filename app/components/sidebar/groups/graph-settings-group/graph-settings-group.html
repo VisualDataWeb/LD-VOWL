@@ -4,32 +4,34 @@
 
   <div class="checkbox">
     <label for="differentExternalColors">
-      <input id="differentExternalColors" type="checkbox" ng-model="vm.differentColors"
-             ng-change="vm.toggleDifferentColors()">
+      <input id="differentExternalColors" type="checkbox" ng-model="graphSettings.differentColors"
+             ng-change="graphSettings.toggleDifferentColors()">
       use different colors
     </label>
   </div>
 
   <p>
-    <label for="ctEdgeLength">Class - Class Distance: {{ vm.ccEdgeLength }}</label>
-    <div id="ccEdgeLength" slider class="cdbl-slider" model="vm.ccEdgeLength" min="1" max="300">
+    <label for="ccEdgeLength">Class - Class Distance: {{ graphSettings.ccEdgeLength }}</label>
+    <div id="ccEdgeLength" slider class="cdbl-slider" model="graphSettings.ccEdgeLength" min="1" max="300"
+         on-update="graphSettings.setClassToClassEdgeLength(newValue)">
     </div>
   </p>
 
   <p>
-    <label for="ctEdgeLength">Class - Type Distance: {{ vm.ctEdgeLength }}</label>
-    <div id="ctEdgeLength" slider class="cdbl-slider" model="vm.ctEdgeLength" min="1" max="150">
+    <label for="ctEdgeLength">Class - Type Distance: {{ graphSettings.ctEdgeLength }}</label>
+    <div id="ctEdgeLength" slider class="cdbl-slider" model="graphSettings.ctEdgeLength" min="1" max="150"
+         on-update="graphSettings.setClassToDatatypeEdgeLength(newValue)">
     </div>
   </p>
 
   <p><strong>Layout</strong></p>
 
   <div class="text-center">
-    <button type="button" class="btn btn-default" ng-click="vm.toggleLayout()">
-    <span class="glyphicon" ng-class="(vm.layoutPaused) ? 'glyphicon-play' : 'glyphicon-pause'" aria-hidden="true">
+    <button type="button" class="btn btn-default" ng-click="graphSettings.toggleLayout()">
+    <span class="glyphicon" ng-class="(graphSettings.layoutPaused) ? 'glyphicon-play' : 'glyphicon-pause'" aria-hidden="true">
     </span>
-      <span ng-if="!vm.layoutPaused">Pause</span>
-      <span ng-if="vm.layoutPaused">Resume</span>
+      <span ng-if="!graphSettings.layoutPaused">Pause</span>
+      <span ng-if="graphSettings.layoutPaused">Resume</span>
     </button>
   </div>
 
