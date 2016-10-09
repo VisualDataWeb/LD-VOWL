@@ -1,12 +1,13 @@
 /**
+ * @ngdoc service
  * @Name Prefixes
  *
  * @param $rootScope
  * @param $log
+ *
+ * @ngInject
  */
 function prefixesService($rootScope, $log) {
-
-  'ngInject';
 
   var prefixes = [];
   var colorNumber = 1;

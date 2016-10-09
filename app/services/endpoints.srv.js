@@ -1,6 +1,12 @@
+/**
+ * @ngdoc service
+ * @name Endpoints
+ *
+ * @param $http
+ *
+ * @ngInject
+ */
 function endpoints($http) {
-
-  'ngInject';
 
   const NON_PROXY_ENDPOINTS_FILE_NAME = 'nonproxy_endpoints.json';
   const PROXY_ENDPOINTS_FILE_NAME = 'proxy_endpoints.json';

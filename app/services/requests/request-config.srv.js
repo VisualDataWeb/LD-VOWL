@@ -1,11 +1,12 @@
 /**
- * @Name RequestConfig
+ * @ngdoc service
+ * @name RequestConfig
  *
  * @param {$cookies} $cookies
+ *
+ * @ngInject
  */
 function requestConfig($cookies) {
-
-  'ngInject';
 
   const cookiePrefix = 'ldvowl_';
   const proxyURL = 'http://cors-anywhere.herokuapp.com/';
@@ -21,7 +22,7 @@ function requestConfig($cookies) {
   let propertiesOrdered = true;
 
   /* jshint validthis: true */
-  var self = this;
+  const self = this;
 
   self.init = function () {
     $cookies.put(cookiePrefix + 'endpoint', endpointURL);

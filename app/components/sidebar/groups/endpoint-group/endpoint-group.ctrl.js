@@ -1,6 +1,15 @@
+/**
+ * @ngdoc type
+ * @name EndpointGroupCtrl
+ *
+ * @param $scope
+ * @param $location
+ * @param Requests
+ * @param RequestConfig
+ *
+ * @ngInject
+ */
 function endpointGroupCtrl($scope, $location, Requests, RequestConfig) {
-
-  'ngInject';
 
   const vm = this;
 

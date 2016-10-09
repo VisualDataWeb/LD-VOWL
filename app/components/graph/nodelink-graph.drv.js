@@ -6,24 +6,24 @@ import d3 from 'd3';
  * @name NodeLinkGraph
  * @module components.graph
  *
- * @param $window
+ * @param {$window} $window
  * @param $log
- * @param Properties
- * @param Nodes
+ * @param {Properties} Properties
+ * @param {Nodes} Nodes
  * @param Prefixes
- * @param Filters
- * @param {Geometry} Geometry
+ * @param {Filters} Filters
  * @param Utils
- * @param Requests
+ * @param {Requests} Requests
  * @param View
+ * @param {Links} Links
  *
  * @description
  *
  * This is the directive which shows the node link graph using D3.
+ *
+ * @ngInject
  */
-function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geometry, Utils, Requests, View) {
-
-  'ngInject';
+function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Utils, Requests, View, Links) {
 
   return {
     restrict: 'EA',
@@ -67,11 +67,6 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
       };
 
       scope.paused = false;
-
-      scope.propDistance = 100;
-      scope.dtPropDistance = 50;
-      scope.disjointPropDistance = 100;
-      scope.loopDistance = 80;
 
       scope.disjointNodeWidth = 40;
       scope.disjointNodeHeight = 20;
@@ -182,15 +177,7 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
         scope.render(scope.data);
       });
 
-      scope.$on('ccEdgeLength-changed', function (event, newPropDistance) {
-        scope.propDistance = newPropDistance;
-        if (scope.force !== undefined) {
-          scope.force.start();
-        }
-      });
-
-      scope.$on('ctEdgeLength-changed', function (event, newDtPropDistance) {
-        scope.dtPropDistance = newDtPropDistance;
+      scope.$on('edge-length-changed', function (){
         if (scope.force !== undefined) {
           scope.force.start();
         }
@@ -331,35 +318,6 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
         return (-1) * (scope.calcPropHighlightBoxWidth(d) / 2);
       };
 
-      scope.linkDistance = function (d) {
-        var distance;
-        if ((d.target !== undefined && d.target.isLoopNode) || (d.source !== undefined && d.source.isLoopNode)) {
-
-          // loops
-          distance = scope.loopDistance;
-        } else {
-
-          // non-loops
-          if (d.type === 'datatypeProperty') {
-            distance = scope.dtPropDistance;
-          } else if (d.type === 'disjointProperty') {
-            distance = scope.disjointPropDistance;
-          } else {
-            distance = scope.propDistance;
-          }
-
-          // add radius to source and target
-          if (d.source !== undefined && d.source.radius !== undefined) {
-            distance += d.source.radius;
-          }
-          if (d.target !== undefined && d.target.radius !== undefined) {
-            distance += d.target.radius;
-          }
-        }
-
-        return distance;
-      };
-
       /**
        * Handles the selection of graph items like classes, properties and types.
        *
@@ -429,7 +387,7 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
       };
 
       scope.redraw = function () {
-        root.attr('transform', 'translate(' + d3.event.translate + ')' + 'scale(' + d3.event.scale + ')');
+        root.attr('transform', `translate(${d3.event.translate})scale(${d3.event.scale})`);
 
         // save current view
         View.setTranslate(d3.event.translate);
@@ -448,25 +406,15 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
         linkContainer.append('defs').selectAll('marker')
           .data(scope.getArrowHeads())
           .enter().append('marker')
-          .attr('id', function (d) {
-            return d.id;
-          })
-          .attr('class', function (d) {
-            return d.class;
-          })
+          .attr('id', function (d) { return d.id; })
+          .attr('class', function (d) { return d.class; })
           .attr('viewBox', function (d) {
             return '-1 ' + ((d.size + 1) * (-1)) + ' ' + ((d.size + 1) * 2) + ' ' + ((d.size + 1) * 2);
           })
-          .attr('refX', function (d) {
-            return d.size * 2;
-          })
+          .attr('refX', function (d) { return d.size * 2;})
           .attr('refY', 0)
-          .attr('markerWidth', function (d) {
-            return d.size;
-          })
-          .attr('markerHeight', function (d) {
-            return d.size;
-          })
+          .attr('markerWidth', function (d) { return d.size; })
+          .attr('markerHeight', function (d) { return d.size; })
           .attr('orient', 'auto')
           .style('stroke', function (d) {
             return (d.class === 'hovered') ? 'red' : scope.arrowColor(d.size);
@@ -482,7 +430,7 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
           })
           .append('path')
             .attr('d', function (d) {
-              return 'M0,' + (d.size * -1) + 'L' + (d.size * 2) + ',0L0,' + d.size + 'Z';
+              return `M0,${d.size * -1}L${d.size * 2},0L0,${d.size}Z`;
             });
       };
 
@@ -695,45 +643,17 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
           .style('stroke-dasharray', '5, 5');
       };
 
+      /**
+       * @param {{source, intermediate, target}} d
+       */
       scope.recalculateLines = function(d) {
-        var line = {};
-
         // check whether current line is a loop
         if (d.source.id === d.target.id) {
-
-          var loopData = [];
-
-          // for the loops
-          loopData.push(Geometry.getAnotherCircleOutlinePoint(d, -1));
-          loopData.push({x: d.intermediate.x, y: d.intermediate.y});
-
-          // loops are always towards classes
-          loopData.push(Geometry.getAnotherCircleOutlinePoint(d, 1));
-
-          line = scope.loopSpline(loopData);
+          return scope.loopSpline(Links.getLoopData(d));
         } else {
-
-          // non-loop
-
-          var lineData = [];
-
-          // TODO should also start from circumference
-          lineData.push({x: d.source.x, y: d.source.y});
-          lineData.push({x: d.intermediate.x, y: d.intermediate.y});
-
-          // position depends on node type
-          if (d.target.type === 'class') {
-            lineData.push(Geometry.getCircleOutlinePoint(d));
-          } else {
-            lineData.push(Geometry.getRectOutlinePoint(d));
-          }
-
-          line = scope.cardinalSpline(lineData);
+          return scope.cardinalSpline(Links.getLineData(d));
         }
-
-        return line;
-      }; // end of recalculateLines()
-
+      };
 
       scope.recalculateDirectLines = function (d) {
         var lineData = [];
@@ -785,7 +705,7 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
             if (resultCodes.length > 0) {
               switch (resultCodes[0]) {
                 case -1:
-                  message = 'Given SPARQL endpoint is not accessable.';
+                  message = 'Given SPARQL endpoint is not accessible.';
                   break;
 
                 case 400:
@@ -844,7 +764,7 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
         }
 
         // restore view
-        root.attr('transform', 'translate(' + scope.translate + ')' + 'scale(' + scope.scale + ')');
+        root.attr('transform', `translate(${scope.translate})scale(${scope.scale})`);
 
         // set up zoom
         var zoom = d3.behavior.zoom()
@@ -929,7 +849,7 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
         scope.force = d3.layout.force()
           .charge(-500)
           .linkStrength(1.0)
-          .linkDistance(scope.linkDistance)
+          .linkDistance(Links.getDistance)
           .gravity(0.03)
           .size([width, height]);
 
@@ -957,7 +877,7 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Geom
       scope.tick = function () {
         scope.link.attr('d', scope.recalculateLines);
         scope.directLink.attr('d', scope.recalculateDirectLines);
-        scope.node.attr('transform', function(d) { return 'translate(' + d.x + ',' + d.y + ')'; });
+        scope.node.attr('transform', function(d) { return `translate(${d.x},${d.y})`; });
       };
     } // end of link()
   }; // end of returned directive

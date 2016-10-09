@@ -1,9 +1,21 @@
-'use strict';
-
+/**
+ * @ngdoc type
+ * @name SettingsCtrl
+ *
+ * @param $log
+ * @param $cookies
+ * @param PREFIX
+ * @param PROPERTY_BLACKLIST
+ * @param CLASS_BLACKLIST
+ * @param {RequestConfig} RequestConfig
+ * @param Data
+ * @param ClassExtractor
+ * @param RelationExtractor
+ *
+ * @ngInject
+ */
 function settingsCtrl($log, $cookies, PREFIX, PROPERTY_BLACKLIST, CLASS_BLACKLIST, RequestConfig, Data, ClassExtractor,
                       RelationExtractor) {
-
-  'ngInject';
 
   /* jshint validthis: true */
   const vm = this;

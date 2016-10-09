@@ -1,23 +1,33 @@
-'use strict';
-
+/**
+ * @ngdoc service
+ * @name DetailExtractor
+ *
+ * @param $http
+ * @param $q
+ * @param $log
+ * @param QueryFactory
+ * @param {RequestConfig} RequestConfig
+ * @param {Nodes} Nodes
+ * @param {Promises} Promises
+ *
+ * @ngInject
+ */
 function detailExtractor($http, $q, $log, QueryFactory, RequestConfig, Nodes, Promises) {
 
-  'ngInject';
-
   /* jshint validthis: true */
-  var that = this;
+  const that = this;
 
   /**
    * Request the rdfs:comment for the given uri and insert it into the right node.
    */
   that.requestCommentForClass = function (id) {
-    var uri = Nodes.getURIById(id);
+    const uri = Nodes.getURIById(id);
 
-    var canceller = $q.defer();
+    const canceller = $q.defer();
     const promiseId = Promises.addPromise(canceller);
 
-    var query = QueryFactory.getCommentQuery(uri);
-    var requestURL = RequestConfig.getRequestURL();
+    const query = QueryFactory.getCommentQuery(uri);
+    const requestURL = RequestConfig.getRequestURL();
 
     $http.get(requestURL, RequestConfig.forQuery(query, canceller))
       .then(function handleExtractedComment(response) {

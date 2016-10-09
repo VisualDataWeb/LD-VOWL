@@ -1,14 +1,15 @@
 /**
- * @Name Nodes
+ * @ngdoc serivice
+ * @name Nodes
  *
  * @param $log
  * @param Properties
  * @param Prefixes
  * @param RequestConfig
+ *
+ * @ngInject
  */
 function nodesService($log, Properties, Prefixes, RequestConfig) {
-
-  'ngInject';
 
   var classUriIdMap = new Map();
   var nodes = new Map();

@@ -59,7 +59,7 @@ describe('Service: RequestConfig', function () {
 
   it('should be possible to change the sparql timeout', function () {
     let newTimeout = 60000;
-    rconf.setTimout(newTimeout);
+    rconf.setTimeout(newTimeout);
     expect(rconf.getTimeout()).toBe(newTimeout);
   });
 
@@ -84,6 +84,7 @@ describe('Service: RequestConfig', function () {
   it('should be possible to disable ordered property retrieval', function () {
     rconf.setPropertiesOrdered(false);
     expect(rconf.getPropertiesOrdered()).toBeFalsy();
+    rconf.setPropertiesOrdered(true);
   });
 
 });

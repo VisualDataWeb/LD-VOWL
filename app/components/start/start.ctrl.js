@@ -3,15 +3,15 @@
  *
  * @param $log
  * @param $location
- * @param Data
+ * @param {Data} Data
  * @param View
  * @param Requests
- * @param RequestConfig
- * @param Endpoints
+ * @param {RequestConfig} RequestConfig
+ * @param {Endpoints} Endpoints
+ *
+ * @ngInject
  */
 function startCtrl($log, $location, Data, View, Requests, RequestConfig, Endpoints) {
-
-  'ngInject';
 
   /* jshint validthis: true */
   const start = this;
@@ -114,7 +114,7 @@ function startCtrl($log, $location, Data, View, Requests, RequestConfig, Endpoin
   };
 
   start.loadProxyEndpoints = function () {
-    $log.debug('[Start] Also load endpoints only accessable via proxy.');
+    $log.debug('[Start] Also load endpoints only accessible via proxy.');
     Endpoints.getProxyEndpoints().then(handleEndpointListResponse, handleEndpointListError);
   };
 

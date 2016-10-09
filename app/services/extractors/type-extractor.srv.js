@@ -5,16 +5,16 @@
  * @param $http
  * @param $q
  * @param $log
- * @param RequestConfig
+ * @param {RequestConfig} RequestConfig
  * @param QueryFactory
- * @param Nodes
- * @param Properties
+ * @param {Nodes} Nodes
+ * @param {Properties} Properties
  * @param {RelationExtractor} RelationExtractor
- * @param Promises
+ * @param {Promises} Promises
+ *
+ * @ngInject
  */
 function typeExtractor($http, $q, $log, RequestConfig, QueryFactory, Nodes, Properties, RelationExtractor, Promises) {
-
-  'ngInject';
 
   /* jshint validthis: true */
   var that = this;

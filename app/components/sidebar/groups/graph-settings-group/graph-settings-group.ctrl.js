@@ -1,13 +1,15 @@
 /**
- * @Name GraphSettingsCtrl
+ * @ngdoc type
+ * @name GraphSettingsCtrl
  *
- * @param Prefixes
  * @param $rootScope
  * @param $log
+ * @param Prefixes
+ * @param {Links} Links
+ *
+ * @ngInject
  */
-function graphSettingsCtrl(Prefixes, $rootScope, $log) {
-
-  'ngInject';
+function graphSettingsCtrl($rootScope, $log, Prefixes, Links) {
 
   /* jshint validthis: true */
   const graphSettings = this;
@@ -15,10 +17,10 @@ function graphSettingsCtrl(Prefixes, $rootScope, $log) {
   graphSettings.differentColors = Prefixes.getDifferentColors();
 
   // length of edges between classes
-  graphSettings.ccEdgeLength = 80;
+  graphSettings.ccEdgeLength = Links.getClassToClassDistance();
 
   // length of edges between data type and class
-  graphSettings.ctEdgeLength = 20;
+  graphSettings.ctEdgeLength = Links.getClassToDatatyoeDistance();
 
   graphSettings.layoutPaused = false;
 
@@ -28,7 +30,10 @@ function graphSettingsCtrl(Prefixes, $rootScope, $log) {
       return;
     }
     graphSettings.ccEdgeLength = newValue;
-    $rootScope.$broadcast('ccEdgeLength-changed', newValue);
+    Links.setClassToClassDistance(newValue);
+
+    // node link graph must be informed
+    $rootScope.$broadcast('edge-length-changed', newValue);
   };
 
   graphSettings.setClassToDatatypeEdgeLength = function (newValue) {
@@ -37,7 +42,10 @@ function graphSettingsCtrl(Prefixes, $rootScope, $log) {
       return;
     }
     graphSettings.ctEdgeLength = newValue;
-    $rootScope.$broadcast('ctEdgeLength-changed', newValue);
+    Links.setClassToDatatypeDistance(newValue);
+
+    // node link graph must be informed
+    $rootScope.$broadcast('edge-length-changed', newValue);
   };
 
   /**

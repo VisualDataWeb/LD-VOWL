@@ -1,8 +1,10 @@
 import angular from 'angular';
-
+/**
+ * @param $provide
+ *
+ * @ngInject
+ */
 function configure($provide) {
-
-  'ngInject';
 
   $provide.decorator('$q', delegate);
 

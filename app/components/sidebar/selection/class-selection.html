@@ -18,7 +18,7 @@
   </p>
 
   <!-- for a single equivalentURI -->
-  <p ng-if="selected.equivalentURIs !== undefined && selected.equivalentURIs.length === 1">
+  <p ng-if="vm.selected.equivalentURIs !== undefined && vm.selected.equivalentURIs.length === 1">
     <strong>Equivalent Class:</strong>
     <a href="{{vm.selected.equivalentURIs[0]}}" target="_blank">
       {{vm.selected.equivalentURIs[0] | uriLabel}}

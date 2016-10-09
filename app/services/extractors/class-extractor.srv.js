@@ -1,5 +1,3 @@
-'use strict';
-
 import Extractor from './extractor.srv';
 
 /**
@@ -16,14 +14,14 @@ class ClassExtractor extends Extractor {
    * @param {$log} $log
    * @param {PREFIX} PREFIX
    * @param {CLASS_BLACKLIST} CLASS_BLACKLIST
-   * @param RequestConfig
+   * @param {RequestConfig} RequestConfig
    * @param QueryFactory
-   * @param Nodes
-   * @param Promises
+   * @param {Nodes} Nodes
+   * @param {Promises} Promises
+   *
+   * @ngInject
    */
   constructor ($cookies, $http, $q, $log, PREFIX, CLASS_BLACKLIST, RequestConfig, QueryFactory, Nodes, Promises) {
-
-    'ngInject';
 
     // call constructor of Extractor
     super();

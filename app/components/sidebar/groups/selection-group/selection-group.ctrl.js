@@ -1,6 +1,10 @@
+/**
+ * @ngdoc type
+ * @name SelectionGroupCtrl
+ *
+ * @ngInject
+ */
 function selectionGroupCtrl() {
-
-  'ngInject';
 
   const vm = this;
 

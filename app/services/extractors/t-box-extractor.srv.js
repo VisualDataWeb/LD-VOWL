@@ -1,20 +1,21 @@
 /**
- * @Name TBoxExtractor
+ * @ngdoc service
+ * @name TBoxExtractor
  *
  * @param $q
  * @param $log
  * @param Data
- * @param Filters
+ * @param {Filters} Filters
  * @param StopWatch
- * @param Promises
+ * @param {Promises} Promises
  * @param {ClassExtractor} ClassExtractor
  * @param {RelationExtractor} RelationExtractor
  * @param TypeExtractor
+ *
+ * @ngInject
  */
 function tBoxExtractor($q, $log, Data, Filters, StopWatch, Promises, ClassExtractor, RelationExtractor,
                          TypeExtractor) {
-
-  'ngInject';
 
   /* jshint validthis: true */
   const self = this;

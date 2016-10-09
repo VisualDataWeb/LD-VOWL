@@ -1,16 +1,24 @@
-'use strict';
-
 /**
+ * @ngdoc service
  * @Name Geometry
  */
 class Geometry {
 
+  /**
+   * @param Utils
+   *
+   * @ngInject
+   */
   constructor(Utils) {
-    'ngInject';
     this.utils = Utils;
     this.defaultPropHeight = 20;
   }
 
+  /**
+   *
+   * @param {{intermediate, target}} d
+   * @returns {{x: number, y: number}}
+   */
   getCircleOutlinePoint(d) {
     var deltaX = d.target.x - d.intermediate.x;
     var deltaY = d.target.y - d.intermediate.y;
@@ -25,6 +33,11 @@ class Geometry {
     return {x: (d.target.x - offsetX), y: (d.target.y - offsetY)};
   }
 
+  /**
+   * @param {{source, intermediate, target}} d
+   * @param a
+   * @returns {{x: *, y: *}}
+   */
   getAnotherCircleOutlinePoint(d, a) {
     var deltaX = (d.intermediate.x - d.source.x);
     var deltaY = (d.intermediate.y - d.source.y);

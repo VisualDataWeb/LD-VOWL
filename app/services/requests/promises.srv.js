@@ -1,13 +1,14 @@
 /**
- * A service holding all promises.
+ * @ngdoc service
+ * @name Promises
  *
- * @Name Promises
+ * @description A service holding all promises.
  *
  * @param $log
+ *
+ * @ngInject
  */
 function promises($log) {
-
-  'ngInject';
 
   /* jshint validthis: true */
   const that = this;

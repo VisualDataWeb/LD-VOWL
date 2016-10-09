@@ -2,8 +2,6 @@ import app from '../../../app/app';
 
 describe('Controller: HeaderCtrl', function () {
 
-  "use strict";
-
   let HeaderCtrl;
   let $location;
   let $rootScope;

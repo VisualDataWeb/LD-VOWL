@@ -1,8 +1,13 @@
-'use strict';
-
+/**
+ * @ngdoc service
+ * @name Requests
+ *
+ * @param $rootScope
+ * @param StopWatch
+ *
+ * @ngInject
+ */
 function requests($rootScope, StopWatch) {
-
-  'ngInject';
 
   /* jshint validthis: true */
   const that = this;
@@ -115,6 +120,6 @@ function requests($rootScope, StopWatch) {
     $rootScope.$broadcast('pending-requests-changed', that.pendingRequests);
   };
   
-} // end of export
+}
 
 export default requests;

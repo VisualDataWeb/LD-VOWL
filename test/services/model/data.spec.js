@@ -1,7 +1,6 @@
 import app from '../../../app/app';
 
 describe('Service Data', function () {
-  'use strict';
 
   let data;
 

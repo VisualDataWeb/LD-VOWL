@@ -1,30 +1,32 @@
-'use strict';
-
 /**
- * Counts successful and failed http requests.
+ * @ngdoc service
+ * @name RequestCounter
+ *
+ * @description
+ * Counts successful and failed http requests towards the SPARQL endpoint.
  *
  * @param $q
- * @param Requests
- * @returns {{request: 'request', response: 'response', responseError: 'responseError'}}
+ * @param {Requests} Requests
+ * @returns {Object}
+ *
+ * @ngInject
  */
 function requestCounter($q, Requests) {
 
-  'ngInject';
-
-  const templateRegEx = /.*\.html$/;
+  const localFileRegEx = /^.+\.(css|html|js|json)$/;
 
   return {
     'request': function (config) {
-      // do not count template requests
-      if (!config.url.match(templateRegEx)) {
+      // do not count requests for local files (e.g. templates or json)
+      if (!config.url.match(localFileRegEx)) {
         Requests.incPendingRequests();
       }
       return config;
     },
 
     'response': function (response) {
-      // do not count template requests
-      if (!response.config.url.match(templateRegEx)) {
+      // do not count requests for local files (e.g. templates or json)
+      if (!response.config.url.match(localFileRegEx)) {
         Requests.decPendingRequests();
         Requests.incSuccessfulRequests();
       }

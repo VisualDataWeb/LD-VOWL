@@ -1,14 +1,15 @@
 /**
- * @Name Properties
+ * @ngdoc service
+ * @name Properties
  *
  * @param $interval
  * @param $log
  * @param $rootScope
- * @param RequestConfig
+ * @param {RequestConfig} RequestConfig
+ *
+ * @ngInject
  */
 function properties($interval, $log, $rootScope, RequestConfig) {
-
-  'ngInject';
 
   /* jshint validthis: true */
   const self = this;

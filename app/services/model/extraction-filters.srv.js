@@ -1,13 +1,15 @@
 /**
- * @Name Filters
+ * @ngdoc service
+ * @name Filters
+ *
  * @param {$cookies} $cookies
  * @param {$log} $log
+ *
+ * @ngInject
  */
 function filters($cookies, $log) {
 
-  'ngInject';
-
-  var self = this;
+  const self = this;
 
   var includeLoops;
   var includeLiterals;

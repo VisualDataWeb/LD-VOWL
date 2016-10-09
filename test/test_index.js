@@ -5,5 +5,5 @@ import '../node_modules/angular-animate/';
 import '../node_modules/angular-cookies/';
 import '../node_modules/angular-ui-bootstrap/';
 
-var testsContext = require.context(".", true, /.spec$/);
+const testsContext = require.context(".", true, /.spec$/);
 testsContext.keys().forEach(testsContext);

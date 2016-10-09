@@ -1,6 +1,14 @@
+/**
+ * @ngdoc type
+ * @name NamespaceGroupCtrl
+ *
+ * @param $scope
+ * @param $log
+ * @param Prefixes
+ *
+ * @ngInject
+ */
 function namespaceGroupCtrl($scope, $log, Prefixes) {
-
-  'ngInject';
 
   const vm = this;
 

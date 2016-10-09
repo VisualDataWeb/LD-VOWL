@@ -1,17 +1,18 @@
 /**
- * @Name GraphCtrl
+ * @ngdoc type
+ * @name GraphCtrl
  *
  * @param {$location} $location
  * @param {$log} $log
- * @param TBoxExtractor
+ * @param {TBoxExtractor} TBoxExtractor
  * @param DetailExtractor
- * @param RequestConfig
- * @param Data
+ * @param {RequestConfig} RequestConfig
+ * @param {Data} Data
  * @param View
+ *
+ * @ngInject
  */
 function graphCtrl($location, $log, TBoxExtractor, DetailExtractor, RequestConfig, Data, View) {
-
-  'ngInject';
 
   /* jshint validthis: true */
   const vm = this;

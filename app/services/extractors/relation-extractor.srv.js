@@ -1,8 +1,7 @@
-'use strict';
-
 import Extractor from './extractor.srv';
 
 /**
+ * @ngdoc service
  * @name RelationExtractor
  * @extends Extractor
  */
@@ -10,11 +9,23 @@ class RelationExtractor extends Extractor {
   
   /**
    * Creates a RelationExtractor.
+   *
+   * @param $cookies
+   * @param $http
+   * @param $q
+   * @param $log
+   * @param PREFIX
+   * @param PROPERTY_BLACKLIST
+   * @param {QueryFactory} QueryFactory
+   * @param {RequestConfig} RequestConfig
+   * @param {Nodes} Nodes
+   * @param {Properties} Properties
+   * @param {Promises} Promises
+   *
+   * @ngInject
    */
   constructor($cookies, $http, $q, $log, PREFIX, PROPERTY_BLACKLIST, QueryFactory, RequestConfig, Nodes, Properties,
               Promises) {
-
-    'ngInject';
 
     // call constructor of super class Extractor
     super();
@@ -24,7 +35,7 @@ class RelationExtractor extends Extractor {
     this.$http = $http;
     this.$q = $q;
     this.$log = $log;
-    this.qFactory = QueryFactory;
+    this.queryFactory = QueryFactory;
     this.rConfig = RequestConfig;
     this.nodes = Nodes;
     this.props = Properties;
@@ -68,9 +79,9 @@ class RelationExtractor extends Extractor {
 
     var query = '';
     if (this.rConfig.getPropertiesOrdered()) {
-      query = this.qFactory.getOrderedClassClassRelationQuery(originClassURI, targetClassURI, limit, offset);
+      query = this.queryFactory.getOrderedClassClassRelationQuery(originClassURI, targetClassURI, limit, offset);
     } else {
-      query = this.qFactory.getUnorderedClassClassRelationQuery(originClassURI, targetClassURI, limit, offset);
+      query = this.queryFactory.getUnorderedClassClassRelationQuery(originClassURI, targetClassURI, limit, offset);
     }
     var requestURL = this.rConfig.getRequestURL();
 
@@ -170,7 +181,7 @@ class RelationExtractor extends Extractor {
     const promiseId = this.promises.addPromise(canceller);
 
     var labelLang = this.rConfig.getLabelLanguage();
-    var query = this.qFactory.getLabelQuery(uri, labelLang);
+    var query = this.queryFactory.getLabelQuery(uri, labelLang);
     var requestURL = this.rConfig.getRequestURL();
 
     var self = this;
@@ -216,9 +227,9 @@ class RelationExtractor extends Extractor {
 
     let query = '';
     if (this.rConfig.getPropertiesOrdered()) {
-      query = this.qFactory.getOrderedClassTypeRelationQuery(classURI, typeURI, limit, offset);
+      query = this.queryFactory.getOrderedClassTypeRelationQuery(classURI, typeURI, limit, offset);
     } else {
-      query = this.qFactory.getUnorderedClassTypeRelationQuery(classURI, typeURI, limit, offset);
+      query = this.queryFactory.getUnorderedClassTypeRelationQuery(classURI, typeURI, limit, offset);
     }
 
     const requestURL = this.rConfig.getRequestURL();
@@ -304,7 +315,7 @@ class RelationExtractor extends Extractor {
     var classURI1 = this.nodes.getURIById(classId1);
     var classURI2 = this.nodes.getURIById(classId2);
 
-    var query = this.qFactory.getNumberOfCommonInstancesQuery(classURI1, classURI2);
+    var query = this.queryFactory.getNumberOfCommonInstancesQuery(classURI1, classURI2);
     var requestURL = this.rConfig.getRequestURL();
 
     var count1 = this.nodes.getInstanceCountById(classId1);

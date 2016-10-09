@@ -3,9 +3,14 @@ import settingsTemplate from './components/settings/settings.html';
 import graphTemplate from './components/graph/graph.html';
 import aboutTemplate from './components/about/about.html';
 
+/**
+ * @param $httpProvider
+ * @param $routeProvider
+ * @param $logProvider
+ *
+ * @ngInject
+ */
 function routing($httpProvider, $routeProvider, $logProvider) {
-
-  'ngInject';
 
   // set up http interceptor
   $httpProvider.interceptors.push('RequestCounter');

@@ -1,12 +1,12 @@
 /**
  * @Name FilterGroupCtrl
  *
- * @param Filters
- * @param TBoxExtractor
+ * @param {Filters} Filters
+ * @param {TBoxExtractor} TBoxExtractor
+ *
+ * @ngInject
  */
 function filterGroupCtrl(Filters, TBoxExtractor) {
-
-  'ngInject';
 
   const vm = this;
 

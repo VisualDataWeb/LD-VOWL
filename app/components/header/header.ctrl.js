@@ -1,15 +1,15 @@
-'use strict';
-
 /**
+ * @ngdoc type
  * @name HeaderCtrl
+ *
  * @param $scope
  * @param $location
+ *
+ * @ngInject
  */
 function HeaderCtrl($scope, $location) {
 
-  'ngInject';
-
-  let header = this;
+  const header = this;
 
   header.loading = false;
 

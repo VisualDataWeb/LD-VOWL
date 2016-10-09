@@ -1,6 +1,9 @@
+/**
+ * @param $rootScope
+ *
+ * @ngInject
+ */
 function runBlock($rootScope) {
-
-  'ngInject';
 
   $rootScope.$on('$routeChangeSuccess', function (event, current) {
     if (current && current.$$route && current.$$route.title) {
