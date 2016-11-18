@@ -1,7 +1,8 @@
+import * as angular from 'angular';
 import app from '../../../app/app';
 
 describe('Service: Filters', function () {
-  "use strict";
+  'use strict';
 
   let filters;
 

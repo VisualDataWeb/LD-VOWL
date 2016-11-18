@@ -14,7 +14,6 @@ import FilterGroup from './filter-group.drv';
  */
 const filterModule = angular.module('components.sidebar.groups.filter', [])
                       .controller('FilterGroupCtrl', FilterGroupCtrl)
-                      .directive('filterGroup', FilterGroup)
-                      .name;
+                      .directive('filterGroup', FilterGroup);
 
 export default filterModule;

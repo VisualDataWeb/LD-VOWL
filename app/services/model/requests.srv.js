@@ -9,7 +9,6 @@
  */
 function requests($rootScope, StopWatch) {
 
-  /* jshint validthis: true */
   const that = this;
 
   that.promises = [];

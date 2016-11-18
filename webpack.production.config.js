@@ -26,7 +26,7 @@ module.exports = {
   },
   module: {
     loaders: [
-      { test: /\.js$/, loader: 'ng-annotate!babel?presets[]=es2015!jshint', exclude: /node_modules/},
+      { test: /\.js$/, loader: 'ng-annotate!babel?presets[]=es2015', exclude: /node_modules/},
       { test: /\.js$/, loader: 'eslint-loader', exclude: /node_modules/},
 
       { test: /\.html$/, loader: 'ng-cache?prefix=[dir]/[dir]', exclude: /index.html/},
@@ -66,7 +66,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       title: 'LD-VOWL',
       template: 'index.ejs',
-      favicon: __dirname + '/app/favicon.ico',
+      favicon: __dirname + '/app/favicon.ico'
     })
   ],
   output: {

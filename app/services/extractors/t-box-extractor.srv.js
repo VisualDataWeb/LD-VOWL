@@ -17,7 +17,6 @@
 function tBoxExtractor($q, $log, Data, Filters, StopWatch, Promises, ClassExtractor, RelationExtractor,
                          TypeExtractor) {
 
-  /* jshint validthis: true */
   const self = this;
 
   self.classes = [];

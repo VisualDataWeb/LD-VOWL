@@ -8,7 +8,6 @@
  */
 function stopWatch($log) {
 
-  /* jshint validthis: true */
   const that = this;
 
   that.round = 1;

@@ -5,5 +5,4 @@ import EndpointGroupCtrl from './endpoint-group.ctrl';
 
 export default angular.module('components.sidebar.groups.endpoint', [])
                       .controller('EndpointGroupCtrl', EndpointGroupCtrl)
-                      .directive('endpointGroup', EndpointGroup)
-                      .name;
+                      .directive('endpointGroup', EndpointGroup);

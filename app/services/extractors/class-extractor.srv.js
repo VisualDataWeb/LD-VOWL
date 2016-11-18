@@ -239,9 +239,9 @@ class ClassExtractor extends Extractor {
         } else {
           self.$log.debug(`[Class Label] Found no SKOS preferred label for '${classURI}'.`);
         }
-    }, function (err) {
-      self.$log.error(err);
-    });
+      }, function (err) {
+        self.$log.error(err);
+      });
   } // end of requestClassSkosLabel()
 } // end of class 'ClassExtractor'
 

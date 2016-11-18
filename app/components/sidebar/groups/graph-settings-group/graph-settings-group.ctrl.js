@@ -11,7 +11,6 @@
  */
 function graphSettingsCtrl($rootScope, $log, Prefixes, Links) {
 
-  /* jshint validthis: true */
   const graphSettings = this;
 
   graphSettings.differentColors = Prefixes.getDifferentColors();

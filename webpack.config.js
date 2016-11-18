@@ -13,7 +13,7 @@ module.exports = {
   },
   module: {
       loaders: [
-        { test: /\.js$/, loader: 'ng-annotate!babel?presets[]=es2015!jshint', exclude: /node_modules|bower_components/},
+        { test: /\.js$/, loader: 'ng-annotate!babel?presets[]=es2015', exclude: /node_modules|bower_components/},
         { test: /\.js$/, loader: 'eslint-loader', exclude: /node_modules/},
 
         { test: /\.html$/, loader: 'ng-cache?prefix=[dir]/[dir]' },

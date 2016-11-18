@@ -8,5 +8,4 @@ import stopWatch from './stop-watch';
 export default angular.module('services.utils', [])
                       .service('Utils', utils)
                       .service('Geometry', geometry)
-                      .service('StopWatch', stopWatch)
-                      .name;
+                      .service('StopWatch', stopWatch);

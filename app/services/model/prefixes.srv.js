@@ -13,7 +13,6 @@ function prefixesService($rootScope, $log) {
   var colorNumber = 1;
   var differentColors = true;
 
-  /* jshint validthis: true */
   const that = this;
 
   /**

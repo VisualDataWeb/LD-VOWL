@@ -1,4 +1,4 @@
-import angular from 'angular';
+import * as angular from 'angular';
 
 import AboutCtrl from './about.ctrl';
 
@@ -10,5 +10,4 @@ import AboutCtrl from './about.ctrl';
  * Module for the about page of the application.
  */
 export default angular.module('components.about', [])
-  .controller('AboutCtrl', AboutCtrl)
-  .name;
+  .controller('AboutCtrl', AboutCtrl);

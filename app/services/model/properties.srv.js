@@ -11,16 +11,13 @@
  */
 function properties($interval, $log, $rootScope, RequestConfig) {
 
-  /* jshint validthis: true */
   const self = this;
 
   self.SUBCLASS_URI = 'http://my-own-sub-class';
   self.DISJOINT_PROP_URI = 'http://my-own-disjoint-prop';
   self.PLACEHOLDER_PROP_URI = 'http://my-placeholder-prop/unknown';
 
-  // jshint ignore:start
   self.useSessionStorage = __SESSION_STORAGE__; // eslint-disable-line no-undef
-  // jshint ignore:end
 
   self.properties = [];
 
@@ -33,12 +30,12 @@ function properties($interval, $log, $rootScope, RequestConfig) {
   self.updateInterval = 5000;
   self.storageUpdate = undefined;
   self.unusedRounds = 0;
-
+  
   /**
    * Initializes properties with the ones saved in Local- or SessionStorage.
    */
   self.initProperties = function () {
-    let storage = (self.useSessionStorage) ? sessionStorage : localStorage ;
+    let storage = (self.useSessionStorage) ? sessionStorage : localStorage;
     if (storage !== undefined) {
       var sessionProperties = storage.getItem(RequestConfig.getEndpointURL() + '_properties');
 

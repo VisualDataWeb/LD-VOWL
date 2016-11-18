@@ -13,5 +13,4 @@ export default angular.module('services.extractors', [])
   .service('ClassExtractor', ClassExtractor)
   .service('RelationExtractor', RelationExtractor)
   .service('TypeExtractor', TypeExtractor)
-  .service('DetailExtractor', DetailExtractor)
-  .name;
+  .service('DetailExtractor', DetailExtractor);

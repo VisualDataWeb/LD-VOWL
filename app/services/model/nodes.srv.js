@@ -19,7 +19,6 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
 
   var subClassSet = new Set();
 
-  /* jshint validthis: true */
   const that = this;
 
   that.DISJOINT_NODE_URI = 'http://my-own-disjoint-node';
@@ -28,9 +27,7 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
   that.suffixRegEx = /(#?[^\/#]*)\/?$/;
   that.altSuffixRegEx = /(:[^:]*)$/;
 
-  // jshint ignore:start
   that.useSessionStorage = __SESSION_STORAGE__; // eslint-disable-line no-undef
-  // jshint ignore:end
 
   that.initMap = function () {
     let storage = (that.useSessionStorage) ? sessionStorage : localStorage;
@@ -109,7 +106,7 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
     let newId = '';
     const connTypes = classDatatypesMap.get(classId);
     if (connTypes !== undefined && connTypes.length > 0 && connTypes.indexOf(dataTypeNode.uri) !== -1) {
-        $log.warn(`[Nodes] There already is a data type '${dataTypeNode.uri}' connected to class '${classId}'!`);
+      $log.warn(`[Nodes] There already is a data type '${dataTypeNode.uri}' connected to class '${classId}'!`);
     } else {
 
       // doesn't exist yet, so its okay to add it

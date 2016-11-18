@@ -13,12 +13,9 @@
  */
 function startCtrl($log, $location, Data, View, Requests, RequestConfig, Endpoints) {
 
-  /* jshint validthis: true */
   const start = this;
 
-  // jshint ignore:start
   start.proxyAvailable = __PROXY__; // eslint-disable-line no-undef
-  // jshint ignore:end
 
   start.endpoints = [];
 
@@ -41,32 +38,32 @@ function startCtrl($log, $location, Data, View, Requests, RequestConfig, Endpoin
    * Shows the graph for the current endpoint and clears all data if endpoint has changed.
    */
   start.showGraph = function () {
-      const lastEndpoint = RequestConfig.getEndpointURL();
+    const lastEndpoint = RequestConfig.getEndpointURL();
 
-      // clear loaded data if endpoint has changed
-      if (lastEndpoint !== start.endpoint && start.endpoint !== undefined && start.endpoint.length > 0) {
-        Data.clearAll();
-        View.reset();
+    // clear loaded data if endpoint has changed
+    if (lastEndpoint !== start.endpoint && start.endpoint !== undefined && start.endpoint.length > 0) {
+      Data.clearAll();
+      View.reset();
 
-        // change endpoint
-        RequestConfig.setEndpointURL(start.endpoint);
+      // change endpoint
+      RequestConfig.setEndpointURL(start.endpoint);
 
-        Data.initMaps();
-      }
+      Data.initMaps();
+    }
 
-      RequestConfig.setUseProxy(start.useProxy);
+    RequestConfig.setUseProxy(start.useProxy);
 
-      if (start.endpoint !== undefined && start.endpoint.length > 0) {
-        $log.debug('[Start] Show Graph!');
+    if (start.endpoint !== undefined && start.endpoint.length > 0) {
+      $log.debug('[Start] Show Graph!');
 
-        // move to the graph view
-        $location.path('graph');
+      // move to the graph view
+      $location.path('graph');
 
-        // $location url-encodes parameters automatically
-        $location.search('endpointURL', start.endpoint);
-      } else {
-        $log.error('[Start] Please enter an url for the SPARQL endpoint!');
-      }
+      // $location url-encodes parameters automatically
+      $location.search('endpointURL', start.endpoint);
+    } else {
+      $log.error('[Start] Please enter an url for the SPARQL endpoint!');
+    }
   }; // end of showGraph()
 
   start.closeEndpointAlert = function () {

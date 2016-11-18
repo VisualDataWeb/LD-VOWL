@@ -21,7 +21,6 @@ const selectionModule = angular.module('components.sidebar.selection', [])
   .directive('typeSelection', TypeSelection)
   .directive('propSelection', PropertySelection)
   .directive('datatypePropSelection', DatatypePropertySelection)
-  .directive('subclassPropSelection', SubclassPropertySelection)
-  .name;
+  .directive('subclassPropSelection', SubclassPropertySelection);
 
 export default selectionModule;

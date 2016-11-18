@@ -17,5 +17,4 @@ export default angular.module('services.model', [])
   .service('Properties', Properties)
   .service('Filters', Filters)
   .service('Data', Data)
-  .service('View', View)
-  .name;
+  .service('View', View);

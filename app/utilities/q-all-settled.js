@@ -33,5 +33,4 @@ function configure($provide) {
 } // end of configure()
 
 export default angular.module('qAllSettled', [])
-                      .config(configure)
-                      .name;
+                      .config(configure);

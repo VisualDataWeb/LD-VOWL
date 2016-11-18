@@ -14,6 +14,8 @@ import selectionGroup from './selection-group/selection-group.module';
  *
  * This module includes all groups for the sidebar accordion of the application.
  */
-export default angular.module('sidebar.groups', [endpointGroup, filterGroup, graphSettingsGroup, namespaceGroup,
-                              selectionGroup])
-                      .name;
+export default angular.module('sidebar.groups', [endpointGroup.name, 
+                                                  filterGroup.name,
+                                                  graphSettingsGroup.name,
+                                                  namespaceGroup.name,
+                                                  selectionGroup.name]);

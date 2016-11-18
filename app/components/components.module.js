@@ -7,5 +7,9 @@ import sidebar from './sidebar/sidebar.module';
 import start from './start/start.module';
 import about from './about/about.module';
 
-export default angular.module('components', [graph, header, settings, sidebar, start, about])
-                      .name;
+export default angular.module('components', [graph.name, 
+                                              header.name, 
+                                              settings.name,
+                                              sidebar.name,
+                                              start.name,
+                                              about.name]);

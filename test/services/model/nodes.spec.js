@@ -1,7 +1,8 @@
+import * as angular from 'angular';
 import app from '../../../app/app';
 
 describe('Service: Nodes', function () {
-  "use strict";
+  'use strict';
 
   let nodes;
 

@@ -1,5 +1,4 @@
 /*global angular*/
-/*jshint browser:true */
 'use strict';
 
 require('./vendor.js')(); // run an empty function

@@ -1,7 +1,8 @@
 import app from '../../../app/app';
+import * as angular from 'angular';
 
 describe('Service: RelationExtractor', function () {
-  "use strict";
+  'use strict';
 
   let relationExtractor;
 

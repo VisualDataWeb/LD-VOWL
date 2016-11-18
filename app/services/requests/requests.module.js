@@ -10,5 +10,4 @@ export default angular.module('services.requests', [])
   .service('RequestConfig', RequestConfig)
   .factory('QueryFactory', QueryFactory)
   .factory('RequestCounter', RequestCounter)
-  .service('Promises', Promises)
-  .name;
+  .service('Promises', Promises);

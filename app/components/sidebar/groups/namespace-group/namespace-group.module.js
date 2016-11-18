@@ -13,7 +13,6 @@ import NamespaceGroup from './namespace-group.drv';
  */
 const namespaceGroupModule = angular.module('components.sidebar.groups.namespace', [])
                                     .controller('NamespaceGroupCtrl', NamespaceGroupCtrl)
-                                    .directive('namespaceGroup', NamespaceGroup)
-                                    .name;
+                                    .directive('namespaceGroup', NamespaceGroup);
 
 export default namespaceGroupModule;

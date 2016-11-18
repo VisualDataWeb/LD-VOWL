@@ -50,9 +50,7 @@ function routing($httpProvider, $routeProvider, $logProvider) {
       redirectTo: '/'
     });
 
-  // jshint ignore:start
   $logProvider.debugEnabled(__LOGGING__); // eslint-disable-line no-undef
-  //jshint ignore:end
 
 } // end of routing()
 

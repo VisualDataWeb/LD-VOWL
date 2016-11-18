@@ -12,7 +12,6 @@
  */
 function dataService($log, Nodes, Properties, Requests, Promises) {
 
-  /* jshint validthis: true */
   const that = this;
 
   that.clearAll = function () {

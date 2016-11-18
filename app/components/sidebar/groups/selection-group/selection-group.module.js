@@ -14,7 +14,6 @@ import SelectionGroupCtrl from './selection-group.ctrl';
  */
 const selectionGroupModule = angular.module('sidebar.groups.selection', [])
                                     .controller('SelectionGroupCtrl', SelectionGroupCtrl)
-                                    .directive('selectionGroup', SelectionGroup)
-                                    .name;
+                                    .directive('selectionGroup', SelectionGroup);
 
 export default selectionGroupModule;

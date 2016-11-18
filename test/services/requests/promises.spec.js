@@ -1,7 +1,8 @@
+import * as angular from 'angular';
 import app from '../../../app/app';
 
 describe('Service: Promises', function () {
-  "use strict";
+  'use strict';
 
   let promises;
   let $q;

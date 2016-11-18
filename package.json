@@ -6,7 +6,7 @@
   "scripts": {
     "start": "webpack-dev-server --content-base app --inline --hot --open",
     "host": "webpack-dev-server --host 0.0.0.0 --content-base app --inline --hot",
-    "test": "karma start",
+    "test": "jest",
     "e2etest": "protractor protractor.conf.js",
     "lint": "eslint . --ext .js || true",
     "deploy": "NODE_ENV=production webpack -p --config webpack.production.config.js"
@@ -19,7 +19,12 @@
   "bugs": {
     "url": "https://github.com/VisualDataWeb/LD-VOWL/issues"
   },
-  "keywords": ["Linked Data", "SPARQL", "Visualization", "VOWL"],
+  "keywords": [
+    "Linked Data",
+    "SPARQL",
+    "Visualization",
+    "VOWL"
+  ],
   "dependencies": {
     "angular": "1.4.8",
     "angular-animate": "1.4.8",
@@ -45,9 +50,11 @@
     "angular-mocks": "~1.4.9",
     "babel-core": "~6.3.13",
     "babel-eslint": "~4.1.8",
+    "babel-jest": "^17.0.0",
     "babel-loader": "~6.2.0",
-    "babel-polyfill": "~6.7.4",
+    "babel-polyfill": "^6.16.0",
     "babel-preset-es2015": "~6.3.13",
+    "babel-preset-react": "^6.16.0",
     "chai": "~3.4.1",
     "css-loader": "~0.23.0",
     "eslint": "~1.6.0",
@@ -61,8 +68,7 @@
     "isparta-loader": "~2.0.0",
     "istanbul-instrumenter-loader": "~0.2.0",
     "jasmine-core": "~2.4.1",
-    "jshint": "~2.8.0",
-    "jshint-loader": "~0.8.3",
+    "jest-cli": "^17.0.0",
     "karma": "~0.13.19",
     "karma-babel-preprocessor": "~6.0.1",
     "karma-chai-plugins": "~0.6.1",
@@ -82,6 +88,28 @@
     "url-loader": "~0.5.7",
     "webpack": "~1.12.9",
     "webpack-dev-server": "~1.14.0"
+  },
+  "jest": {
+    "verbose": true,
+    "globals": { 
+      "__LOGGING__": true, 
+      "__SESSION_STORAGE__": false,
+      "__VERSION__": "1.1.1",
+      "__PROXY__": true
+    },
+    "setupTestFrameworkScriptFile": "<rootDir>/test/test_jest.js",
+    "transform": {
+      ".*": "./node_modules/babel-jest"
+    },
+    "moduleFileExtensions": [
+      "js",
+      "jsx"
+    ],
+    "moduleNameMapper": {".+\\.html$": "<rootDir>/test/empty"},
+    "unmockedModulePathPatterns": [
+      "<rootDir>/node_module/angular",
+      "<rootDir>/node_module/angular-mocks"
+    ]
   },
   "private": true,
   "homepage": "http://ldvowl.visualdataweb.org/",

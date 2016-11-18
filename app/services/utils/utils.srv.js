@@ -7,15 +7,15 @@ export default function utils() {
   var maxNameLength = 15;
 
   that.labelFromURI = function (uri) {
-      var uriLabel = '';
-      if (uri !== undefined && uri !== '') {
-        var lastSlash = uri.lastIndexOf('/');
-        var lastHash = uri.lastIndexOf('#');
-        uriLabel = uri.substr(Math.max(lastSlash, lastHash) + 1).replace(/\_/g, ' ');
-      }
+    var uriLabel = '';
+    if (uri !== undefined && uri !== '') {
+      var lastSlash = uri.lastIndexOf('/');
+      var lastHash = uri.lastIndexOf('#');
+      uriLabel = uri.substr(Math.max(lastSlash, lastHash) + 1).replace(/\_/g, ' ');
+    }
 
-      return uriLabel;
-    };
+    return uriLabel;
+  };
 
   that.getName = function (obj, values, clip) {
     var name = '';

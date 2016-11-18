@@ -1,7 +1,8 @@
 import app from '../../app/app';
+import * as angular from 'angular';
 
 describe('Filters: httpLess', function () {
-  "use strict";
+  'use strict';
 
   let $filter;
 

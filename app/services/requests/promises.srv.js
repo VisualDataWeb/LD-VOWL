@@ -10,7 +10,6 @@
  */
 function promises($log) {
 
-  /* jshint validthis: true */
   const that = this;
 
   let cancelPromises = new Map();

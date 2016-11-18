@@ -15,9 +15,7 @@ function filterGroupCtrl(Filters, TBoxExtractor) {
   vm.filterDisjointNodes = !Filters.getIncludeDisjointNode();
   vm.filterSubclassRelations = !Filters.getIncludeSubclassRelations();
 
-  // jshint ignore:start
   vm.showEndpointUrl = __SHOW_ENDPOINT__; // eslint-disable-line no-undef
-  // jshint ignore:end
 
   /**
    * Toggle whether data types should be shown in the graph.

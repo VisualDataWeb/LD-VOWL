@@ -21,7 +21,6 @@ function requestConfig($cookies) {
 
   let propertiesOrdered = true;
 
-  /* jshint validthis: true */
   const self = this;
 
   self.init = function () {

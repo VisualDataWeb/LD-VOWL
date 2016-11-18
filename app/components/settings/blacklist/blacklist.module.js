@@ -15,5 +15,4 @@ import BlacklistClasses from './blacklist_classes';
 export default angular.module('blacklist', [])
   .constant('PREFIX', BlacklistPrefixes)
   .constant('PROPERTY_BLACKLIST', BlacklistProperties)
-  .constant('CLASS_BLACKLIST', BlacklistClasses)
-  .name;
+  .constant('CLASS_BLACKLIST', BlacklistClasses);

@@ -8,7 +8,6 @@ import links from './links.srv';
 
 import endpoints from './endpoints.srv';
 
-export default angular.module('services', [extractors, model, requests, utils])
+export default angular.module('services', [extractors.name, model.name, requests.name, utils.name])
                       .service('Endpoints', endpoints)
-                      .service('Links', links)
-                      .name;
+                      .service('Links', links);

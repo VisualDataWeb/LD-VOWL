@@ -1,5 +1,5 @@
-import angular from 'angular';
-import d3 from 'd3';
+import * as angular from 'angular';
+import * as d3 from 'd3';
 
 /**
  * @ngdoc directive
@@ -107,11 +107,11 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Util
       });
 
       scope.$watch(function () {
-          return Filters.getIncludeLiterals();
-        },
-        function (newVal) {
-          scope.data.showTypes = newVal;
-          return scope.render(scope.data);
+        return Filters.getIncludeLiterals();
+      },
+      function (newVal) {
+        scope.data.showTypes = newVal;
+        return scope.render(scope.data);
       });
 
       scope.$watch(function () {

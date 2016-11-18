@@ -17,7 +17,6 @@
 function settingsCtrl($log, $cookies, PREFIX, PROPERTY_BLACKLIST, CLASS_BLACKLIST, RequestConfig, Data, ClassExtractor,
                       RelationExtractor) {
 
-  /* jshint validthis: true */
   const vm = this;
 
   const cookiePrefix = 'ldvowl_';
@@ -124,7 +123,6 @@ function settingsCtrl($log, $cookies, PREFIX, PROPERTY_BLACKLIST, CLASS_BLACKLIS
     
     vm.restoreListDefaults();
   };
-
 
   /**
    * Restore blacklists to predefined list.

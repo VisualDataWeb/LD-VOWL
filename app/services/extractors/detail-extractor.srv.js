@@ -14,7 +14,6 @@
  */
 function detailExtractor($http, $q, $log, QueryFactory, RequestConfig, Nodes, Promises) {
 
-  /* jshint validthis: true */
   const that = this;
 
   /**
@@ -31,18 +30,18 @@ function detailExtractor($http, $q, $log, QueryFactory, RequestConfig, Nodes, Pr
 
     $http.get(requestURL, RequestConfig.forQuery(query, canceller))
       .then(function handleExtractedComment(response) {
-      var bindings = response.data.results.bindings;
+        var bindings = response.data.results.bindings;
 
-      if (bindings.length > 0) {
-        var newComment = bindings[0].comment;
-        if (newComment !== undefined && newComment.hasOwnProperty('value')) {
-          Nodes.insertComment(id, newComment.value);
+        if (bindings.length > 0) {
+          var newComment = bindings[0].comment;
+          if (newComment !== undefined && newComment.hasOwnProperty('value')) {
+            Nodes.insertComment(id, newComment.value);
+          } else {
+            $log.error(`[DetailExtractor] Error parsing comment for '${uri}'.`);
+          }
         } else {
-          $log.error(`[DetailExtractor] Error parsing comment for '${uri}'.`);
+          $log.debug(`[DetailExtractor] No Comment found for '${uri}'.`);
         }
-      } else {
-        $log.debug(`[DetailExtractor] No Comment found for '${uri}'.`);
-      }
     }, function (err) {
       $log.error(err);
     })

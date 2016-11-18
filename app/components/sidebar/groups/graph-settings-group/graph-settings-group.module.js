@@ -13,7 +13,6 @@ import graphSettingsGroup from './graph-settings-group.drv';
  */
 const graphSettingsModule = angular.module('components.sidebar.groups.graphsettings', [])
                     .directive('graphSettingsGroup', graphSettingsGroup)
-                    .controller('GraphSettingsCtrl', GraphSettingsGroupCtrl)
-                    .name;
+                    .controller('GraphSettingsCtrl', GraphSettingsGroupCtrl);
 
 export default graphSettingsModule;

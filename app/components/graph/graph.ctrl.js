@@ -5,7 +5,7 @@
  * @param {$location} $location
  * @param {$log} $log
  * @param {TBoxExtractor} TBoxExtractor
- * @param DetailExtractor
+ * @param {DetailExtractor} DetailExtractor
  * @param {RequestConfig} RequestConfig
  * @param {Data} Data
  * @param View
@@ -14,7 +14,6 @@
  */
 function graphCtrl($location, $log, TBoxExtractor, DetailExtractor, RequestConfig, Data, View) {
 
-  /* jshint validthis: true */
   const vm = this;
 
   vm.selected = {

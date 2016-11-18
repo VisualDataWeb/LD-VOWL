@@ -16,7 +16,6 @@
  */
 function typeExtractor($http, $q, $log, RequestConfig, QueryFactory, Nodes, Properties, RelationExtractor, Promises) {
 
-  /* jshint validthis: true */
   var that = this;
 
   that.requestReferringTypes = function (classId) {
