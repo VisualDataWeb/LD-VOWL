@@ -13,6 +13,10 @@ LD-VOWL requires [Node.js](https://nodejs.org/) to be built.
 3. Run `npm install` in the root directory of LD-VOWL to install the dependencies.
 4. Run `npm run-script start` to start a local webpack development server on port 8080 or run `npm run-script deploy` for a production build.
 
+## Build
+
+To get a production build, run `npm run-script deploy`. After the build is finished, the results will be inside the `dist` directory.
+
 ## Tests
 
 In order to run the unit tests, run `npm run-script test`.

@@ -35,7 +35,7 @@ function links(Geometry) {
 
   /**
    * @param {{source, target}} d
-   * @returns number
+   * @returns {number}
    */
   self.getDistance = function (d) {
     var distance;

@@ -9,7 +9,7 @@
 function requestConfig($cookies) {
 
   const cookiePrefix = 'ldvowl_';
-  const proxyURL = 'http://cors-anywhere.herokuapp.com/';
+  const proxyURL = 'http://localhost/proxy.php';
 
   let endpointURL = $cookies.get(cookiePrefix + 'endpoint') || '';
   let useProxy = $cookies.get(cookiePrefix + 'proxy') || 'false';
@@ -56,7 +56,7 @@ function requestConfig($cookies) {
     let url;
 
     if (self.getUseProxy()) {
-      url = proxyURL + self.getEndpointURL();
+      url = proxyURL;
     } else {
       endpointURL = self.getEndpointURL();
       url = endpointURL;
@@ -176,8 +176,11 @@ function requestConfig($cookies) {
       debug: debug,
       format: format,
       query: query
-      //ep: endpointURL
     };
+
+    if (useProxy) {
+      config.params.endpoint = endpointURL;
+    }
 
     if (jsonp) {
       config.params.callback = 'JSON_CALLBACK';

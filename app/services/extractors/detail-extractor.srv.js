@@ -32,7 +32,11 @@ function detailExtractor($http, $q, $log, QueryFactory, RequestConfig, Nodes, Pr
 
     $http.get(requestURL, RequestConfig.forQuery(query, canceller))
       .then(function handleExtractedComment(response) {
-        var bindings = response.data.results.bindings;
+        if (response === undefined || response.data === undefined || response.data.results === undefined) {
+          return;
+        }
+
+        const bindings = response.data.results.bindings;
 
         if (bindings.length > 0) {
           var newComment = bindings[0].comment;

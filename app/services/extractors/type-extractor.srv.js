@@ -37,16 +37,14 @@ function typeExtractor($http, $q, $log, RequestConfig, QueryFactory, Nodes, Prop
 
     $http.get(requestURL, RequestConfig.forQuery(query, canceller))
       .then(function handleExtractedReferringTypes(response) {
-
         if (response === undefined || response.data === undefined || response.data.results === undefined) {
           $log.warn('[Referring Types] No results');
           return;
         }
 
-        var bindings = response.data.results.bindings;
+        const bindings = response.data.results.bindings;
 
         if (bindings !== undefined && bindings.length > 0) {
-
           $log.debug(`[Referring Types] Found ${bindings.length} for '${classURI}'.`);
 
           for (let i = 0; i < bindings.length; i++) {
@@ -105,7 +103,7 @@ function typeExtractor($http, $q, $log, RequestConfig, QueryFactory, Nodes, Prop
         Promises.removePromise(promiseId);
       });
   }; // end of requestReferringTypes()
-
+  
 } // end of TypeExtractor
 
 export default typeExtractor;
