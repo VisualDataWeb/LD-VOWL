@@ -6,6 +6,8 @@ import typeSelectionTemplate from './type-selection.html';
  *
  * @description
  * This directive shows details about a data type node selected in the graph.
+ * 
+ * @return {*}
  */
 const typeSelection = function() {
 

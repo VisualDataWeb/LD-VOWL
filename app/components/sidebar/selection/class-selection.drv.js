@@ -5,8 +5,9 @@ import classSelectionTemplate from './class-selection.html';
  * @name classSelection
  *
  * @description
- *
  * This directive shows details about a class node selected in the graph.
+ * 
+ * @return {*}
  */
 const classSelection = function() {
 

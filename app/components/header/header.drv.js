@@ -6,6 +6,8 @@
  * @description
  *
  * The directive showing name and version of LD-VOWL.
+ * 
+ * @return {*}
  */
 export default function header() {
 

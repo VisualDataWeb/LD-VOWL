@@ -2,15 +2,15 @@
  * @ngdoc type
  * @name SettingsCtrl
  *
- * @param $log
- * @param $cookies
- * @param PREFIX
- * @param PROPERTY_BLACKLIST
- * @param CLASS_BLACKLIST
+ * @param {$log} $log
+ * @param {$cookies} $cookies
+ * @param {PREFIX} PREFIX
+ * @param {PROPERTY_BLACKLIST} PROPERTY_BLACKLIST
+ * @param {CLASS_BLACKLIST} CLASS_BLACKLIST
  * @param {RequestConfig} RequestConfig
- * @param Data
- * @param ClassExtractor
- * @param RelationExtractor
+ * @param {Data} Data
+ * @param {ClassExtractor} ClassExtractor
+ * @param {RelationExtractor} RelationExtractor
  *
  * @ngInject
  */

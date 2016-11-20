@@ -2,9 +2,9 @@
  * @ngdoc service
  * @name Properties
  *
- * @param $interval
- * @param $log
- * @param $rootScope
+ * @param {$interval} $interval
+ * @param {$log} $log
+ * @param {$rootScope} $rootScope
  * @param {RequestConfig} RequestConfig
  *
  * @ngInject
@@ -291,7 +291,7 @@ function properties($interval, $log, $rootScope, RequestConfig) {
   /**
    * Returns the property with the given id as its intermediate node or null if no such property exists.
    *
-   * @param intermediateNodeId - the id of the intermediate node
+   * @param {string} intermediateNodeId - the id of the intermediate node
    * @returns {*}
    */
   self.getByNodeId = function (intermediateNodeId) {
@@ -301,8 +301,8 @@ function properties($interval, $log, $rootScope, RequestConfig) {
   /**
    * Returns the id of the node between two given nodes.
    *
-   * @param sourceId - the id of the property source node
-   * @param targetId - the id of the property target node
+   * @param {string} sourceId - the id of the property source node
+   * @param {string} targetId - the id of the property target node
    * @returns {string}
    */
   self.getIntermediateId = function (sourceId, targetId) {

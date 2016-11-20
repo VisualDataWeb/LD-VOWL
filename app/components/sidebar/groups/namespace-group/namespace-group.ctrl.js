@@ -2,9 +2,9 @@
  * @ngdoc type
  * @name NamespaceGroupCtrl
  *
- * @param $scope
- * @param $log
- * @param Prefixes
+ * @param {$scope} $scope
+ * @param {$log} $log
+ * @param {Prefixes} Prefixes
  *
  * @ngInject
  */

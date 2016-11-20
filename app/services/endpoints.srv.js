@@ -2,7 +2,7 @@
  * @ngdoc service
  * @name Endpoints
  *
- * @param $http
+ * @param {$http} $http
  *
  * @ngInject
  */

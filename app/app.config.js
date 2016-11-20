@@ -4,9 +4,9 @@ import graphTemplate from './components/graph/graph.html';
 import aboutTemplate from './components/about/about.html';
 
 /**
- * @param $httpProvider
- * @param $routeProvider
- * @param $logProvider
+ * @param {$httpProvider} $httpProvider
+ * @param {$routeProvider} $routeProvider
+ * @param {$logProvider} $logProvider
  *
  * @ngInject
  */

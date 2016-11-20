@@ -2,10 +2,10 @@
  * @ngdoc type
  * @name EndpointGroupCtrl
  *
- * @param $scope
- * @param $location
- * @param Requests
- * @param RequestConfig
+ * @param {$scope} $scope
+ * @param {$location} $location
+ * @param {Requests} Requests
+ * @param {RequestConfig} RequestConfig
  *
  * @ngInject
  */

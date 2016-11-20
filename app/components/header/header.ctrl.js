@@ -2,8 +2,8 @@
  * @ngdoc type
  * @name HeaderCtrl
  *
- * @param $scope
- * @param $location
+ * @param {$scope} $scope
+ * @param {$location} $location
  *
  * @ngInject
  */
@@ -22,7 +22,7 @@ function HeaderCtrl($scope, $location) {
   /**
    * Returns true if the given view location is the current one, false otherwise.
    *
-   * @param viewLocation - the location of the view to check
+   * @param {string} viewLocation - the location of the view to check
    * @returns {boolean}
    */
   header.isActive = function (viewLocation) {

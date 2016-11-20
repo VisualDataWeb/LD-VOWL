@@ -2,9 +2,9 @@
  * @ngdoc type
  * @name GraphSettingsCtrl
  *
- * @param $rootScope
- * @param $log
- * @param Prefixes
+ * @param {$rootScope} $rootScope
+ * @param {$log} $log
+ * @param {Prefixes} Prefixes
  * @param {Links} Links
  *
  * @ngInject

@@ -94,7 +94,7 @@ function requestConfig($cookies) {
   /**
    * Set the flag whether a proxy should be used or not and saves the flag into a cookie.
    *
-   * @param useProxy - true if proxy should be used, false otherwise
+   * @param {boolean} useProxy - true if proxy should be used, false otherwise
    */
   self.setUseProxy = function (useProxy) {
     useProxy = (useProxy) ? 'true' : 'false';
@@ -161,6 +161,12 @@ function requestConfig($cookies) {
 
   /**
    * Returns a configuration object for the given SPARQL query
+   * 
+   * @param {string} query
+   * @param {*} canceller
+   * @param {boolean} jsonp
+   * 
+   * @return {*}
    */
   self.forQuery = function (query, canceller, jsonp) {
     const config = {};

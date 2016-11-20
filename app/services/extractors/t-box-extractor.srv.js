@@ -2,15 +2,15 @@
  * @ngdoc service
  * @name TBoxExtractor
  *
- * @param $q
- * @param $log
- * @param Data
+ * @param {$q} $q
+ * @param {$log} $log
+ * @param {Data} Data
  * @param {Filters} Filters
- * @param StopWatch
+ * @param {StopWatch} StopWatch
  * @param {Promises} Promises
  * @param {ClassExtractor} ClassExtractor
  * @param {RelationExtractor} RelationExtractor
- * @param TypeExtractor
+ * @param {TypeExtractor} TypeExtractor
  *
  * @ngInject
  */

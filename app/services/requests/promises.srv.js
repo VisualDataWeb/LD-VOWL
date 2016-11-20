@@ -4,7 +4,7 @@
  *
  * @description A service holding all promises.
  *
- * @param $log
+ * @param {$log} $log
  *
  * @ngInject
  */
@@ -18,7 +18,7 @@ function promises($log) {
   /**
    * Adds a new promise and returns the id assigned to it.
    *
-   * @param newPromise - the promise to be added
+   * @param {*} newPromise - the promise to be added
    * @returns {string} the id of the added promise
    */
   that.addPromise = function (newPromise) {
@@ -32,7 +32,7 @@ function promises($log) {
   /**
    * Removes the promise with the given id.
    *
-   * @param promiseId - the id of the promise to be deleted
+   * @param {string} promiseId - the id of the promise to be deleted
    */
   that.removePromise = function (promiseId) {
     cancelPromises.delete(promiseId);

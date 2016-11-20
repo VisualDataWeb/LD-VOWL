@@ -6,8 +6,9 @@ import namespaceGroupTemplate from './namespace-group.html';
  * @module components.sidebar.groups.namespace
  *
  * @description
- *
  * This directive represents the accordion group showing the class namespaces.
+ * 
+ * @return {*}
  */
 const namespaceGroup = function() {
 

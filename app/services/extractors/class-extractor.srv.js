@@ -10,12 +10,12 @@ class ClassExtractor extends Extractor {
    * Create a new ClassExtractor.
    * @param {$cookies} $cookies
    * @param {$http} $http
-   * @param $q
+   * @param {$q} $q
    * @param {$log} $log
    * @param {PREFIX} PREFIX
    * @param {CLASS_BLACKLIST} CLASS_BLACKLIST
    * @param {RequestConfig} RequestConfig
-   * @param QueryFactory
+   * @param {QueryFactory} QueryFactory
    * @param {Nodes} Nodes
    * @param {Promises} Promises
    *
@@ -209,8 +209,8 @@ class ClassExtractor extends Extractor {
   /**
    * If rdfs label can not be found, maybe there is an skos:prefLabel.
    *
-   * @param classId - the id of the class which label should be found
-   * @param classURI - the URI of this class
+   * @param {string} classId - the id of the class which label should be found
+   * @param {string} classURI - the URI of this class
    */
   requestClassSkosLabel (classId, classURI) {
     var self = this;

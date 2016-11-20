@@ -5,8 +5,9 @@ import propSelectionTemplate from './prop-selection.html';
  * @name propertySelection
  *
  * @description
- *
  * This directive shows details about selected properties in the graph.
+ * 
+ * @return {*}
  */
 const propertySelection = function() {
 

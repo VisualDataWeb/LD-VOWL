@@ -11,6 +11,8 @@
  * - property loops
  * - subclass relations
  * - class disjointness nodes
+ * 
+ * @return {*}
  */
 const filterGroup = function() {
 

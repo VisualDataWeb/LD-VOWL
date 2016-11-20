@@ -1,4 +1,4 @@
-import * as angular from 'angular';
+import angular from 'angular';
 
 import HeaderCtrl from './header.ctrl';
 import HeaderDirective from './header.drv';

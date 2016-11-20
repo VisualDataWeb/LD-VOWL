@@ -1,4 +1,5 @@
 import app from '../../../app/app';
+import angular from 'angular';
 
 describe('Controller: HeaderCtrl', function () {
 

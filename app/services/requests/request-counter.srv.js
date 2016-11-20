@@ -5,7 +5,7 @@
  * @description
  * Counts successful and failed http requests towards the SPARQL endpoint.
  *
- * @param $q
+ * @param {$q} $q
  * @param {Requests} Requests
  * @returns {Object}
  *

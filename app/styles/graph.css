@@ -39,6 +39,15 @@ circle {
   cursor: pointer;
 }
 
+.node.dragged circle, 
+.node.dragged rect, 
+.property.dragged rect, 
+.datatypeProperty.dragged rect, 
+.subClassProperty.dragged rect, 
+.type.dragged rect {
+  cursor: move;
+}
+
 .node circle, .node rect, .property rect {
   fill: #acf;
 }

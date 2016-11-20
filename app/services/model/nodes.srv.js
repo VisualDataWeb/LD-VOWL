@@ -2,10 +2,10 @@
  * @ngdoc serivice
  * @name Nodes
  *
- * @param $log
- * @param Properties
- * @param Prefixes
- * @param RequestConfig
+ * @param {$log} $log
+ * @param {Properties} Properties
+ * @param {Prefixes} Prefixes
+ * @param {RequestConfig} RequestConfig
  *
  * @ngInject
  */
@@ -131,7 +131,8 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
   /**
    * Add a new node to the graph.
    *
-   * @param newNode - the node which should be added to the graph
+   * @param {*} newNode - the node which should be added to the graph
+   * @return {string} id of the new node
    */
   that.addNode = function (newNode) {
     let newId = '';
@@ -201,7 +202,7 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
   /**
    * Returns the node with the given id or null if there is none.
    *
-   * @param idToSearch - the id of the node to search for
+   * @param {string} idToSearch - the id of the node to search for
    * @returns {*}
    */
   that.getById = function (idToSearch) {
@@ -216,8 +217,8 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
   /**
    * Returns the number of instances of the node with the given id or -1 if there is no node with the given id.
    *
-   * @param id - the id of the node which number of instances should be returned
-   * @returns {number}
+   * @param {string} id - the id of the node which number of instances should be returned
+   * @returns {number} number of instances
    */
   that.getInstanceCountById = function (id) {
     var instanceCount = -1;
@@ -234,8 +235,8 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
   /**
    * Returns the URI of the node with the given id or an empty string if no such node exists.
    *
-   * @param id - the id of the node which URI should be returned
-   * @returns {string}
+   * @param {string} id - the id of the node which URI should be returned
+   * @returns {string} uri of the node with given id
    */
   that.getURIById = function (id) {
     let uri = '';
@@ -254,8 +255,8 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
   /**
    * Insert a label for the node with the given id.
    *
-   * @param id - the id of the node which should get the label
-   * @param label - the label for the node with the given id
+   * @param {string} id - the id of the node which should get the label
+   * @param {string} label - the label for the node with the given id
    */
   that.insertLabel = function (id, label) {
     var searchedItem = nodes.get(id);
@@ -270,8 +271,8 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
   /**
    * Insert a given comment into the node with the also given id.
    *
-   * @param id - the id of the node to augment
-   * @param commentToAdd - the comment to add to the node with the given id
+   * @param {string} id - the id of the node to augment
+   * @param {string} commentToAdd - the comment to add to the node with the given id
    */
   that.insertComment = function (id, commentToAdd) {
     var searchedItem = nodes.get(id);
@@ -298,7 +299,7 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
   /**
    * Set a flag indicating that the types for the class with the given id were loaded.
    *
-   * @param classId - the id of the class which referring types were loaded
+   * @param {string} classId - the id of the class which referring types were loaded
    */
   that.setTypesLoaded = function (classId) {
     if (classId !== undefined && typeof classId === 'string') {
@@ -314,7 +315,7 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
   /**
    * Returns true if the types for the class with the given id were already loaded, false otherwise.
    *
-   * @param classId - the id of the class to check
+   * @param {string} classId - the id of the class to check
    * @returns {boolean}
    */
   that.getTypesLoaded = function (classId) {
@@ -332,8 +333,10 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
   /**
    * Merge two classes with given ids by saving the seconds URI into the first and then deleting the second.
    *
-   * @param classId1 - the id of the class to merge into
-   * @param classId2 - the id of the class to merge (will be deleted)
+   * @param {string} classId1 - the id of the class to merge into
+   * @param {string} classId2 - the id of the class to merge (will be deleted)
+   * 
+   * @return {string} id of the deleted class
    */
   that.mergeClasses = function (classId1, classId2) {
     let deletedId = '';
@@ -403,6 +406,12 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
     }
   };
 
+  /**
+   * Increments value for given id.
+   * 
+   * @param {string} id - the id of the node which value should be incremented
+   * @return {number} the new value of the node or -1 if node was not found 
+   */
   that.incValueOfId = function (id) {
     var searchedItem = nodes.get(id);
 
@@ -443,8 +452,8 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
    * Returns true if an sub class relation between the classes with the given ids does already exist, false otherwise.
    * If one of the given nodes does not exist anymore, it is assumed that the sub class node exists.
    *
-   * @param childId - the id of the child class
-   * @param parentId - the id of the parent class
+   * @param {string} childId - the id of the child class
+   * @param {string} parentId - the id of the parent class
    * @returns {boolean}
    */
   that.hasSubClassPropNode = function (childId, parentId) {

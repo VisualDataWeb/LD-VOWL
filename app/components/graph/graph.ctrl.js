@@ -8,7 +8,7 @@
  * @param {DetailExtractor} DetailExtractor
  * @param {RequestConfig} RequestConfig
  * @param {Data} Data
- * @param View
+ * @param {View} View
  *
  * @ngInject
  */

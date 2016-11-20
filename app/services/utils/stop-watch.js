@@ -2,7 +2,7 @@
  * @ngdoc service
  * @name StopWatch
  *
- * @param $log
+ * @param {$log} $log
  *
  * @ngInject
  */

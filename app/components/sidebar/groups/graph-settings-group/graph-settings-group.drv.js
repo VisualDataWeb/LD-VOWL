@@ -4,9 +4,10 @@
  * @module components.sidebar.groups.graphsettings
  *
  * @description
- *
  * This is the directive for the graph settings including different edge lengths, coloring for external elements and
  * controls for the force directed layout of the graph.
+ * 
+ * @return {*}
  */
 const graphSettingsGroup = function graphSettingsGroup() {
 

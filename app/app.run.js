@@ -1,5 +1,5 @@
 /**
- * @param $rootScope
+ * @param {$rootScope} $rootScope
  *
  * @ngInject
  */

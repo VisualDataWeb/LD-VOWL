@@ -2,8 +2,8 @@
  * @ngdoc service
  * @name Requests
  *
- * @param $rootScope
- * @param StopWatch
+ * @param {$rootScope} $rootScope
+ * @param {StopWatch} StopWatch
  *
  * @ngInject
  */
@@ -78,6 +78,7 @@ function requests($rootScope, StopWatch) {
 
   /**
    * Increases the number of failed requests by one.
+   * @param {number} status
    */
   that.incFailedRequests = function (status) {
     that.errorStatus.add(status);

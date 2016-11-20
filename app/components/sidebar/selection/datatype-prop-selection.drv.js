@@ -6,6 +6,8 @@ import datatypePropSelectionTemplate from './datatype-prop-selection.html';
  *
  * @description
  * This directive shows details about a data type node selected in the graph.
+ * 
+ * @return {*}
  */
 const datatypePropertySelection = function() {
 

@@ -2,11 +2,11 @@
  * @Name TypeExtractor
  * TODO rename to DataTypeExtractor
  *
- * @param $http
- * @param $q
- * @param $log
+ * @param {$http} $http
+ * @param {$q} $q
+ * @param {$log} $log
  * @param {RequestConfig} RequestConfig
- * @param QueryFactory
+ * @param {QueryFactory} QueryFactory
  * @param {Nodes} Nodes
  * @param {Properties} Properties
  * @param {RelationExtractor} RelationExtractor

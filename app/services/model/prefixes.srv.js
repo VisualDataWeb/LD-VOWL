@@ -2,8 +2,8 @@
  * @ngdoc service
  * @Name Prefixes
  *
- * @param $rootScope
- * @param $log
+ * @param {$rootScope} $rootScope
+ * @param {$log} $log
  *
  * @ngInject
  */
@@ -18,7 +18,7 @@ function prefixesService($rootScope, $log) {
   /**
    * Add a new prefix.
    *
-   * @param pre - an object with the prefix to add
+   * @param {{color: number, prefix: string, value: number}} pre - an object with the prefix to add
    */
   that.addPrefix = function (pre) {
     if (typeof pre === 'object' && pre.prefix !== undefined) {
@@ -87,7 +87,7 @@ function prefixesService($rootScope, $log) {
   /**
    * Update prefixes to the given ones.
    *
-   * @param newPrefixes - array of the new prefixes
+   * @param {Array} newPrefixes - array of the new prefixes
    */
   that.setPrefixes = function (newPrefixes) {
     if (newPrefixes !== undefined && newPrefixes.length !== undefined) {
@@ -100,7 +100,7 @@ function prefixesService($rootScope, $log) {
   /**
    * Returns true if the given URI is an internal one, false otherwise.
    *
-   * @param uri - the URI to be checked
+   * @param {string} uri - the URI to be checked
    * @returns {boolean}
    */
   that.isInternal = function (uri) {
@@ -120,7 +120,7 @@ function prefixesService($rootScope, $log) {
 
   /**
    * Returns the color number for a node with the given URI. If different colors are disabled, this will always return 1
-   * @param uri - the uri of the node to color
+   * @param {string} uri - the uri of the node to color
    * @returns {number} the number of the color to use
    */
   that.getColor = function (uri) {

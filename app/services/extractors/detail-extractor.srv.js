@@ -2,10 +2,10 @@
  * @ngdoc service
  * @name DetailExtractor
  *
- * @param $http
- * @param $q
- * @param $log
- * @param QueryFactory
+ * @param {$http} $http
+ * @param {$q} $q
+ * @param {$log} $log
+ * @param {QueryFactory} QueryFactory
  * @param {RequestConfig} RequestConfig
  * @param {Nodes} Nodes
  * @param {Promises} Promises
@@ -17,7 +17,9 @@ function detailExtractor($http, $q, $log, QueryFactory, RequestConfig, Nodes, Pr
   const that = this;
 
   /**
-   * Request the rdfs:comment for the given uri and insert it into the right node.
+   * Request the rdfs:comment for the node with the given id and insert it into the right node.
+   * 
+   * @param {string} id - the id of the class node
    */
   that.requestCommentForClass = function (id) {
     const uri = Nodes.getURIById(id);

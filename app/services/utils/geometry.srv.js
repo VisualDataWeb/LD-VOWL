@@ -5,13 +5,14 @@
 class Geometry {
 
   /**
-   * @param Utils
+   * @param {GraphUtils} GraphUtils
    *
    * @ngInject
    */
-  constructor(Utils) {
-    this.utils = Utils;
+  constructor(GraphUtils) {
+    this.graphUtils = GraphUtils;
     this.defaultPropHeight = 20;
+    this.ringWidth = 4;
   }
 
   /**
@@ -35,7 +36,7 @@ class Geometry {
 
   /**
    * @param {{source, intermediate, target}} d
-   * @param a
+   * @param {number} a
    * @returns {{x: *, y: *}}
    */
   getAnotherCircleOutlinePoint(d, a) {
@@ -59,16 +60,12 @@ class Geometry {
     return {x: x, y: y};
   }
 
-  calcPropBoxWidth(d) {
-    return (this.utils.getName(d, true, true).length * 8);
-  }
-
   getRectOutlinePoint(d) {
     var source = (d.intermediate !== undefined) ? d.intermediate : d.source;
 
     var m = (d.target.y - source.y) / (d.target.x - source.x);
 
-    var boxWidth = this.calcPropBoxWidth(d.target);
+    var boxWidth = this.graphUtils.calcPropBoxWidth(d.target);
 
     var minX = d.target.x - (boxWidth / 2);
     var maxX = d.target.x + (boxWidth / 2);

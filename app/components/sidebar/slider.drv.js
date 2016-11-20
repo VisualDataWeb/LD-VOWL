@@ -9,6 +9,8 @@ require('jquery-ui');
  * @description
  *
  * The directive which uses a jQuery slider to adjust the length of different edges in the force directed graph.
+ * 
+ * @return {*}
  *
  * @ngInject
  */

@@ -24,6 +24,11 @@
     "max-len": [1, 120],
     "max-params": [1, 10],
     "max-statements": [1, 40],
-    "no-var": 0
+    "no-var": 0,
+    "valid-jsdoc": [1, {
+      "requireReturn": false,
+      "requireParamDescription": false, 
+      "requireReturnDescription": false
+    }]
   }
 }

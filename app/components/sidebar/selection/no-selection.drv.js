@@ -5,8 +5,9 @@ import noSelectionTemplate from './no-selection.html';
  * @name noSelection
  *
  * @description
- *
  * This directive is shown if no element is selected in the graph.
+ * 
+ * @return {*}
  */
 const noSelection = function() {
 

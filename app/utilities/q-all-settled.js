@@ -1,6 +1,6 @@
 import angular from 'angular';
 /**
- * @param $provide
+ * @param {$provide} $provide
  *
  * @ngInject
  */

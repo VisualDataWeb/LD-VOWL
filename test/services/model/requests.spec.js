@@ -1,4 +1,4 @@
-import * as angular from 'angular';
+import angular from 'angular';
 import app from '../../../app/app';
 
 describe('Service: Requests', function () {

@@ -1,5 +1,5 @@
 import app from '../../../app/app';
-import * as angular from 'angular';
+import angular from 'angular';
 
 describe('Service: Properties', function () {
   'use strict';

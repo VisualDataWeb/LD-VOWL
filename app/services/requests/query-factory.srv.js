@@ -12,8 +12,8 @@ function queryFactory() {
   var defaultLang = 'en';
 
   var prefixes = function () {
-    var pre = '';
-    for (var i = 0; i < namespaces.length; i++) {
+    let pre = '';
+    for (let i = 0; i < namespaces.length; i++) {
       pre += 'PREFIX ';
       pre += namespaces[i];
       pre += ' ';
@@ -28,6 +28,7 @@ function queryFactory() {
 
     /**
      * Returns the prefixes for SPARQL queries, including the used namespaces.
+     * @return {string} the prefixes
      */
     getPrefixes: function () {
       return prefixes();

@@ -10,12 +10,12 @@ class RelationExtractor extends Extractor {
   /**
    * Creates a RelationExtractor.
    *
-   * @param $cookies
-   * @param $http
-   * @param $q
-   * @param $log
-   * @param PREFIX
-   * @param PROPERTY_BLACKLIST
+   * @param {$cookies} $cookies
+   * @param {$http} $http
+   * @param {$q} $q
+   * @param {$log} $log
+   * @param {PREFIX} PREFIX
+   * @param {PROPERTY_BLACKLIST} PROPERTY_BLACKLIST
    * @param {QueryFactory} QueryFactory
    * @param {RequestConfig} RequestConfig
    * @param {Nodes} Nodes
@@ -62,30 +62,27 @@ class RelationExtractor extends Extractor {
   /**
    * Requests class to class relations between the given uris.
    *
-   * @param originId - the uri of the class to start from
-   * @param targetId - the uri of the class to go to
-   * @param limit - the maximum number of relations to receive
-   * @param offset - the number of the relation to start with
+   * @param {string} originId - the uri of the class to start from
+   * @param {string} targetId - the uri of the class to go to
+   * @param {number} limit - the maximum number of relations to receive
+   * @param {number} offset - the number of the relation to start with
    */
-  requestClassClassRelation(originId, targetId, limit, offset) {
+  requestClassClassRelation(originId, targetId, limit = 10, offset = 0) {
     const canceller = this.$q.defer();
     const promiseId = this.promises.addPromise(canceller);
 
-    offset = offset || 0;
-    limit = limit || 10;
+    const originClassURI = this.nodes.getURIById(originId);
+    const targetClassURI = this.nodes.getURIById(targetId);
 
-    var originClassURI = this.nodes.getURIById(originId);
-    var targetClassURI = this.nodes.getURIById(targetId);
-
-    var query = '';
+    let query;
     if (this.rConfig.getPropertiesOrdered()) {
       query = this.queryFactory.getOrderedClassClassRelationQuery(originClassURI, targetClassURI, limit, offset);
     } else {
       query = this.queryFactory.getUnorderedClassClassRelationQuery(originClassURI, targetClassURI, limit, offset);
     }
-    var requestURL = this.rConfig.getRequestURL();
+    const requestURL = this.rConfig.getRequestURL();
 
-    var self = this;
+    const self = this;
 
     this.$http.get(requestURL, this.rConfig.forQuery(query, canceller))
       .then(function handleClassClassRelations(response) {
@@ -102,8 +99,8 @@ class RelationExtractor extends Extractor {
               let first = (offset === 0);
 
               // add uris if they are not blacklisted
-              for (var i = 0; i < bindings.length; i++) {
-                var currentURI = bindings[i].prop.value;
+              for (let i = 0; i < bindings.length; i++) {
+                let currentURI = bindings[i].prop.value;
 
                 // only add prop if not black listed
                 if (!self.inBlacklist(currentURI)) {
@@ -137,7 +134,6 @@ class RelationExtractor extends Extractor {
                     self.requestPropertyLabel(currentURI);
                     first = false;
                   }
-
                 } // end of if not blacklisted
               } // end of for loop over all bindings
 
@@ -174,17 +170,17 @@ class RelationExtractor extends Extractor {
   /**
    * Request the label for a property with the given uri.
    *
-   * @param uri - the uri of the property which label should be caught
+   * @param {string} uri - the uri of the property which label should be caught
    */
   requestPropertyLabel(uri) {
-    var canceller = this.$q.defer();
+    const canceller = this.$q.defer();
     const promiseId = this.promises.addPromise(canceller);
 
-    var labelLang = this.rConfig.getLabelLanguage();
-    var query = this.queryFactory.getLabelQuery(uri, labelLang);
-    var requestURL = this.rConfig.getRequestURL();
+    const labelLang = this.rConfig.getLabelLanguage();
+    const query = this.queryFactory.getLabelQuery(uri, labelLang);
+    const requestURL = this.rConfig.getRequestURL();
 
-    var self = this;
+    const self = this;
 
     self.$log.debug(`[Property Label] Send Request for '${uri}'...`);
 
@@ -218,14 +214,24 @@ class RelationExtractor extends Extractor {
       });
   } // end of requestPropertyLabel()
 
+  /**
+   * Request relation between origin class node and target data type node. The found relations will 
+   * be added to the intermediate node.
+   * 
+   * @param {string} originClassId - the id of the origin class node
+   * @param {string} intermediateId - the id of the node to which the resulting uris should be added
+   * @param {string} targetTypeId - the id of the target data type node
+   * @param {number} limit - the maximum amount of results
+   * @param {number} offset - the offset for the results
+   */
   requestClassTypeRelation(originClassId, intermediateId, targetTypeId, limit = 10, offset = 0) {
-    var canceller = this.$q.defer();
+    const canceller = this.$q.defer();
     const promiseId = this.promises.addPromise(canceller);
 
     const classURI = this.nodes.getURIById(originClassId);
     const typeURI = this.nodes.getURIById(targetTypeId);
 
-    let query = '';
+    let query;
     if (this.rConfig.getPropertiesOrdered()) {
       query = this.queryFactory.getOrderedClassTypeRelationQuery(classURI, typeURI, limit, offset);
     } else {
@@ -293,11 +299,12 @@ class RelationExtractor extends Extractor {
   /**
    * Request whether given classes are equal by having the same instances.
    *
-   * @param classId1 - the id of the first class to check for equality
-   * @param classId2 - the id of the second class to check for equality
+   * @param {string} classId1 - the id of the first class to check for equality
+   * @param {string} classId2 - the id of the second class to check for equality
+   * 
+   * @return {*} promise
    */
   requestClassEquality(classId1, classId2) {
-
     var deferred = this.$q.defer();
     const promiseId = this.promises.addPromise(deferred);
 
@@ -316,7 +323,7 @@ class RelationExtractor extends Extractor {
     var classURI2 = this.nodes.getURIById(classId2);
 
     var query = this.queryFactory.getNumberOfCommonInstancesQuery(classURI1, classURI2);
-    var requestURL = this.rConfig.getRequestURL();
+    const requestURL = this.rConfig.getRequestURL();
 
     var count1 = this.nodes.getInstanceCountById(classId1);
     var count2 = this.nodes.getInstanceCountById(classId2);

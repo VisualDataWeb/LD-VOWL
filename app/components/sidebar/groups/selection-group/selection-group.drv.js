@@ -3,10 +3,11 @@ import selectionGroupTemplate from './selection-group.html';
 /**
  * @ngdoc directive
  * @name selectionGroup
+ * 
  * @description
- *
  * This directive represents the selection group in the sidebar accordion which shows details about the selected graph
  * elements.
+ * @return {*}
  */
 const selectionGroup = function() {
 

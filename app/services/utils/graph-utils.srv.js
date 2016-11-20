@@ -1,8 +1,8 @@
-'use strict';
+export default function graphUtils() {
 
-export default function utils() {
+  const that = this;
 
-  var that = this;
+  let arrowHeads = [];
 
   var maxNameLength = 15;
 
@@ -42,8 +42,8 @@ export default function utils() {
    * Returns the name which should be displayed for a given object if the width is restricted to a given amount of
    * pixels.
    *
-   * @param obj - the object which name should be displayed, must have a name or uri attribute
-   * @param maxWidth - the maximum amount of space available (in pixels)
+   * @param {*} obj - the object which name should be displayed, must have a name or uri attribute
+   * @param {number} maxWidth - the maximum amount of space available (in pixels)
    * @returns {string}
    */
   that.getNameForSpace = function (obj, maxWidth) {
@@ -66,5 +66,25 @@ export default function utils() {
 
     return name;
   };
+
+  that.getArrowHeads = function () {
+    if (arrowHeads.length === 0) {
+      for (let lwidth = 1; lwidth <= 5; lwidth++) {
+        arrowHeads.push({id: `Arrow${lwidth}`, class: 'arrow', size: 10 - lwidth});
+        arrowHeads.push({id: `hoveredArrow${lwidth}`, class: 'hovered', size: 10 - lwidth});
+        arrowHeads.push({id: `subclassArrow${lwidth}`, class: 'subclass', size: 10 - lwidth});
+      }
+    }
+
+    return arrowHeads;
+  };
+
+  that.calcPropBoxWidth = function(d) {
+    return (this.getName(d, true, true).length * 8);
+  };
+
+  that.calcPropBoxOffset = function(d) {
+    return (-1) * (this.calcPropBoxWidth(d) / 2);
+  }
 
 }

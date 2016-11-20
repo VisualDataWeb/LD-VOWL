@@ -1,4 +1,4 @@
-import * as angular from 'angular';
+import angular from 'angular';
 
 import SettingsCtrl from './settings.ctrl';
 import blacklist from './blacklist/blacklist.module.js';

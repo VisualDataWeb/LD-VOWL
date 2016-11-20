@@ -1,11 +1,11 @@
 /**
  * @Name StartCtrl
  *
- * @param $log
- * @param $location
+ * @param {$log} $log
+ * @param {$location} $location
  * @param {Data} Data
- * @param View
- * @param Requests
+ * @param {View} View
+ * @param {Requests} Requests
  * @param {RequestConfig} RequestConfig
  * @param {Endpoints} Endpoints
  *

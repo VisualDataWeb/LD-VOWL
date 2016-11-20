@@ -5,8 +5,9 @@ import subclassPropSelectionTemplate from './subclass-prop-selection.html';
  * @name subclassPropertySelection
  *
  * @description
- *
  * This directive shows more details about a subclass relation selected in the graph.
+ * 
+ * @return {*}
  */
 const subclassPropertySelection = function() {
 
