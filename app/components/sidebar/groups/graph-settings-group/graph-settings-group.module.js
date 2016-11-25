@@ -3,6 +3,8 @@ import angular from 'angular';
 import GraphSettingsGroupCtrl from './graph-settings-group.ctrl';
 import graphSettingsGroup from './graph-settings-group.drv';
 
+require('./graph-settings.css');
+
 /**
  * @ngdoc module
  * @name sidebar.groups.graphsettings

@@ -38,7 +38,7 @@ function links(Geometry) {
    * @returns {number}
    */
   self.getDistance = function (d) {
-    var distance;
+    let distance = 0;
     if ((d.target !== undefined && d.target.isLoopNode) || (d.source !== undefined && d.source.isLoopNode)) {
 
       // loops

@@ -51,7 +51,7 @@ class RelationExtractor extends Extractor {
       // create a new blacklist
       for (var type in PROPERTY_BLACKLIST) {
         if (PROPERTY_BLACKLIST.hasOwnProperty(type) && type !== 'SKOS') {
-          for (var i = 0; i < PROPERTY_BLACKLIST[type].length; i++) {
+          for (let i = 0; i < PROPERTY_BLACKLIST[type].length; i++) {
             this.blacklist.push(PREFIX[type] + PROPERTY_BLACKLIST[type][i]);
           }
         }

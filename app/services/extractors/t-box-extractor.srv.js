@@ -21,6 +21,9 @@ function tBoxExtractor($q, $log, Data, Filters, StopWatch, Promises, ClassExtrac
 
   self.classes = [];
 
+  /**
+   * Start the extraction of TBox information by requesting classes.
+   */
   self.startTBoxExtraction = function () {
     StopWatch.start();
     ClassExtractor.requestClasses().then(function extractForClasses(results) {
@@ -41,7 +44,7 @@ function tBoxExtractor($q, $log, Data, Filters, StopWatch, Promises, ClassExtrac
         }
       }
 
-      var promises = [];
+      let promises = [];
       for (let end = 0; end < self.classes.length; end++) {
         for (let start = 0; start < end; start++) {
           promises.push(RelationExtractor.requestClassEquality(self.classes[start], self.classes[end]));
@@ -93,7 +96,6 @@ function tBoxExtractor($q, $log, Data, Filters, StopWatch, Promises, ClassExtrac
    * Load relations for each pair of classes.
    */
   self.extractRelations = function () {
-
     $log.debug('[TBox Extractor] Send requests for relations...');
 
     // for each pair of classes search relation and check equality

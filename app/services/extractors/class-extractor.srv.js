@@ -55,14 +55,12 @@ class ClassExtractor extends Extractor {
   } // end of constructor()
 
   requestClasses() {
-    var self = this;
-
-    var deferred = this.$q.defer();
-    const promiseId = self.promises.addPromise(deferred);
+    const deferred = this.$q.defer();
+    const promiseId = this.promises.addPromise(deferred);
 
     // do not request further classes
     if (this.nodes.hasClassNodes()) {
-      self.$log.debug('[Classes] Skip loading further classes...');
+      this.$log.debug('[Classes] Skip loading further classes...');
       deferred.resolve([]);
       return deferred.promise;
     }
@@ -71,17 +69,18 @@ class ClassExtractor extends Extractor {
 
     let limit = this.reqConfig.getLimit() || 10;
 
-    var requestURL = this.reqConfig.getRequestURL();
+    const requestURL = this.reqConfig.getRequestURL();
+
+    const self = this;
 
     function doQuery(lastTry = false, offset = 0, limit = 10) {
-
       let query = self.queryFactory.getClassQuery(limit, offset);
 
       self.$log.debug(`[Classes] Send Request with offset ${offset}...`);
       self.$http.get(requestURL, self.reqConfig.forQuery(query, deferred))
         .then(function handleExtractedClasses(response) {
           if (response.data.results !== undefined) {
-            var bindings = response.data.results.bindings;
+            let bindings = response.data.results.bindings;
 
             if (bindings !== undefined) {
 

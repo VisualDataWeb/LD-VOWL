@@ -18,16 +18,15 @@ module.exports = {
       'angular-animate',
       'angular-cookies',
       'd3',
-      'jquery',
-      'jquery-ui',
       'bootstrap-webpack',
       'angular-ui-bootstrap'
     ]
   },
   module: {
     loaders: [
-      { test: /\.js$/, loader: 'ng-annotate!babel?presets[]=es2015', exclude: /node_modules/},
-      { test: /\.js$/, loader: 'eslint-loader', exclude: /node_modules/},
+      { test: /\.js$/, loader: 'ng-annotate!babel?presets[]=es2015', exclude: /node_modules/ },
+      { test: /\.js$/, loader: 'eslint-loader', exclude: /node_modules/ },
+      { test: /\.json$/, loader: 'file-loader?name=[name].[ext]', exclude: /node_modules/ },
 
       { test: /\.html$/, loader: 'ng-cache?prefix=[dir]/[dir]', exclude: /index.html/},
 
@@ -42,9 +41,7 @@ module.exports = {
   },
   plugins: [
     new webpack.ProvidePlugin({
-      d3: 'd3',
-      $: 'jquery',
-      jQuery: 'jquery'
+      d3: 'd3'
     }),
 
     new webpack.DefinePlugin({

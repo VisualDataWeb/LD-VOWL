@@ -23,28 +23,20 @@ function graphSettingsCtrl($rootScope, $log, Prefixes, Links) {
 
   graphSettings.layoutPaused = false;
 
-  graphSettings.setClassToClassEdgeLength = function (newValue) {
-    if (newValue === undefined) {
-      $log.error('[Graph Settings] New class to class edge length is undefined!');
-      return;
-    }
-    graphSettings.ccEdgeLength = newValue;
-    Links.setClassToClassDistance(newValue);
+  graphSettings.updateClassToClassLength = function() {
+    const newLength = parseInt(graphSettings.ccEdgeLength);
+    Links.setClassToClassDistance(newLength);
 
     // node link graph must be informed
-    $rootScope.$broadcast('edge-length-changed', newValue);
+    $rootScope.$broadcast('edge-length-changed', newLength);
   };
 
-  graphSettings.setClassToDatatypeEdgeLength = function (newValue) {
-    if (newValue === undefined) {
-      $log.error('[Graph Settings] New class to data type edge length is undefined!');
-      return;
-    }
-    graphSettings.ctEdgeLength = newValue;
-    Links.setClassToDatatypeDistance(newValue);
+  graphSettings.updateClassToDatatypeLength = function() {  
+    const newLength = parseInt(graphSettings.ctEdgeLength)
+    Links.setClassToDatatypeDistance(newLength);
 
     // node link graph must be informed
-    $rootScope.$broadcast('edge-length-changed', newValue);
+    $rootScope.$broadcast('edge-length-changed', newLength);
   };
 
   /**

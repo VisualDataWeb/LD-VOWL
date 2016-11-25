@@ -1,5 +1,3 @@
-import endpointGroupTemplate from './endpoint-group.html';
-
 /**
  * @ngdoc directive
  * @name endpointGroup
@@ -22,7 +20,7 @@ const endpointGroup = function() {
     },
     controller: 'EndpointGroupCtrl',
     controllerAs: 'vm',
-    template: endpointGroupTemplate
+    template: require('./endpoint-group.html')
   };
 
 };

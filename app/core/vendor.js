@@ -5,9 +5,7 @@ module.exports = function () {
   require('angular-route');
   require('angular-animate');
   require('angular-cookies');
-  require('jquery');
-  require('jquery-ui');
-  require('bootstrap-webpack');
+  require('bootstrap-webpack!../../bootstrap.config.js');
   require('angular-ui-bootstrap');
 
 };

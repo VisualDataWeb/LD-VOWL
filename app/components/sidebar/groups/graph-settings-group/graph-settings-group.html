@@ -12,16 +12,12 @@
 
   <p>
     <label for="ccEdgeLength">Class - Class Distance: {{ graphSettings.ccEdgeLength }}</label>
-    <div id="ccEdgeLength" slider class="cdbl-slider" model="graphSettings.ccEdgeLength" min="1" max="300"
-         on-update="graphSettings.setClassToClassEdgeLength(newValue)">
-    </div>
+    <input id="ccEdgeLength" type="range" min="1" max="300" ng-model="graphSettings.ccEdgeLength" ng-change="graphSettings.updateClassToClassLength()" />
   </p>
 
   <p>
     <label for="ctEdgeLength">Class - Type Distance: {{ graphSettings.ctEdgeLength }}</label>
-    <div id="ctEdgeLength" slider class="cdbl-slider" model="graphSettings.ctEdgeLength" min="1" max="150"
-         on-update="graphSettings.setClassToDatatypeEdgeLength(newValue)">
-    </div>
+    <input id="ctEdgeLength" type="range" min="1" max="150" ng-model="graphSettings.ctEdgeLength" ng-change="graphSettings.updateClassToDatatypeLength()" />
   </p>
 
   <p><strong>Layout</strong></p>

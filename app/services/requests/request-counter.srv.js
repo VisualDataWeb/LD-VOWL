@@ -18,7 +18,7 @@ function requestCounter($q, Requests) {
   return {
     'request': function (config) {
       // do not count requests for local files (e.g. templates or json)
-      if (!config.url.match(localFileRegEx)) {
+      if (config !== undefined && typeof config.url === 'string' && !config.url.match(localFileRegEx)) {
         Requests.incPendingRequests();
       }
       return config;

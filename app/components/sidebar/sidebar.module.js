@@ -1,7 +1,5 @@
 import angular from 'angular';
 
-import Slider from './slider.drv.js';
-
 import groups from './groups/sidebar-groups.module';
 import selections from './selection/selection.module';
 
@@ -12,7 +10,6 @@ import selections from './selection/selection.module';
  * @requires groups, selections
  * 
  * @description
- * This is the module for the sidebar of the application, including the directive for the jQuery slider.
+ * This is the module for the sidebar of the application.
  */
-export default angular.module('components.sidebar', [groups.name, selections.name])
-                      .directive('slider', Slider);
+export default angular.module('components.sidebar', [groups.name, selections.name]);
