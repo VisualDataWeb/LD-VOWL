@@ -9,7 +9,7 @@
 function requestConfig($cookies) {
 
   const cookiePrefix = 'ldvowl_';
-  const proxyURL = 'http://localhost/proxy.php';
+  const proxyURL = __PROXY_URL__ || 'http://localhost/proxy.php';  // eslint-disable-line no-undef
 
   let endpointURL = $cookies.get(cookiePrefix + 'endpoint') || '';
   let useProxy = $cookies.get(cookiePrefix + 'proxy') || 'false';
@@ -97,8 +97,8 @@ function requestConfig($cookies) {
    * @param {boolean} useProxy - true if proxy should be used, false otherwise
    */
   self.setUseProxy = function (useProxy) {
-    useProxy = (useProxy) ? 'true' : 'false';
-    $cookies.put(cookiePrefix + 'proxy', useProxy);
+    const proxyFlag = (useProxy) ? 'true' : 'false';
+    $cookies.put(cookiePrefix + 'proxy', proxyFlag);
   };
 
   self.getLimit = function () {
@@ -125,7 +125,7 @@ function requestConfig($cookies) {
   };
 
   self.getLabelLanguage = function () {
-    var cookieLang = $cookies.get(cookiePrefix + 'lang');
+    const cookieLang = $cookies.get(cookiePrefix + 'lang');
     if (cookieLang !== undefined) {
       labelLanguage = cookieLang;
     }

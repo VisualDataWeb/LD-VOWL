@@ -6,50 +6,42 @@
   {
     "name": "BCN Datos",
     "url": "http://datos.bcn.cl/sparql",
-    "description": "",
-    "proxyNeeded": false
+    "description": ""
   },
   {
     "name": "Database Center for Life Science (DBCLS)",
     "url": "http://data.allie.dbcls.jp/sparql",
-    "description": "",
-    "proxyNeeded": false
+    "description": ""
   },
   {
     "name": "dbpedia",
     "url": "http://dbpedia.org/sparql",
-    "description": "",
-    "proxyNeeded": false
+    "description": ""
   },
   {
     "name": "Dutch Ships and Sailors (DSS)",
     "url": "http://dutchshipsandsailors.nl/data/sparql/",
-    "description": "maritime historical data set",
-    "proxyNeeded": false
+    "description": "maritime historical data set"
   },
   {
     "name": "Dutch Ships and Sailors (DSS) Semantic Layer",
     "url": "http://semanticweb.cs.vu.nl/dss/sparql/",
-    "description": "",
-    "proxyNeeded": false
+    "description": ""
   },
   {
     "name": "EBI BioModels Database",
     "url": "https://www.ebi.ac.uk/rdf/services/biomodels/sparql",
-    "description": "",
-    "proxyNeeded": false
+    "description": ""
   },
   {
     "name": "EBI Biosamples Database",
     "url": "https://www.ebi.ac.uk/rdf/services/biosamples/sparql",
-    "description": "",
-    "proxyNeeded": false
+    "description": ""
   },
   {
     "name": "EBI ChEMBL",
     "url": "https://www.ebi.ac.uk/rdf/services/chembl/sparql",
-    "description": "",
-    "proxyNeeded": false
+    "description": ""
   },
   {
     "name": "Enipedia",
@@ -58,14 +50,12 @@
   {
     "name": "Environment Agency Bathing Water Quality",
     "url": "http://environment.data.gov.uk/sparql/bwq/query",
-    "description": "",
-    "proxyNeeded": false
+    "description": ""
   },
   {
     "name": "EUscreen Linked Open Data Pilot",
     "url": "http://lod.euscreen.eu/sparql",
-    "description": "about television",
-    "proxyNeeded": false
+    "description": "about television"
   },
   {
     "name": "FOODpedia",
@@ -107,8 +97,7 @@
   {
     "name": "MORElab",
     "url": "http://apps.morelab.deusto.es/labman/sparql",
-    "description": "",
-    "proxyNeeded": true
+    "description": ""
   },
   {
     "name": "Nobelprize.org",
@@ -125,20 +114,17 @@
   {
     "name": "Springer LOD Conference Portal",
     "url": "http://lod.springer.com/sparql",
-    "description": "about scientific publications at springer",
-    "proxyNeeded": false
+    "description": "about scientific publications at springer"
   },
   {
     "name": "Swiss Federal Statistics Office Linked Data",
     "url": "http://bfs.270a.info/sparql",
-    "description": "swiss statistics",
-    "proxyNeeded": false
+    "description": "swiss statistics"
   },
   {
     "name": "Transparency International Linked Data",
     "url": "http://transparency.270a.info/sparql",
-    "description": "data set about corruption",
-    "proxyNeeded": false
+    "description": "data set about corruption"
   },
   {
     "name": "WKD - Arbeitsrechtsthesaurus",
@@ -146,13 +132,11 @@
   },
   {
     "name": "WKD - Gerichtsthesaurus",
-    "url": "http://vocabulary.wolterskluwer.de/PoolParty/sparql/court",
-    "proxyNeeded": false
+    "url": "http://vocabulary.wolterskluwer.de/PoolParty/sparql/court"
   },
   {
     "name": "ww1lod",
     "url": "http://ldf.fi/ww1lod/sparql",
-    "description": "about WW1",
-    "proxyNeeded": false
+    "description": "about WW1"
   }
 ]

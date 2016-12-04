@@ -1,6 +1,6 @@
 {
   "name": "ld-vowl",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Extract ontology information out of arbitrary SPARQL endpoints and visualize it using a slightly adjusted form of VOWL.",
   "author": "Marc Weise <weisemc@studi.informatik.uni-stuttgart.de>",
   "scripts": {
@@ -19,12 +19,7 @@
   "bugs": {
     "url": "https://github.com/VisualDataWeb/LD-VOWL/issues"
   },
-  "keywords": [
-    "Linked Data",
-    "SPARQL",
-    "Visualization",
-    "VOWL"
-  ],
+  "keywords": ["Linked Data", "SPARQL", "Visualization", "VOWL"],
   "dependencies": {
     "angular": "1.4.8",
     "angular-animate": "1.4.8",
@@ -66,6 +61,7 @@
     "isparta-loader": "~2.0.0",
     "istanbul-instrumenter-loader": "~0.2.0",
     "jasmine-core": "~2.4.1",
+    "jest": "^17.0.3",
     "jest-cli": "^17.0.0",
     "karma": "~0.13.19",
     "karma-babel-preprocessor": "~6.0.1",
@@ -89,8 +85,8 @@
   },
   "jest": {
     "verbose": true,
-    "globals": { 
-      "__LOGGING__": true, 
+    "globals": {
+      "__LOGGING__": true,
       "__SESSION_STORAGE__": false,
       "__VERSION__": "1.1.1",
       "__PROXY__": true

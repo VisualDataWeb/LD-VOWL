@@ -18,7 +18,6 @@ module.exports = {
       'angular-animate',
       'angular-cookies',
       'd3',
-      'bootstrap-webpack',
       'angular-ui-bootstrap'
     ]
   },
@@ -47,6 +46,7 @@ module.exports = {
     new webpack.DefinePlugin({
       __LOGGING__: false,
       __PROXY__: true,
+      __PROXY_URL__: JSON.stringify(require('./production.conf.json').proxyUrl),
       __SESSION_STORAGE__: false,
       __SHOW_ENDPOINT__: true,
       __VERSION__: JSON.stringify(require('./package.json').version)

@@ -11,13 +11,13 @@
  */
 function nodesService($log, Properties, Prefixes, RequestConfig) {
 
-  var classUriIdMap = new Map();
-  var nodes = new Map();
+  let classUriIdMap = new Map();
+  let nodes = new Map();
   let equivalentClasses = new Map();
 
   const classDatatypesMap = new Map();
 
-  var subClassSet = new Set();
+  let subClassSet = new Set();
 
   const that = this;
 
@@ -131,7 +131,7 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
   /**
    * Add a new node to the graph.
    *
-   * @param {*} newNode - the node which should be added to the graph
+   * @param {{uri: string, type: string}} newNode - the node which should be added to the graph
    * @return {string} id of the new node
    */
   that.addNode = function (newNode) {
@@ -206,7 +206,7 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
    * @returns {*}
    */
   that.getById = function (idToSearch) {
-    var nodeToReturn = null;
+    let nodeToReturn = null;
 
     if (idToSearch !== undefined && typeof idToSearch === 'string') {
       nodeToReturn = nodes.get(idToSearch);
@@ -221,9 +221,9 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
    * @returns {number} number of instances
    */
   that.getInstanceCountById = function (id) {
-    var instanceCount = -1;
+    let instanceCount = -1;
 
-    var searchedItem = nodes.get(id);
+    const searchedItem = nodes.get(id);
 
     if (searchedItem !== undefined && searchedItem.hasOwnProperty('value')) {
       instanceCount = searchedItem.value;
@@ -275,7 +275,7 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
    * @param {string} commentToAdd - the comment to add to the node with the given id
    */
   that.insertComment = function (id, commentToAdd) {
-    var searchedItem = nodes.get(id);
+    const searchedItem = nodes.get(id);
 
     if (searchedItem !== undefined) {
       searchedItem.comment = commentToAdd;
@@ -285,8 +285,14 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
     }
   };
 
+  /**
+   * Set the given URI for the node with the also given id.
+   * 
+   * @param {string} id
+   * @param {string} newUri
+   */
   that.setURI = function (id, newUri) {
-    var nodeToChange = nodes.get(id);
+    const nodeToChange = nodes.get(id);
 
     if (nodeToChange !== undefined) {
       nodeToChange.uri = newUri;
@@ -304,7 +310,7 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
   that.setTypesLoaded = function (classId) {
     if (classId !== undefined && typeof classId === 'string') {
 
-      var clazz = nodes.get(classId);
+      const clazz = nodes.get(classId);
 
       if (clazz !== undefined && clazz.type === 'class') {
         clazz.typesLoaded = true;
@@ -398,11 +404,16 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
     return nodeToReturn;
   };
 
+  /**
+   * Removes all given nodes from the node map.
+   * 
+   * @param {Array} nodeArr - an array of nodes to be removed
+   */
   that.removeNodes = function (nodeArr) {
     if (nodeArr !== undefined && nodeArr.length > 0) {
-      for (let i = 0; i < nodeArr.length; i++) {
-        nodes.delete(nodeArr[i]);
-      }
+      nodeArr.forEach((node) => {
+        nodes.delete(node);
+      });
     }
   };
 
@@ -413,7 +424,7 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
    * @return {number} the new value of the node or -1 if node was not found 
    */
   that.incValueOfId = function (id) {
-    var searchedItem = nodes.get(id);
+    const searchedItem = nodes.get(id);
 
     if (searchedItem !== undefined && searchedItem.hasOwnProperty('value')) {
       searchedItem.value += 1;

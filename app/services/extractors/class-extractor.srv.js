@@ -44,9 +44,9 @@ class ClassExtractor extends Extractor {
       this.setBlacklist(classInput.split(','));
     } else {
       // set up new blacklists
-      for (var type in CLASS_BLACKLIST) {
+      for (let type in CLASS_BLACKLIST) {
         if (CLASS_BLACKLIST.hasOwnProperty(type) && type !== 'SKOS') {
-          for (var i = 0; i < CLASS_BLACKLIST[type].length; i++) {
+          for (let i = 0; i < CLASS_BLACKLIST[type].length; i++) {
             this.blacklist.push(PREFIX[type] + CLASS_BLACKLIST[type][i]);
           }
         }
@@ -69,11 +69,10 @@ class ClassExtractor extends Extractor {
 
     let limit = this.reqConfig.getLimit() || 10;
 
-    const requestURL = this.reqConfig.getRequestURL();
-
     const self = this;
 
     function doQuery(lastTry = false, offset = 0, limit = 10) {
+      let requestURL = self.reqConfig.getRequestURL();
       let query = self.queryFactory.getClassQuery(limit, offset);
 
       self.$log.debug(`[Classes] Send Request with offset ${offset}...`);
@@ -89,31 +88,30 @@ class ClassExtractor extends Extractor {
 
               let fetchMore = 0;
 
-              for (let i = 0; i < bindings.length; i++) {
-
-                var currentClassURI = bindings[i].class.value;
+              bindings.forEach((binding) => {
+                let currentClassURI = binding.class.value;
 
                 if (currentClassURI.match(/^http.*/) && !self.inBlacklist(currentClassURI) &&
-                    bindings[i].instanceCount !== undefined) {
-                  var node = {};
+                    binding.instanceCount !== undefined) {
+                  let node = {};
 
                   node.uri = currentClassURI;
-                  node.name = (bindings[i].label !== undefined) ? bindings[i].label.value : '';
-                  node.value = parseInt(bindings[i].instanceCount.value);
+                  node.name = (binding.label !== undefined) ? binding.label.value : '';
+                  node.value = parseInt(binding.instanceCount.value);
                   node.type = 'class';
                   node.active = false;
-                  var newClassId = self.nodes.addNode(node);
+                  const newClassId = self.nodes.addNode(node);
 
                   classIds.push(newClassId);
 
-                  if (bindings[i].class !== undefined && bindings[i].class.value !== undefined) {
+                  if (binding.class !== undefined && binding.class.value !== undefined) {
                     self.requestClassLabel(newClassId, currentClassURI);
                   }
                 } else {
                   self.$log.debug(`[Classes] Class '${currentClassURI}' is either blacklisted or has an invalid URI!`);
                   fetchMore++;
                 }
-              }
+              });
 
               if (fetchMore === 0) {
                 deferred.resolve(classIds);
@@ -142,19 +140,25 @@ class ClassExtractor extends Extractor {
         }, function handleErrorExtractingClasses(err) {
           if (err.config.timeout.$$state.value === 'canceled') {
             self.$log.warn('[Class Extractor] Class extraction was canceled!');
+            deferred.reject(classIds);
           } else {
             self.$log.error(err);
-          }
 
-          // TODO check whether this was because of CORS
-          deferred.reject(classIds);
+            if (!self.reqConfig.getUseProxy()) {
+              self.$log.warn('Might need a proxy here, try again...');
+              self.reqConfig.setUseProxy(true);
+              doQuery(false, 0, limit);
+            } else {
+              deferred.reject(classIds);
+            }
+          }
         })
         .finally(function () {
           self.promises.removePromise(promiseId);
         });
     } // end of doQuery()
 
-    doQuery(false, 0,limit);
+    doQuery(false, 0, limit);
 
     return deferred.promise;
   }

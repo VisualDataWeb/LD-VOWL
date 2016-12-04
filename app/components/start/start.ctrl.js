@@ -5,17 +5,14 @@
  * @param {$location} $location
  * @param {Data} Data
  * @param {View} View
- * @param {Requests} Requests
  * @param {RequestConfig} RequestConfig
  * @param {Endpoints} Endpoints
  *
  * @ngInject
  */
-function startCtrl($log, $location, Data, View, Requests, RequestConfig, Endpoints) {
+function startCtrl($log, $location, Data, View, RequestConfig, Endpoints) {
 
   const start = this;
-
-  start.proxyAvailable = __PROXY__; // eslint-disable-line no-undef
 
   start.endpoints = [];
 
@@ -24,15 +21,6 @@ function startCtrl($log, $location, Data, View, Requests, RequestConfig, Endpoin
   start.useProxy = RequestConfig.getUseProxy();
 
   start.endpointAlert = true;
-
-  /**
-   * This function is triggered every time the proxy flag is toggled.
-   */
-  start.updateUseProxy = function () {
-    Requests.clear();
-    $log.warn('[Start] Cleared old requests.');
-    start.loadProxyEndpoints();
-  };
 
   /**
    * Shows the graph for the current endpoint and clears all data if endpoint has changed.
@@ -51,7 +39,7 @@ function startCtrl($log, $location, Data, View, Requests, RequestConfig, Endpoin
       Data.initMaps();
     }
 
-    RequestConfig.setUseProxy(start.useProxy);
+    RequestConfig.setUseProxy(false);
 
     if (start.endpoint !== undefined && start.endpoint.length > 0) {
       $log.debug('[Start] Show Graph!');
@@ -104,14 +92,6 @@ function startCtrl($log, $location, Data, View, Requests, RequestConfig, Endpoin
    */
   start.loadEndpoints = function () {
     Endpoints.getNonProxyEndpoints().then(handleEndpointListResponse, handleEndpointListError);
-
-    if (start.useProxy) {
-      start.loadProxyEndpoints();
-    }
-  };
-
-  start.loadProxyEndpoints = function () {
-    $log.debug('[Start] Also load endpoints only accessible via proxy.');
     Endpoints.getProxyEndpoints().then(handleEndpointListResponse, handleEndpointListError);
   };
 
