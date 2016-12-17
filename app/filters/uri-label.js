@@ -1,10 +1,10 @@
 export default function uriLabelFilter() {
 
   return function (uri) {
-    var uriLabel = '';
+    let uriLabel = '';
     if (uri !== undefined && uri !== '') {
-      var lastSlash = uri.lastIndexOf('/');
-      var lastHash = uri.lastIndexOf('#');
+      const lastSlash = uri.lastIndexOf('/');
+      const lastHash = uri.lastIndexOf('#');
       uriLabel = uri.substr(Math.max(lastSlash, lastHash) + 1).replace(/\_/g, ' ');
     }
     return uriLabel;

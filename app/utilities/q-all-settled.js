@@ -1,4 +1,5 @@
 import angular from 'angular';
+
 /**
  * @param {$provide} $provide
  *
@@ -8,14 +9,18 @@ function configure($provide) {
 
   $provide.decorator('$q', delegate);
 
-  delegate.$inject = ['$delegate'];
-
+  /**
+   *
+   * @param {$delegate} $delegate
+   * @returns {*}
+   *
+   * @ngInject
+   */
   function delegate($delegate) {
-
-    var $q = $delegate;
+    let $q = $delegate;
 
     $q.allSettled = function(promises) {
-      var wrappedPromises = angular.isArray(promises) ? promises.slice(0) : {};
+      let wrappedPromises = angular.isArray(promises) ? promises.slice(0) : {};
 
       angular.forEach(promises, function(promise, index) {
         wrappedPromises[index] = promise.then(function(value) {

@@ -1,26 +1,26 @@
 /**
  * @ngdoc service
- * @Name Prefixes
+ * @name Prefixes
  *
  * @param {$rootScope} $rootScope
  * @param {$log} $log
  *
  * @ngInject
  */
-function prefixesService($rootScope, $log) {
+function prefixes($rootScope, $log) {
 
-  var prefixes = [];
-  var colorNumber = 1;
-  var differentColors = true;
+  let prefixes = [];
+  let colorNumber = 1;
+  let differentColors = true;
 
   const that = this;
 
   /**
    * Add a new prefix.
    *
-   * @param {{color: number, prefix: string, value: number}} pre - an object with the prefix to add
+   * @param {{prefix: string}} pre - an object with the prefix to add
    */
-  that.addPrefix = function (pre) {
+  that.addPrefix = function(pre) {
     if (typeof pre === 'object' && pre.prefix !== undefined) {
 
       if (pre.prefix.length < 8) {
@@ -28,7 +28,7 @@ function prefixesService($rootScope, $log) {
         return;
       }
 
-      var existingPrefix;
+      let existingPrefix;
       for (let i = 0; i < prefixes.length; i++) {
         prefixes[i].classification = 'extern';
         if (prefixes[i].prefix === pre.prefix) {
@@ -168,4 +168,4 @@ function prefixesService($rootScope, $log) {
 
 } // end of PrefixesService
 
-export default prefixesService;
+export default prefixes;

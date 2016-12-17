@@ -1,4 +1,8 @@
-export default function graphUtils() {
+/**
+ * @ngdoc service
+ * @name GraphUtils
+ */
+function graphUtils() {
 
   const that = this;
 
@@ -88,3 +92,5 @@ export default function graphUtils() {
   }
 
 }
+
+export default graphUtils;

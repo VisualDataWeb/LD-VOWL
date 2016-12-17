@@ -49,7 +49,7 @@ class RelationExtractor extends Extractor {
       this.setBlacklist(classInput.split(','));
     } else {
       // create a new blacklist
-      for (var type in PROPERTY_BLACKLIST) {
+      for (let type in PROPERTY_BLACKLIST) {
         if (PROPERTY_BLACKLIST.hasOwnProperty(type) && type !== 'SKOS') {
           for (let i = 0; i < PROPERTY_BLACKLIST[type].length; i++) {
             this.blacklist.push(PREFIX[type] + PROPERTY_BLACKLIST[type][i]);
@@ -105,10 +105,10 @@ class RelationExtractor extends Extractor {
 
               // only add prop if not black listed
               if (!self.inBlacklist(currentURI)) {
-                var intermediateId = '';
-                var uriBetween = self.props.existsBetween(originId, targetId);
+                let intermediateId = '';
+                let uriBetween = self.props.existsBetween(originId, targetId);
                 if (uriBetween === false) {
-                  var propNode = {};
+                  let propNode = {};
                   propNode.uri = currentURI;
                   propNode.type = 'property';
                   propNode.value = 1;
@@ -192,7 +192,7 @@ class RelationExtractor extends Extractor {
 
         const bindings = response.data.results.bindings;
         if (bindings !== undefined && bindings.length > 0 && bindings[0].label !== undefined) {
-          var label = bindings[0].label.value;
+          const label = bindings[0].label.value;
           self.$log.debug(`[Property Label] Found '${label}' for '${uri}'.`);
           self.props.insertValue(uri, 'name', label);
         } else {
@@ -313,7 +313,7 @@ class RelationExtractor extends Extractor {
    * @return {*} promise
    */
   requestClassEquality(classId1, classId2) {
-    var deferred = this.$q.defer();
+    const deferred = this.$q.defer();
     const promiseId = this.promises.addPromise(deferred);
 
     if (classId1 === undefined || classId2 === undefined) {
@@ -327,16 +327,16 @@ class RelationExtractor extends Extractor {
       return deferred.promise;
     }
 
-    var classURI1 = this.nodes.getURIById(classId1);
-    var classURI2 = this.nodes.getURIById(classId2);
+    const classURI1 = this.nodes.getURIById(classId1);
+    const classURI2 = this.nodes.getURIById(classId2);
 
-    var query = this.queryFactory.getNumberOfCommonInstancesQuery(classURI1, classURI2);
+    const query = this.queryFactory.getNumberOfCommonInstancesQuery(classURI1, classURI2);
     const requestURL = this.rConfig.getRequestURL();
 
-    var count1 = this.nodes.getInstanceCountById(classId1);
-    var count2 = this.nodes.getInstanceCountById(classId2);
+    const count1 = this.nodes.getInstanceCountById(classId1);
+    const count2 = this.nodes.getInstanceCountById(classId2);
 
-    var self = this;
+    const self = this;
 
     self.$log.debug(`[Relations] Query for number of common Instances of '${classURI1}' and '${classURI2}'...`);
 
@@ -349,7 +349,7 @@ class RelationExtractor extends Extractor {
         const bindings = response.data.results.bindings;
 
         if (bindings !== undefined && bindings.length > 0 && bindings[0].hasOwnProperty('commonInstanceCount')) {
-          var commonCount = parseInt(bindings[0].commonInstanceCount.value);
+          const commonCount = parseInt(bindings[0].commonInstanceCount.value);
 
           if (commonCount !== undefined) {
             self.$log.debug(`[Relations] Classes '${classURI1}' (${count1}) and '${classURI2}' (${count2}) have ` +
@@ -435,7 +435,7 @@ class RelationExtractor extends Extractor {
 
               self.$log.debug('[Relations] ' + classId1 + ' and ' + classId2 + ' are disjoint.');
 
-              var newDNode = {
+              let newDNode = {
                 uri: self.nodes.DISJOINT_NODE_URI,
                 type: 'disjointNode',
                 name: ' ',
@@ -446,7 +446,7 @@ class RelationExtractor extends Extractor {
               newDNode.classes.push(classId1);
               newDNode.classes.push(classId2);
 
-              var disjointNodeId = self.nodes.addNode(newDNode);
+              const disjointNodeId = self.nodes.addNode(newDNode);
 
               // TODO check against all connected classes
               self.props.addDisjointProp(classId1, disjointNodeId);

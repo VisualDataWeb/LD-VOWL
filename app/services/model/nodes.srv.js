@@ -1,5 +1,5 @@
 /**
- * @ngdoc serivice
+ * @ngdoc service
  * @name Nodes
  *
  * @param {$log} $log
@@ -33,14 +33,14 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
     let storage = (that.useSessionStorage) ? sessionStorage : localStorage;
 
     if (storage !== undefined) {
-      var sessionNodes = storage.getItem(RequestConfig.getEndpointURL() + '_nodes');
+      const sessionNodes = storage.getItem(RequestConfig.getEndpointURL() + '_nodes');
 
       if (sessionNodes !== undefined && sessionNodes !== null) {
         $log.debug('[Nodes] Use nodes from session or local storage!');
         nodes = new Map(JSON.parse(sessionNodes));
 
         // rebuild the class uri map
-        for (var node of nodes.values()) {
+        for (let node of nodes.values()) {
           if (node.type === 'class' || node.type === 'disjointNode') {
             classUriIdMap.set(node.uri, node.id);
           } else if (node.type === 'subClassProperty') {
@@ -63,7 +63,7 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
   that.buildPrefixMap = function () {
     Prefixes.clear();
 
-    for (var node of nodes.values()) {
+    for (let node of nodes.values()) {
       if (node.uri !== undefined && node.uri.length > 0 &&
           (node.uri !== Properties.SUBCLASS_URI && node.uri !== that.DISJOINT_NODE_URI)) {
         let pre = node.uri.replace(that.suffixRegEx, '');
@@ -138,7 +138,7 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
     let newId = '';
     if (typeof newNode === 'object' && newNode.hasOwnProperty('uri') && newNode.hasOwnProperty('type')) {
       if (newNode.type === 'class') {
-        var idByUri = classUriIdMap.get(newNode.uri);
+        const idByUri = classUriIdMap.get(newNode.uri);
 
         // check whether this class already exists
         if (idByUri !== undefined) {
@@ -259,7 +259,7 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
    * @param {string} label - the label for the node with the given id
    */
   that.insertLabel = function (id, label) {
-    var searchedItem = nodes.get(id);
+    const searchedItem = nodes.get(id);
 
     if (searchedItem !== undefined) {
       searchedItem.name = label;
@@ -326,7 +326,7 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
    */
   that.getTypesLoaded = function (classId) {
     if (classId !== undefined && typeof classId === 'string') {
-      var clazz = nodes.get(classId);
+      const clazz = nodes.get(classId);
 
       if (clazz !== undefined && clazz.type === 'class' && clazz.typesLoaded) {
         $log.debug(`[Nodes] Types for '${classId}' are already loaded!`);
@@ -353,8 +353,8 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
 
       // NOTE: one or both of them may not exist anymore, because they are already merged with another node
 
-      var cl1 = that.getClassNodeOrEquivalent(classId1);
-      var cl2 = that.getClassNodeOrEquivalent(classId2);
+      const cl1 = that.getClassNodeOrEquivalent(classId1);
+      const cl2 = that.getClassNodeOrEquivalent(classId2);
 
       if (cl1 !== undefined && cl1.type === 'class' && cl2 !== undefined && cl2.type === 'class') {
         if (cl1 === cl2) {

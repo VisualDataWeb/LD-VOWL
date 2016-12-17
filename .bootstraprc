@@ -1,0 +1,68 @@
+---
+bootstrapVersion: 3
+#loglevel: debug
+
+env:
+  development:
+    extractStyles: false
+  production:
+    extractStyles: true
+
+styleLoaders:
+  - style
+  - css
+  - sass
+
+styles:
+
+  # Mixins
+  mixins: true
+
+  # Reset and dependencies
+  normalize: true
+  print: true
+  glyphicons: true
+
+  # Core CSS
+  scaffolding: true
+  type: true
+  code: true
+  grid: true
+  tables: true
+  forms: true
+  buttons: true
+
+  # Components
+  component-animations: true
+  dropdowns: true
+  button-groups: true
+  input-groups: true
+  navs: true
+  navbar: true
+  breadcrumbs: false
+  pagination: true
+  pager: true
+  labels: true
+  badges: false
+  jumbotron: true
+  thumbnails: false
+  alerts: true
+  progress-bars: false
+  media: true
+  list-group: true
+  panels: true
+  wells: true
+  responsive-embed: false
+  close: true
+
+  # Components w/ JavaScript
+  modals: false
+  tooltip: false
+  popovers: false
+  carousel: false
+
+  # Utility classes
+  utilities: true
+  responsive-utilities: true
+
+scripts: false

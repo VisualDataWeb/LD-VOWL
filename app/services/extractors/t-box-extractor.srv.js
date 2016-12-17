@@ -51,7 +51,7 @@ function tBoxExtractor($q, $log, Data, Filters, StopWatch, Promises, ClassExtrac
         }
       }
 
-      // after class equality is checked for all pairs, types and relations can be loaded
+      // after class equality is checked for all pairs, data types and relations can be loaded
       $q.allSettled(promises).then(function extractForRemainingClasses(data) {
 
         $log.debug('[TBox Extractor] Now all should be settled!');

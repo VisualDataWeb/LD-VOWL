@@ -1,8 +1,8 @@
-/*global angular*/
-'use strict';
+import angular from 'angular';
 
 require('./vendor.js')(); // run an empty function
 
+//TODO move into specific components
 require('../styles/main.css');
 require('../styles/graph.css');
 

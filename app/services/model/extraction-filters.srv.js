@@ -11,34 +11,34 @@ function filters($cookies, $log) {
 
   const self = this;
 
-  var includeLoops;
-  var includeLiterals;
-  var includeDisjointNode;
-  var includeSubclassRelations;
+  let includeLoops;
+  let includeLiterals;
+  let includeDisjointNode;
+  let includeSubclassRelations;
 
   // TODO move into constant
-  var cookiePrefix = 'ldvowl_';
+  let cookiePrefix = 'ldvowl_';
 
   self.init = function () {
-    var loopCookie = cookiePrefix + 'include_loops';
+    let loopCookie = cookiePrefix + 'include_loops';
     includeLoops = self.getIncludeLoops() || true;
     $cookies.put(loopCookie, includeLoops);
 
-    var literalCookie = cookiePrefix + 'include_literals';
+    let literalCookie = cookiePrefix + 'include_literals';
     includeLiterals = self.getIncludeLiterals() || true;
     $cookies.put(literalCookie, includeLiterals);
 
-    var disjointNodeCookie = cookiePrefix + 'include_disjoint_node';
+    let disjointNodeCookie = cookiePrefix + 'include_disjoint_node';
     includeDisjointNode = self.getIncludeDisjointNode() || false;
     $cookies.put(disjointNodeCookie, includeDisjointNode);
 
-    var subclassCookie = cookiePrefix + 'include_subclass_relations';
+    let subclassCookie = cookiePrefix + 'include_subclass_relations';
     includeSubclassRelations = self.getIncludeSubclassRelations() || true;
     $cookies.put(subclassCookie, includeSubclassRelations);
   };
 
   self.getIncludeLoops = function () {
-    var cookieLoopFlag = $cookies.get(cookiePrefix + 'include_loops');
+    let cookieLoopFlag = $cookies.get(cookiePrefix + 'include_loops');
 
     if (cookieLoopFlag !== undefined) {
       includeLoops = cookieLoopFlag;
@@ -48,7 +48,7 @@ function filters($cookies, $log) {
   };
 
   self.toggleLoops = function () {
-    var cookieName = cookiePrefix + 'include_loops';
+    let cookieName = cookiePrefix + 'include_loops';
     if (self.getIncludeLoops()) {
       $cookies.put(cookieName, 'false');
       $log.debug('[Filters] Disable loops.');
@@ -61,7 +61,7 @@ function filters($cookies, $log) {
   };
 
   self.getIncludeLiterals = function () {
-    var cookieLiteralsFlag = $cookies.get(cookiePrefix + 'include_literals');
+    let cookieLiteralsFlag = $cookies.get(cookiePrefix + 'include_literals');
 
     if (cookieLiteralsFlag !== undefined) {
       includeLiterals = cookieLiteralsFlag;
@@ -71,7 +71,7 @@ function filters($cookies, $log) {
   };
 
   self.toggleLiterals = function () {
-    var cookieName = cookiePrefix + 'include_literals';
+    let cookieName = cookiePrefix + 'include_literals';
     if (self.getIncludeLiterals()) {
       $log.debug('[Filters] Disable Literals.');
       $cookies.put(cookieName, 'false');
@@ -84,7 +84,7 @@ function filters($cookies, $log) {
   };
 
   self.getIncludeDisjointNode = function () {
-    var cookieDisjointNodeFlag = $cookies.get(cookiePrefix + 'include_disjoint_node');
+    let cookieDisjointNodeFlag = $cookies.get(cookiePrefix + 'include_disjoint_node');
 
     if (cookieDisjointNodeFlag !== undefined) {
       includeDisjointNode = cookieDisjointNodeFlag;
@@ -94,7 +94,7 @@ function filters($cookies, $log) {
   };
 
   self.toggleDisjointNode = function () {
-    var cookieName = cookiePrefix + 'include_disjoint_node';
+    let cookieName = cookiePrefix + 'include_disjoint_node';
     if (self.getIncludeDisjointNode()) {
       $log.debug('[Filters] Disable disjoint node.');
       $cookies.put(cookieName, 'false');
@@ -107,7 +107,7 @@ function filters($cookies, $log) {
   };
 
   self.getIncludeSubclassRelations = function () {
-    var cookieSubclassRelationFlag = $cookies.get(cookiePrefix + 'include_subclass_relations');
+    let cookieSubclassRelationFlag = $cookies.get(cookiePrefix + 'include_subclass_relations');
 
     if (cookieSubclassRelationFlag !== undefined) {
       includeSubclassRelations = cookieSubclassRelationFlag;
@@ -117,7 +117,7 @@ function filters($cookies, $log) {
   };
 
   self.toggleSubclassRelations = function () {
-    var cookieName = cookiePrefix + 'include_subclass_relations';
+    let cookieName = cookiePrefix + 'include_subclass_relations';
     if (self.getIncludeSubclassRelations()) {
       $log.debug('[Filters] Disable subclass relations');
       $cookies.put(cookieName, 'false');

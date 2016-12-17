@@ -145,7 +145,7 @@ class ClassExtractor extends Extractor {
             self.$log.error(err);
 
             if (!self.reqConfig.getUseProxy()) {
-              self.$log.warn('Might need a proxy here, try again...');
+              self.$log.warn('[Class Extractor] Might need a proxy here, try again...');
               self.reqConfig.setUseProxy(true);
               doQuery(false, 0, limit);
             } else {
@@ -166,7 +166,7 @@ class ClassExtractor extends Extractor {
   requestClassLabel (classId, classURI) {
     const self = this;
 
-    var canceller = self.$q.defer();
+    const canceller = self.$q.defer();
     const promiseId = self.promises.addPromise(canceller);
 
     const labelLang = this.reqConfig.getLabelLanguage();
@@ -185,7 +185,7 @@ class ClassExtractor extends Extractor {
 
         if (bindings !== undefined && bindings.length > 0 && bindings[0].label !== undefined &&
             bindings[0].label.value !== '') {
-          var label = bindings[0].label.value;
+          const label = bindings[0].label.value;
           self.nodes.insertLabel(classId, label);
           self.$log.debug(`[Class Label] Found '${label}' for '${classURI}'.`);
         } else {
@@ -216,13 +216,13 @@ class ClassExtractor extends Extractor {
    * @param {string} classURI - the URI of this class
    */
   requestClassSkosLabel (classId, classURI) {
-    var self = this;
+    const self = this;
 
-    var canceller = this.$q.defer();
+    const canceller = this.$q.defer();
 
-    var labelLang = this.reqConfig.getLabelLanguage();
-    var skosLabelQuery = this.queryFactory.getPreferredLabelQuery(classURI, labelLang);
-    var requestURL = this.reqConfig.getRequestURL();
+    const labelLang = this.reqConfig.getLabelLanguage();
+    const skosLabelQuery = this.queryFactory.getPreferredLabelQuery(classURI, labelLang);
+    const requestURL = this.reqConfig.getRequestURL();
 
     self.$log.debug(`[Class Label] Send request for '${classURI}' SKOS preferred label...`);
 

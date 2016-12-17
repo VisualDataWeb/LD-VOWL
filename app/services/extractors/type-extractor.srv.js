@@ -1,5 +1,5 @@
 /**
- * @Name TypeExtractor
+ * @name TypeExtractor
  * TODO rename to DataTypeExtractor
  *
  * @param {$http} $http
@@ -16,16 +16,16 @@
  */
 function typeExtractor($http, $q, $log, RequestConfig, QueryFactory, Nodes, Properties, RelationExtractor, Promises) {
 
-  var that = this;
+  const that = this;
 
   that.requestReferringTypes = function (classId) {
-
-    var canceller = $q.defer();
+    const canceller = $q.defer();
     const promiseId = Promises.addPromise(canceller);
 
-    var classURI = Nodes.getURIById(classId);
+    const classURI = Nodes.getURIById(classId);
     const query = QueryFactory.getInstanceReferringTypesQuery(classURI, 5);
-    var requestURL = RequestConfig.getRequestURL();
+
+    const requestURL = RequestConfig.getRequestURL();
 
     // avoid loading types multiple times
     if (Nodes.getTypesLoaded(classId)) {

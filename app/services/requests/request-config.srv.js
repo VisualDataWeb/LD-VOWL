@@ -160,15 +160,14 @@ function requestConfig($cookies) {
   };
 
   /**
-   * Returns a configuration object for the given SPARQL query
+   * Returns a configuration object for the given SPARQL query.
    * 
    * @param {string} query
    * @param {*} canceller
-   * @param {boolean} jsonp
    * 
-   * @return {*}
+   * @return {{params: {timeout, debug, format, query}}}
    */
-  self.forQuery = function (query, canceller, jsonp) {
+  self.forQuery = function(query, canceller) {
     const config = {};
 
     config.params = {
@@ -180,10 +179,6 @@ function requestConfig($cookies) {
 
     if (useProxy) {
       config.params.endpoint = endpointURL;
-    }
-
-    if (jsonp) {
-      config.params.callback = 'JSON_CALLBACK';
     }
 
     config.headers = {

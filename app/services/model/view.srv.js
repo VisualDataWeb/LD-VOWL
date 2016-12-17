@@ -1,14 +1,13 @@
-'use strict';
-
 /**
- * @Name View
+ * @ngdoc service
+ * @name View
  */
 function viewService() {
 
+  let that = this;
+
   let scale;
   let translate;
-
-  let that = this;
 
   that.getScale = function() {
     return scale;

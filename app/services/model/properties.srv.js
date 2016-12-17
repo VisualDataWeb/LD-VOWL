@@ -37,10 +37,10 @@ function properties($interval, $log, $rootScope, RequestConfig) {
   self.initProperties = function () {
     let storage = (self.useSessionStorage) ? sessionStorage : localStorage;
     if (storage !== undefined) {
-      var sessionProperties = storage.getItem(RequestConfig.getEndpointURL() + '_properties');
+      const sessionProperties = storage.getItem(RequestConfig.getEndpointURL() + '_properties');
 
       if (sessionProperties !== undefined && sessionProperties !== null) {
-        var savedItems = JSON.parse(sessionProperties);
+        const savedItems = JSON.parse(sessionProperties);
 
         if (savedItems !== undefined && savedItems.length > 0) {
           $log.debug('[Properties] Re-use ' + savedItems.length + ' properties from session storage!');
@@ -155,7 +155,7 @@ function properties($interval, $log, $rootScope, RequestConfig) {
     if (typeof source === 'string' && typeof intermediate === 'string' && typeof target === 'string' &&
         typeof uri === 'string') {
 
-      var ordered;
+      let ordered;
       if (value !== undefined) {
         ordered = true;
       } else {
@@ -240,11 +240,11 @@ function properties($interval, $log, $rootScope, RequestConfig) {
   };
 
   self.removeDisjointProperties = function (classId) {
-    var i = 0;
-    var nodesToRemove = [];
+    let i = 0;
+    let nodesToRemove = [];
 
     while (i < self.properties.length) {
-      var adjacentProp = self.properties[i];
+      let adjacentProp = self.properties[i];
       if (adjacentProp.source === classId && adjacentProp.type === 'disjointProperty') {
         nodesToRemove.push(adjacentProp.target);
         self.properties.splice(i, 1);
@@ -255,7 +255,7 @@ function properties($interval, $log, $rootScope, RequestConfig) {
 
     i = 0;
     while (i < self.properties.length) {
-      var otherProp = self.properties[i];
+      let otherProp = self.properties[i];
       if (otherProp.type === 'disjointProperty' && nodesToRemove.indexOf(otherProp.target) !== -1) {
         self.properties.splice(i, 1);
       } else {
@@ -306,9 +306,9 @@ function properties($interval, $log, $rootScope, RequestConfig) {
    * @returns {string}
    */
   self.getIntermediateId = function (sourceId, targetId) {
-    var intermediateId = '';
+    let intermediateId = '';
     for (let i = 0; i < self.properties.length; i++) {
-      var currentProp = self.properties[i];
+      let currentProp = self.properties[i];
       if (currentProp.source === sourceId && currentProp.target === targetId) {
         intermediateId = currentProp.intermediate;
         break;

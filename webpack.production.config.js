@@ -1,11 +1,9 @@
-'use strict';
+const webpack = require('webpack');
+const ngAnnotatePlugin = require('ng-annotate-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-var webpack = require('webpack');
-var ngAnnotatePlugin = require('ng-annotate-webpack-plugin');
-var ExtractPlugin = require('extract-text-webpack-plugin');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
-
-var APP = __dirname + '/app';
+const APP = __dirname + '/app';
 
 module.exports = {
   // config goes here
@@ -34,7 +32,8 @@ module.exports = {
       { test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
         loader: 'url-loader?limit=10000&minetype=application/font-woff&name=fonts/[name].[ext]' },
       { test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'file-loader?name=img/[name].[ext]' },
-      { test: /\.css$/, loader: ExtractPlugin.extract('style', 'css') },
+      { test: /\.css$/, loader: ExtractTextPlugin.extract('style', 'css')},
+      { test: /\.scss$/, loader: ExtractTextPlugin.extract('style', 'css!sass')},
       { test: /\.(jpg|png|gif|ico)$/, loader: 'file-loader?name=img/[name].[ext]'}
     ]
   },
@@ -56,7 +55,7 @@ module.exports = {
       add: true
     }),
 
-    new ExtractPlugin('styles.css'),
+    new ExtractTextPlugin('styles.css', { allChunks: true }),
 
     new webpack.optimize.CommonsChunkPlugin('vendors', 'js/vendors.js'),
 

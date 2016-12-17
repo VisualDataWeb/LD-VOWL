@@ -39,7 +39,7 @@ function detailExtractor($http, $q, $log, QueryFactory, RequestConfig, Nodes, Pr
         const bindings = response.data.results.bindings;
 
         if (bindings.length > 0) {
-          var newComment = bindings[0].comment;
+          const newComment = bindings[0].comment;
           if (newComment !== undefined && newComment.hasOwnProperty('value')) {
             Nodes.insertComment(id, newComment.value);
           } else {

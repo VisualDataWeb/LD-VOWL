@@ -62,9 +62,9 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Grap
                               .attr('class', 'notification')
                               .style('opacity', 0.0);
 
-      var lastUpdate = null;
+      let lastUpdate = null;
 
-      var minUpdateInterval = 1500;
+      const minUpdateInterval = 1500;
 
       // Browser onresize event
       $window.onresize = function () {
@@ -155,19 +155,17 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Grap
        * Watch for data changes, and consider time difference since last update, otherwise there may be too much
        * refreshes if responses are cached.
        */
-      scope.$watch('data', function(newVals) {
-        //$log.debug("[Graph] Needs Update!");
-
+      scope.$watch('data', function(newData) {
         if (lastUpdate === null) {
           // first update, store current time and render
           lastUpdate = new Date();
-          return scope.render(newVals);
+          return scope.render(newData);
         } else {
           // another update, check how much time has passed since last update
-          var currentTime = new Date();
+          const currentTime = new Date();
           if ((currentTime - lastUpdate) > minUpdateInterval) {
             lastUpdate = currentTime;
-            return scope.render(newVals);
+            return scope.render(newData);
           }
         }
       }, true);
@@ -317,14 +315,14 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Grap
       };
 
       scope.getMarkerEnd = function (type, value) {
-        var size = parseInt(Math.min(Math.log2(value + 2), 5));
+        const size = parseInt(Math.min(Math.log2(value + 2), 5));
         return `url(#${type}Arrow${size})`;
       };
 
       scope.calcRadius = function (element) {
         var scale = d3.scale.sqrt()
                         .domain([0, scope.maxValue])
-                        .range ([defaultRadius, 65]);
+                        .range([defaultRadius, 65]);
         return scale(element.value);
       };
 
@@ -349,7 +347,7 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Grap
 
         scope.data.selected = d.uri;
 
-        var message = {};
+        let message = {};
 
         if (d.type === 'property' || d.type === 'datatypeProperty' || d.type === 'subClassProperty') {
           $log.debug(`[Graph] Selected property '${d.uri}'.`);
@@ -430,13 +428,13 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Grap
           .attr('markerHeight', function (d) { return d.size; })
           .attr('orient', 'auto')
           .style('stroke', function (d) {
-            return (d.class === 'hovered') ? 'red' : scope.arrowColor(d.size);
+            return (d.class === 'hovered') ? '#f00' : scope.arrowColor(d.size);
           })
           .style('fill', function (d) {
             if (d.class === 'hovered') {
-              return 'red';
+              return '#f00';
             } else if (d.class === 'subclass') {
-              return 'white';
+              return '#fff';
             } else {
               return scope.arrowColor(d.size);
             }
@@ -482,7 +480,7 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Grap
           .attr('r', function (d) { return d.radius + 'px'; })
           .on('click', scope.updateActive)
           .on('mouseover', function () {
-            d3.select(this).style('fill', 'red');
+            d3.select(this).style('fill', '#f00');
           })
           .on('mouseout', function () {
             d3.select(this).style('fill', '#acf');
@@ -506,7 +504,7 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Grap
           .attr('height', defaultPropHeight)
           .on('click', scope.updateActive)
           .on('mouseover', function () {
-            d3.select(this).style('fill', 'red');
+            d3.select(this).style('fill', '#f00');
           })
           .on('mouseout', function () {
             d3.select(this).style('fill', '#acf');
@@ -767,7 +765,7 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Grap
       /**
        * Function which creates the graph.
        *
-       * @param {{nodes, properties}} data
+       * @param {{nodes, properties, showTypes}} data
        */
       scope.render = function (data) {
 
@@ -826,11 +824,11 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Grap
               // get direct class links
               if (s.type !== 'property' && t.type !== 'property') {
 
-                let linktype = 'property';
+                let linkType = 'property';
 
                 if (t.type === 'type') {
                   if (data.showTypes) {
-                    linktype = 'datatypeProperty';
+                    linkType = 'datatypeProperty';
                   } else {
                     return;
                   }
@@ -839,8 +837,8 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Grap
                 i.value = link.value;
 
                 // create two links
-                links.push({source: s, target: i, type: linktype});
-                links.push({source: i, target: t, type: linktype});
+                links.push({source: s, target: i, type: linkType});
+                links.push({source: i, target: t, type: linkType});
                 bilinks.push({source: s, intermediate: i, target: t, value: link.value, type: link.type});
               }
             } else {
