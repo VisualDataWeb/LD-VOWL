@@ -10,7 +10,7 @@ function filterGroupCtrl(Filters, TBoxExtractor) {
 
   const vm = this;
 
-  vm.filterTypes = !Filters.getIncludeLiterals();
+  vm.filterDataTypes = !Filters.getIncludeDataTypes();
   vm.filterLoops = !Filters.getIncludeLoops();
   vm.filterDisjointNodes = !Filters.getIncludeDisjointNode();
   vm.filterSubclassRelations = !Filters.getIncludeSubclassRelations();
@@ -20,9 +20,9 @@ function filterGroupCtrl(Filters, TBoxExtractor) {
   /**
    * Toggle whether data types should be shown in the graph.
    */
-  vm.toggleTypes = function () {
-    vm.filterTypes = !Filters.toggleLiterals();
-    if (!vm.filterTypes) {
+  vm.toggleDataTypes = function () {
+    vm.filterDataTypes = !Filters.toggleDataTypes();
+    if (!vm.filterDataTypes) {
       TBoxExtractor.extractDataTypes();
     }
   };

@@ -17,7 +17,7 @@ function links(Geometry) {
   self.disjointPropDistance = 100;
   self.loopDistance = 80;
 
-  self.getClassToDatatyoeDistance = function () {
+  self.getClassToDatatypeDistance = function () {
     return self.dtPropDistance;
   };
 

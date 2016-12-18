@@ -6,10 +6,11 @@
  * @param {Properties} Properties
  * @param {Prefixes} Prefixes
  * @param {RequestConfig} RequestConfig
+ * @param {Storage} Storage
  *
  * @ngInject
  */
-function nodesService($log, Properties, Prefixes, RequestConfig) {
+function nodesService($log, Properties, Prefixes, RequestConfig, Storage) {
 
   let classUriIdMap = new Map();
   let nodes = new Map();
@@ -27,36 +28,28 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
   that.suffixRegEx = /(#?[^\/#]*)\/?$/;
   that.altSuffixRegEx = /(:[^:]*)$/;
 
-  that.useSessionStorage = __SESSION_STORAGE__; // eslint-disable-line no-undef
-
   that.initMap = function () {
-    let storage = (that.useSessionStorage) ? sessionStorage : localStorage;
+    const sessionNodes = Storage.getItem(RequestConfig.getEndpointURL() + '_nodes');
 
-    if (storage !== undefined) {
-      const sessionNodes = storage.getItem(RequestConfig.getEndpointURL() + '_nodes');
+    if (sessionNodes !== undefined && sessionNodes !== null) {
+      $log.debug('[Nodes] Use nodes from session or local storage!');
+      nodes = new Map(JSON.parse(sessionNodes));
 
-      if (sessionNodes !== undefined && sessionNodes !== null) {
-        $log.debug('[Nodes] Use nodes from session or local storage!');
-        nodes = new Map(JSON.parse(sessionNodes));
-
-        // rebuild the class uri map
-        for (let node of nodes.values()) {
-          if (node.type === 'class' || node.type === 'disjointNode') {
-            classUriIdMap.set(node.uri, node.id);
-          } else if (node.type === 'subClassProperty') {
-            subClassSet.add(node.childId + node.parentId);
-          } else if (node.hasEquivalent === true && node.equivalentURIs !== undefined) {
-            for (let i = 0; i < node.equivalentURIs.length; i++) {
-              equivalentClasses.set(node.equivalentURIs[i], node.id);
-            }
+      // rebuild the class uri map
+      for (let node of nodes.values()) {
+        if (node.type === 'class' || node.type === 'disjointNode') {
+          classUriIdMap.set(node.uri, node.id);
+        } else if (node.type === 'subClassProperty') {
+          subClassSet.add(node.childId + node.parentId);
+        } else if (node.hasEquivalent === true && node.equivalentURIs !== undefined) {
+          for (let i = 0; i < node.equivalentURIs.length; i++) {
+            equivalentClasses.set(node.equivalentURIs[i], node.id);
           }
         }
-
-        $log.debug('[Nodes] Build prefix map for nodes from session storage!');
-        that.buildPrefixMap();
       }
-    } else {
-      $log.error('[Nodes] No session or local storage, caching of this app is disabled!');
+
+      $log.debug('[Nodes] Build prefix map for nodes from session storage!');
+      that.buildPrefixMap();
     }
   };
 
@@ -78,18 +71,7 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
   };
 
   that.updateStorage = function () {
-    let storage;
-    if (that.useSessionStorage) {
-      storage = sessionStorage;
-    } else {
-      storage = localStorage;
-    }
-
-    if (storage !== undefined) {
-      storage.setItem(RequestConfig.getEndpointURL() + '_nodes', JSON.stringify([...nodes]));
-    } else {
-      $log.error(`[Nodes] Can not update storage, local or session storage is not supported by your browser!`);
-    }
+    Storage.setItem(RequestConfig.getEndpointURL() + '_nodes', JSON.stringify([...nodes]));
   };
 
   that.addDatatypeForClass = function(dataTypeNode, classId) {
@@ -246,7 +228,14 @@ function nodesService($log, Properties, Prefixes, RequestConfig) {
     if (searchedItem !== undefined && searchedItem.hasOwnProperty('uri')) {
       uri = searchedItem.uri;
     } else {
-      $log.error(`[Nodes] Can not resolve uri of node with id '${id}'! This node doesn't exist!`);
+      $log.debug(`[Nodes] Can not resolve uri of node with id '${id}'! Search for equivalent nodes...`);
+      const eqNode = nodes.getClassNodeOrEquivalent(id);
+
+      if (eqNode !== undefined && eqNode.uri !== undefined) {
+        uri = eqNode.uri;
+      } else {
+        $log.error(`[Nodes] Can not resolve uri of node with id '${id}'! This node doesn't exist!`);
+      }
     }
 
     return uri;

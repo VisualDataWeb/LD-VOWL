@@ -25,7 +25,6 @@ function promises($log) {
     const promiseId = 'promise' + nextPromiseNumber;
     cancelPromises.set(promiseId, newPromise);
     nextPromiseNumber++;
-    $log.debug(`[Promises] Added a new promise with id ${promiseId}! Now holding ${cancelPromises.size} promises.`);
     return promiseId;
   };
 
@@ -36,7 +35,6 @@ function promises($log) {
    */
   that.removePromise = function (promiseId) {
     cancelPromises.delete(promiseId);
-    $log.debug(`[Promises] Removed promise ${promiseId}, now holding ${cancelPromises.size} promises.`);
   };
 
   /**

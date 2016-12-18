@@ -1,6 +1,6 @@
 /**
- * @name TypeExtractor
- * TODO rename to DataTypeExtractor
+ * @ngdoc service
+ * @name DataTypeExtractor
  *
  * @param {$http} $http
  * @param {$q} $q
@@ -14,7 +14,8 @@
  *
  * @ngInject
  */
-function typeExtractor($http, $q, $log, RequestConfig, QueryFactory, Nodes, Properties, RelationExtractor, Promises) {
+function dataTypeExtractor($http, $q, $log, RequestConfig, QueryFactory, Nodes, Properties, RelationExtractor,
+                           Promises) {
 
   const that = this;
 
@@ -104,6 +105,6 @@ function typeExtractor($http, $q, $log, RequestConfig, QueryFactory, Nodes, Prop
       });
   }; // end of requestReferringTypes()
   
-} // end of TypeExtractor
+} // end of DataTypeExtractor
 
-export default typeExtractor;
+export default dataTypeExtractor;

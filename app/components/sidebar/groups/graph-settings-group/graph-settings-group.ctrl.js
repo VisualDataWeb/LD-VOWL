@@ -19,7 +19,7 @@ function graphSettingsCtrl($rootScope, $log, Prefixes, Links) {
   graphSettings.ccEdgeLength = Links.getClassToClassDistance();
 
   // length of edges between data type and class
-  graphSettings.ctEdgeLength = Links.getClassToDatatyoeDistance();
+  graphSettings.ctEdgeLength = Links.getClassToDatatypeDistance();
 
   graphSettings.layoutPaused = false;
 
@@ -32,7 +32,7 @@ function graphSettingsCtrl($rootScope, $log, Prefixes, Links) {
   };
 
   graphSettings.updateClassToDatatypeLength = function() {  
-    const newLength = parseInt(graphSettings.ctEdgeLength)
+    const newLength = parseInt(graphSettings.ctEdgeLength);
     Links.setClassToDatatypeDistance(newLength);
 
     // node link graph must be informed
@@ -44,6 +44,7 @@ function graphSettingsCtrl($rootScope, $log, Prefixes, Links) {
    */
   graphSettings.toggleDifferentColors = function () {
     graphSettings.differentColors = Prefixes.toggleDifferentColors();
+    $log.debug(`[GraphSettings] ${graphSettings.differentColors ? 'Use' : "Don't use"} different colors in graph.`);
   };
 
   /**
@@ -52,6 +53,7 @@ function graphSettingsCtrl($rootScope, $log, Prefixes, Links) {
   graphSettings.toggleLayout = function () {
     graphSettings.layoutPaused = !graphSettings.layoutPaused;
     $rootScope.$broadcast('toggled-layout', graphSettings.layoutPaused);
+    $log.debug(`[GraphSettings] ${graphSettings.layoutPaused ? 'Pause' : 'Resume'} force-directed layout.`);
   };
 
 }

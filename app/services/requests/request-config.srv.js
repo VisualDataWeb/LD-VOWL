@@ -2,21 +2,26 @@
  * @ngdoc service
  * @name RequestConfig
  *
- * @param {$cookies} $cookies
+ * @param {Storage} Storage
  *
  * @ngInject
  */
-function requestConfig($cookies) {
+function requestConfig(Storage) {
 
-  const cookiePrefix = 'ldvowl_';
   const proxyURL = __PROXY_URL__ || 'http://localhost/proxy.php';  // eslint-disable-line no-undef
 
-  let endpointURL = $cookies.get(cookiePrefix + 'endpoint') || '';
-  let useProxy = $cookies.get(cookiePrefix + 'proxy') || 'false';
+  const ENDPOINT_KEY = 'endpoint';
+  const PROXY_KEY = 'proxy';
+  const LIMIT_KEY = 'limit';
+  const ORDERED_FLAG_KEY = 'ordered';
+  const LABEL_LANG_KEY = 'lang';
+
+  let endpointURL = Storage.getItem(ENDPOINT_KEY) || '';
+  let useProxy = Storage.getItem(PROXY_KEY) || 'false';
   let limit = 10;
   let sparqlTimeout = 30000;
   let debug = 'on';
-  let labelLanguage = 'en';
+  let labelLanguage = Storage.getItem(LABEL_LANG_KEY) || 'en';
   let format = 'application/sparql-results+json';
 
   let propertiesOrdered = true;
@@ -24,25 +29,25 @@ function requestConfig($cookies) {
   const self = this;
 
   self.init = function () {
-    $cookies.put(cookiePrefix + 'endpoint', endpointURL);
-    $cookies.put(cookiePrefix + 'proxy', useProxy);
+    Storage.setItem(ENDPOINT_KEY, endpointURL);
+    Storage.setItem(PROXY_KEY, useProxy);
 
     // SPARQL limit
-    let cookieLimit = $cookies.get(cookiePrefix + 'limit');
-    if (typeof cookieLimit !== 'undefined') {
-      limit = parseInt(cookieLimit);
+    let storedLimit = Storage.getItem(LIMIT_KEY);
+    if (typeof storedLimit !== 'undefined' && storedLimit !== null) {
+      limit = parseInt(storedLimit);
     } else {
-      $cookies.put(cookiePrefix + 'limit', limit.toString());
+      Storage.setItem(LIMIT_KEY, limit.toString());
     }
 
     // Properties ordered ?
-    let cookieOrdered = $cookies.get(cookiePrefix + 'ordered');
-    if (typeof cookieOrdered !== 'undefined') {
-      propertiesOrdered = (cookieOrdered === 'true');
+    let storedOrderedFlag = Storage.getItem(ORDERED_FLAG_KEY);
+    if (typeof storedOrderedFlag !== 'undefined' && storedLimit !== null) {
+      propertiesOrdered = (storedOrderedFlag === 'true');
     } else {
       // save current state
       let ordered = (propertiesOrdered) ? 'true'  : 'false';
-      $cookies.put(cookiePrefix + 'ordered', ordered);
+      Storage.setItem(ORDERED_FLAG_KEY, ordered);
     }
   };
 
@@ -53,29 +58,16 @@ function requestConfig($cookies) {
    * @returns {*}
    */
   self.getRequestURL = function () {
-    let url;
-
-    if (self.getUseProxy()) {
-      url = proxyURL;
-    } else {
-      endpointURL = self.getEndpointURL();
-      url = endpointURL;
-    }
-
-    return url;
+    return (self.getUseProxy()) ? proxyURL : self.getEndpointURL();
   };
 
   self.getEndpointURL = function () {
-    let cookieEndpoint = $cookies.get(cookiePrefix + 'endpoint');
-    if (cookieEndpoint !== undefined) {
-      endpointURL = cookieEndpoint;
-    }
     return endpointURL;
   };
 
   self.setEndpointURL = function (newEndpoint) {
     endpointURL = newEndpoint;
-    $cookies.put(cookiePrefix + 'endpoint', newEndpoint);
+    Storage.setItem(ENDPOINT_KEY, newEndpoint);
   };
 
   /**
@@ -84,21 +76,18 @@ function requestConfig($cookies) {
    * @returns {boolean}
    */
   self.getUseProxy = function () {
-    const cookieProxyFlag = $cookies.get(cookiePrefix + 'proxy');
-    if (cookieProxyFlag !== undefined) {
-      useProxy = cookieProxyFlag;
-    }
     return (useProxy === 'true');
   };
 
   /**
    * Set the flag whether a proxy should be used or not and saves the flag into a cookie.
    *
-   * @param {boolean} useProxy - true if proxy should be used, false otherwise
+   * @param {boolean} proxy - true if proxy should be used, false otherwise
    */
-  self.setUseProxy = function (useProxy) {
-    const proxyFlag = (useProxy) ? 'true' : 'false';
-    $cookies.put(cookiePrefix + 'proxy', proxyFlag);
+  self.setUseProxy = function (proxy) {
+    const proxyFlag = (proxy) ? 'true' : 'false';
+    useProxy = proxyFlag;
+    Storage.setItem(PROXY_KEY, proxyFlag);
   };
 
   self.getLimit = function () {
@@ -107,7 +96,7 @@ function requestConfig($cookies) {
 
   self.setLimit = function (newLimit) {
     limit = (typeof newLimit === 'number' && newLimit > 0) ? newLimit : limit;
-    $cookies.put(cookiePrefix + 'limit', limit.toString());
+    Storage.setItem(LIMIT_KEY, limit.toString());
   };
 
   self.getTimeout = function () {
@@ -125,16 +114,12 @@ function requestConfig($cookies) {
   };
 
   self.getLabelLanguage = function () {
-    const cookieLang = $cookies.get(cookiePrefix + 'lang');
-    if (cookieLang !== undefined) {
-      labelLanguage = cookieLang;
-    }
     return labelLanguage;
   };
 
   self.setLabelLanguage = function (newLang) {
     labelLanguage = newLang;
-    $cookies.put(cookiePrefix + 'lang', newLang);
+    Storage.setItem(LABEL_LANG_KEY, newLang);
   };
 
   self.getPropertiesOrdered = function () {
@@ -143,8 +128,8 @@ function requestConfig($cookies) {
 
   self.setPropertiesOrdered = function (ordered) {
     propertiesOrdered = ordered;
-    let flag = (ordered) ? 'true' : 'false';
-    $cookies.put(cookiePrefix + 'ordered', flag);
+    const flag = (ordered) ? 'true' : 'false';
+    Storage.setItem(ORDERED_FLAG_KEY, flag);
   };
 
   /**
@@ -177,7 +162,7 @@ function requestConfig($cookies) {
       query: query
     };
 
-    if (useProxy) {
+    if (self.getUseProxy()) {
       config.params.endpoint = endpointURL;
     }
 

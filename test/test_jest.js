@@ -3,7 +3,6 @@ const files = {
   angularAnimate: 'angular-animate',
   angularRoute: 'angular-route',
   angularMocks: 'angular-mocks',
-  angularCookies: 'angular-cookies',
   uiBootstrap: 'angular-ui-bootstrap'
 };
  
@@ -23,19 +22,18 @@ const localStorageMock = (function() {
     }
   };
 })();
+Object.defineProperty(window, 'sessionStorage', {value: localStorageMock });
 Object.defineProperty(window, 'localStorage', { value: localStorageMock });
  
 jest.dontMock(files.angular)
   .dontMock(files.angularAnimate)
   .dontMock(files.angularRoute)
-  .dontMock(files.angularMocks)
-  .dontMock(files.angularCookies);
+  .dontMock(files.angularMocks);
 
 require(files.angular);
 require(files.angularAnimate);
 require(files.angularRoute);
 require(files.angularMocks);
-require(files.angularCookies);
 require(files.uiBootstrap);
 
 require('../app/app.js');

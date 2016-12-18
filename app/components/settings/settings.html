@@ -123,7 +123,8 @@
     <div class="form-group">
       <div class="col-sm-12">
         <div class= "pull-right">
-          <button type="button" class="btn btn-default" ng-click="vm.restoreDefaults(); bl.$setPristine()"
+          <button type="button" class="btn btn-default"
+                  ng-click="vm.restoreDefaults(); bl.$setPristine(); lists.$setPristine()"
                   ng-disabled="bl.clazz.$pristine && bl.prop.$pristine && vm.enabled.RDF && vm.enabled.RDFS &&
                                 vm.enabled.OWL && !vm.enabled.SKOS">
             <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>

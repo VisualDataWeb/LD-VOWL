@@ -1,6 +1,6 @@
 {
   "name": "ld-vowl",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Extract ontology information out of arbitrary SPARQL endpoints and visualize it using a slightly adjusted form of VOWL.",
   "author": "Marc Weise <weisemc@studi.informatik.uni-stuttgart.de>",
   "scripts": {
@@ -28,7 +28,6 @@
   "dependencies": {
     "angular": "1.4.8",
     "angular-animate": "1.4.8",
-    "angular-cookies": "~1.4.8",
     "angular-route": "~1.4.8",
     "angular-ui-bootstrap": "~1.1.0",
     "bootstrap": "~3.3.6",
@@ -92,6 +91,7 @@
     "globals": {
       "__LOGGING__": true,
       "__SESSION_STORAGE__": false,
+      "__PROXY_URL__": "http://localhost/proxy.php",
       "__VERSION__": "1.1.1",
       "__PROXY__": true
     },

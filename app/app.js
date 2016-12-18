@@ -11,7 +11,7 @@ import routing from './app.config';
 import runBlock from './app.run';
 
 // create main app module
-export default angular.module('ldVOWLApp', ['ngRoute', 'ngAnimate', 'ui.bootstrap', 'ngCookies', 
+export default angular.module('ldVOWLApp', ['ngRoute', 'ngAnimate', 'ui.bootstrap',
                                             components.name, 
                                             filters.name,
                                             services.name, 

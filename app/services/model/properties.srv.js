@@ -6,18 +6,17 @@
  * @param {$log} $log
  * @param {$rootScope} $rootScope
  * @param {RequestConfig} RequestConfig
+ * @param {Storage} Storage
  *
  * @ngInject
  */
-function properties($interval, $log, $rootScope, RequestConfig) {
+function properties($interval, $log, $rootScope, RequestConfig, Storage) {
 
   const self = this;
 
   self.SUBCLASS_URI = 'http://my-own-sub-class';
   self.DISJOINT_PROP_URI = 'http://my-own-disjoint-prop';
   self.PLACEHOLDER_PROP_URI = 'http://my-placeholder-prop/unknown';
-
-  self.useSessionStorage = __SESSION_STORAGE__; // eslint-disable-line no-undef
 
   self.properties = [];
 
@@ -35,27 +34,22 @@ function properties($interval, $log, $rootScope, RequestConfig) {
    * Initializes properties with the ones saved in Local- or SessionStorage.
    */
   self.initProperties = function () {
-    let storage = (self.useSessionStorage) ? sessionStorage : localStorage;
-    if (storage !== undefined) {
-      const sessionProperties = storage.getItem(RequestConfig.getEndpointURL() + '_properties');
+    const sessionProperties = Storage.getItem(RequestConfig.getEndpointURL() + '_properties');
 
-      if (sessionProperties !== undefined && sessionProperties !== null) {
-        const savedItems = JSON.parse(sessionProperties);
+    if (sessionProperties !== undefined && sessionProperties !== null) {
+      const savedItems = JSON.parse(sessionProperties);
 
-        if (savedItems !== undefined && savedItems.length > 0) {
-          $log.debug('[Properties] Re-use ' + savedItems.length + ' properties from session storage!');
-          savedItems.forEach(prop => {
-            return self.intermediateIdMap.set(prop.intermediate, prop);
-          });
-          self.properties = savedItems;
-        } else {
-          $log.debug('[Properties] No saved properties in session storage!');
-        }
+      if (savedItems !== undefined && savedItems.length > 0) {
+        $log.debug('[Properties] Re-use ' + savedItems.length + ' properties from session storage!');
+        savedItems.forEach(prop => {
+          return self.intermediateIdMap.set(prop.intermediate, prop);
+        });
+        self.properties = savedItems;
+      } else {
+        $log.debug('[Properties] No saved properties in session storage!');
       }
-      self.startStorageUpdate();
-    } else {
-      $log.error('[Properties] SessionStorage is not available! Properties will not be saved across page reloads!');
     }
+    self.startStorageUpdate();
   };
 
   /**
@@ -99,14 +93,7 @@ function properties($interval, $log, $rootScope, RequestConfig) {
    * Function which is triggered to update properties in HTML5 SessionStore.
    */
   self.updateStorage = function () {
-    let storage = (self.useSessionStorage) ? sessionStorage : localStorage;
-
-    if (storage !== undefined) {
-      $log.debug('[Properties] Update Storage!');
-      storage.setItem(RequestConfig.getEndpointURL() + '_properties', JSON.stringify(self.properties));
-    } else {
-      $log.error('[Properties] Unable to update storage, session or local storage is not supported by your browser!');
-    }
+    Storage.setItem(RequestConfig.getEndpointURL() + '_properties', JSON.stringify(self.properties));
   };
 
   /**

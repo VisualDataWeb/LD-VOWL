@@ -2,131 +2,109 @@
  * @ngdoc service
  * @name Filters
  *
- * @param {$cookies} $cookies
  * @param {$log} $log
+ * @param {Storage} Storage
  *
  * @ngInject
  */
-function filters($cookies, $log) {
+function filters($log, Storage) {
 
   const self = this;
 
+  const DATATYPE_FLAG_NAME = 'include_data_types';
+  const LOOP_FLAG_NAME = 'include_loops';
+  const DISJOINT_NODE_FLAG_NAME = 'include_disjoint_node';
+  const SUBCLASS_FLAG_NAME = 'include_subclass_relations';
+
   let includeLoops;
-  let includeLiterals;
+  let includeDataTypes;
   let includeDisjointNode;
   let includeSubclassRelations;
 
-  // TODO move into constant
-  let cookiePrefix = 'ldvowl_';
-
   self.init = function () {
-    let loopCookie = cookiePrefix + 'include_loops';
-    includeLoops = self.getIncludeLoops() || true;
-    $cookies.put(loopCookie, includeLoops);
+    includeLoops = Storage.getItem(LOOP_FLAG_NAME) || 'true';
+    Storage.setItem(LOOP_FLAG_NAME, includeLoops);
 
-    let literalCookie = cookiePrefix + 'include_literals';
-    includeLiterals = self.getIncludeLiterals() || true;
-    $cookies.put(literalCookie, includeLiterals);
+    includeDataTypes = Storage.getItem(DATATYPE_FLAG_NAME) || 'true';
+    Storage.setItem(DATATYPE_FLAG_NAME, includeDataTypes);
 
-    let disjointNodeCookie = cookiePrefix + 'include_disjoint_node';
-    includeDisjointNode = self.getIncludeDisjointNode() || false;
-    $cookies.put(disjointNodeCookie, includeDisjointNode);
+    includeDisjointNode = Storage.getItem(DISJOINT_NODE_FLAG_NAME) || 'false';
+    Storage.setItem(DISJOINT_NODE_FLAG_NAME, includeDisjointNode);
 
-    let subclassCookie = cookiePrefix + 'include_subclass_relations';
-    includeSubclassRelations = self.getIncludeSubclassRelations() || true;
-    $cookies.put(subclassCookie, includeSubclassRelations);
+    includeSubclassRelations = Storage.getItem(SUBCLASS_FLAG_NAME) || 'true';
+    Storage.setItem(SUBCLASS_FLAG_NAME, includeSubclassRelations);
   };
 
   self.getIncludeLoops = function () {
-    let cookieLoopFlag = $cookies.get(cookiePrefix + 'include_loops');
-
-    if (cookieLoopFlag !== undefined) {
-      includeLoops = cookieLoopFlag;
-    }
-
     return (includeLoops === 'true');
   };
 
+  /**
+   * Toggle property loops and return new setting.
+   *
+   * @return {boolean} true if property loops are shown, false otherwise
+   */
   self.toggleLoops = function () {
-    let cookieName = cookiePrefix + 'include_loops';
-    if (self.getIncludeLoops()) {
-      $cookies.put(cookieName, 'false');
-      $log.debug('[Filters] Disable loops.');
-      return false;
-    } else {
-      $cookies.put(cookieName, 'true');
-      $log.debug('[Filters] Enable loops');
-      return true;
-    }
+    includeLoops = (self.getIncludeLoops()) ? 'false' : 'true';
+    Storage.setItem(LOOP_FLAG_NAME, includeLoops);
+
+    $log.debug(`[Filters] Property loops are now ${self.getIncludeLoops() ? 'shown' : 'hidden' }.`);
+
+    return self.getIncludeLoops();
   };
 
-  self.getIncludeLiterals = function () {
-    let cookieLiteralsFlag = $cookies.get(cookiePrefix + 'include_literals');
-
-    if (cookieLiteralsFlag !== undefined) {
-      includeLiterals = cookieLiteralsFlag;
-    }
-
-    return (includeLiterals === 'true');
+  self.getIncludeDataTypes = function () {
+    return (includeDataTypes === 'true');
   };
 
-  self.toggleLiterals = function () {
-    let cookieName = cookiePrefix + 'include_literals';
-    if (self.getIncludeLiterals()) {
-      $log.debug('[Filters] Disable Literals.');
-      $cookies.put(cookieName, 'false');
-      return false;
-    } else {
-      $cookies.put(cookieName, 'true');
-      $log.debug('[Filters] Enable Literals');
-      return true;
-    }
+  /**
+   * Toggles data types and returns new setting.
+   *
+   * @return {boolean} true if data types are included, false otherwise
+   */
+  self.toggleDataTypes = function () {
+    includeDataTypes = (self.getIncludeDataTypes()) ? 'false' : 'true';
+    Storage.setItem(DATATYPE_FLAG_NAME, includeDataTypes);
+
+    $log.debug(`[Filters] Data types are now ${self.getIncludeLoops() ? 'shown' : 'hidden'}.`);
+
+    return self.getIncludeDataTypes();
   };
 
   self.getIncludeDisjointNode = function () {
-    let cookieDisjointNodeFlag = $cookies.get(cookiePrefix + 'include_disjoint_node');
-
-    if (cookieDisjointNodeFlag !== undefined) {
-      includeDisjointNode = cookieDisjointNodeFlag;
-    }
-
     return (includeDisjointNode === 'true');
   };
 
+  /**
+   * Toggles disjoint nodes and returns new setting.
+   *
+   * @return {boolean} true if disjoint nodes are included, false otherwise
+   */
   self.toggleDisjointNode = function () {
-    let cookieName = cookiePrefix + 'include_disjoint_node';
-    if (self.getIncludeDisjointNode()) {
-      $log.debug('[Filters] Disable disjoint node.');
-      $cookies.put(cookieName, 'false');
-      return false;
-    } else {
-      $log.debug('[Filters] Enable disjoint node.');
-      $cookies.put(cookieName, 'true');
-      return true;
-    }
+    includeDisjointNode = self.getIncludeDisjointNode() ? 'false' : 'true';
+    Storage.setItem(DISJOINT_NODE_FLAG_NAME, includeDisjointNode);
+
+    $log.debug(`[Filters] Disjoint nodes are now ${self.getIncludeDisjointNode() ? 'shown' : 'hidden'}.`);
+
+    return self.getIncludeDisjointNode();
   };
 
   self.getIncludeSubclassRelations = function () {
-    let cookieSubclassRelationFlag = $cookies.get(cookiePrefix + 'include_subclass_relations');
-
-    if (cookieSubclassRelationFlag !== undefined) {
-      includeSubclassRelations = cookieSubclassRelationFlag;
-    }
-
     return (includeSubclassRelations === 'true');
   };
 
+  /**
+   * Toggles subclass relations and returns new setting.
+   *
+   * @return {boolean} true if subclass relations are included, false otherwise
+   */
   self.toggleSubclassRelations = function () {
-    let cookieName = cookiePrefix + 'include_subclass_relations';
-    if (self.getIncludeSubclassRelations()) {
-      $log.debug('[Filters] Disable subclass relations');
-      $cookies.put(cookieName, 'false');
-      return false;
-    } else {
-      $log.debug('[Filters] Enable subclass relations.');
-      $cookies.put(cookieName, 'true');
-      return true;
-    }
+    includeSubclassRelations = self.getIncludeSubclassRelations() ? 'false' : 'true';
+    Storage.setItem(SUBCLASS_FLAG_NAME, includeSubclassRelations);
+
+    $log.debug(`[Filters] Subclass relations are now ${self.getIncludeSubclassRelations() ? 'shown' : 'hidden'}.`);
+
+    return self.getIncludeSubclassRelations();
   };
 
   self.init();

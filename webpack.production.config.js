@@ -14,7 +14,6 @@ module.exports = {
       'angular',
       'angular-route',
       'angular-animate',
-      'angular-cookies',
       'd3',
       'angular-ui-bootstrap'
     ]

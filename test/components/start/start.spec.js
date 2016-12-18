@@ -15,7 +15,8 @@ describe('Controller: StartCtrl', function () {
   let RequestConfig;
   let Endpoints;
 
-  let deferred;
+  let deferredNonProxyEndpoints;
+  let deferredProxyEndpoints;
 
   let defaultEndpointURL = '';
   let nonProxyEndpoints = 30;
@@ -37,8 +38,13 @@ describe('Controller: StartCtrl', function () {
     $q = _$q_;
 
     spyOn(Endpoints, 'getNonProxyEndpoints').and.callFake(() => {
-      deferred = $q.defer();
-      return deferred.promise;
+      deferredNonProxyEndpoints = $q.defer();
+      return deferredNonProxyEndpoints.promise;
+    });
+
+    spyOn(Endpoints, 'getProxyEndpoints').and.callFake(() => {
+      deferredProxyEndpoints = $q.defer();
+      return deferredProxyEndpoints.promise;
     });
 
     StartCtrl = $controller('StartCtrl', {
@@ -46,7 +52,6 @@ describe('Controller: StartCtrl', function () {
       '$location': $location,
       'Data': Data,
       'View': View,
-      'Requests': Requests,
       'RequestConfig': RequestConfig,
       'Endpoints': Endpoints
     });
@@ -75,17 +80,15 @@ describe('Controller: StartCtrl', function () {
       ]
     };
 
-    deferred.resolve(fakeEndpoints);
+    deferredNonProxyEndpoints.resolve(fakeEndpoints);
+    deferredProxyEndpoints.resolve(fakeEndpoints);
 
     $scope.$apply();
 
     expect(Endpoints.getNonProxyEndpoints).toHaveBeenCalled();
+    expect(Endpoints.getProxyEndpoints).toHaveBeenCalled();
 
-    expect(StartCtrl.endpoints.length).toEqual(2);
-  });
-
-  it('should be possible to retrieve proxy-only endpoints', () => {
-
+    expect(StartCtrl.endpoints.length).toEqual(4);
   });
 
   // TODO move this into a test case for endpoint service
@@ -101,10 +104,6 @@ describe('Controller: StartCtrl', function () {
   // TODO move this into a test case for endpoint service
   xit('should have more then 30 proxy only endpoints', function () {
     expect(StartCtrl.proxyOnlyEndpoints.length).toBeGreaterThan(proxyOnlyEndpoints);
-  });
-
-  it('should have a flag for proxy availability', function () {
-    expect(StartCtrl.proxyAvailable).toBeTruthy();
   });
 
   it('should not use a proxy', function() {

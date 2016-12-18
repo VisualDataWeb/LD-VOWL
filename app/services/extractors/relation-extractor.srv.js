@@ -10,7 +10,7 @@ class RelationExtractor extends Extractor {
   /**
    * Creates a RelationExtractor.
    *
-   * @param {$cookies} $cookies
+   * @param {Storage} Storage
    * @param {$http} $http
    * @param {$q} $q
    * @param {$log} $log
@@ -24,14 +24,14 @@ class RelationExtractor extends Extractor {
    *
    * @ngInject
    */
-  constructor($cookies, $http, $q, $log, PREFIX, PROPERTY_BLACKLIST, QueryFactory, RequestConfig, Nodes, Properties,
+  constructor(Storage, $http, $q, $log, PREFIX, PROPERTY_BLACKLIST, QueryFactory, RequestConfig, Nodes, Properties,
               Promises) {
 
     // call constructor of super class Extractor
     super();
 
     this.blacklist = [];
-    this.$cookies = $cookies;
+    this.Storage = Storage;
     this.$http = $http;
     this.$q = $q;
     this.$log = $log;
@@ -41,9 +41,9 @@ class RelationExtractor extends Extractor {
     this.props = Properties;
     this.promises = Promises;
     
-    let blacklistStr = $cookies.get('ldvowl_property_blacklist');
+    let blacklistStr = Storage.getItem('property_blacklist');
     
-    if (typeof blacklistStr !== 'undefined') {
+    if (blacklistStr !== undefined && blacklistStr !== null) {
       // use last blacklist
       let classInput = blacklistStr.replace(/(\r\n|\n|\r|\s)/gm,'');
       this.setBlacklist(classInput.split(','));
@@ -295,7 +295,7 @@ class RelationExtractor extends Extractor {
           } else {
             self.$log.error(err);
           }
-        }  else {
+        } else {
           self.$log.error(err);
         }
       })

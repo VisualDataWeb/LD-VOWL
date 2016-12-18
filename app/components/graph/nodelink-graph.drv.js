@@ -101,7 +101,7 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Grap
         'nodes': Nodes.getNodes(),
         'properties': Properties.getProperties(),
         'prefixes': Prefixes.getPrefixes(),
-        'showTypes': Filters.getIncludeLiterals(),
+        'showTypes': Filters.getIncludeDataTypes(),
         'showLoops': Filters.getIncludeLoops(),
         'showDisjointNode': Filters.getIncludeDisjointNode(),
         'showSubclassRelations': Filters.getIncludeSubclassRelations(),
@@ -114,13 +114,13 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Grap
         scope.render(scope.data);
       });
 
-      scope.$watch('data.nodes.size', function () {
+      scope.$watch('data.nodes.size', function nodeNumberChanged() {
         $log.debug('[Graph] Number of nodes has changed!');
         return scope.render(scope.data);
       });
 
       scope.$watch(function () {
-        return Filters.getIncludeLiterals();
+        return Filters.getIncludeDataTypes();
       },
       function (newVal) {
         scope.data.showTypes = newVal;
@@ -888,7 +888,7 @@ function NodeLinkGraph($window, $log, Properties, Nodes, Prefixes, Filters, Grap
       scope.tick = function () {
         scope.link.attr('d', scope.recalculateLines);
         scope.directLink.attr('d', scope.recalculateDirectLines);
-        scope.node.attr('transform', function(d) { return `translate(${d.x},${d.y})`; });
+        scope.node.attr('transform', function nodeTransform(d) { return `translate(${d.x},${d.y})`; });
       };
     } // end of link()
   }; // end of returned directive

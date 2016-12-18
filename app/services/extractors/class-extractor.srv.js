@@ -8,7 +8,7 @@ class ClassExtractor extends Extractor {
 
   /**
    * Create a new ClassExtractor.
-   * @param {$cookies} $cookies
+   * @param {Storage} Storage
    * @param {$http} $http
    * @param {$q} $q
    * @param {$log} $log
@@ -21,7 +21,7 @@ class ClassExtractor extends Extractor {
    *
    * @ngInject
    */
-  constructor ($cookies, $http, $q, $log, PREFIX, CLASS_BLACKLIST, RequestConfig, QueryFactory, Nodes, Promises) {
+  constructor (Storage, $http, $q, $log, PREFIX, CLASS_BLACKLIST, RequestConfig, QueryFactory, Nodes, Promises) {
 
     // call constructor of Extractor
     super();
@@ -34,11 +34,10 @@ class ClassExtractor extends Extractor {
     this.queryFactory = QueryFactory;
     this.nodes = Nodes;
     this.promises = Promises;
-    
-    //TODO move cookie name into a constant
-    let blacklistStr = $cookies.get('ldvowl_class_blacklist');
 
-    if (typeof blacklistStr !== 'undefined') {
+    let blacklistStr = Storage.getItem('class_blacklist');
+
+    if (blacklistStr !== undefined && blacklistStr !== null) {
       // use last blacklist
       let classInput = blacklistStr.replace(/(\r\n|\n|\r|\s)/gm,'');
       this.setBlacklist(classInput.split(','));
@@ -142,8 +141,6 @@ class ClassExtractor extends Extractor {
             self.$log.warn('[Class Extractor] Class extraction was canceled!');
             deferred.reject(classIds);
           } else {
-            self.$log.error(err);
-
             if (!self.reqConfig.getUseProxy()) {
               self.$log.warn('[Class Extractor] Might need a proxy here, try again...');
               self.reqConfig.setUseProxy(true);

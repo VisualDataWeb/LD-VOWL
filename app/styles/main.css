@@ -32,7 +32,7 @@ ul.properties {
 }
 
 div.prop-list {
-  max-height: 200px;
+  max-height: 400px;
   overflow-y: auto;
 }
 
@@ -58,6 +58,10 @@ div.main {
 
 .sidebar {
   margin-top: 15px;
+}
+
+.panel-title a:focus {
+  outline: 0;
 }
 
 /* small fix so deactivated namespace really looks deactivated */

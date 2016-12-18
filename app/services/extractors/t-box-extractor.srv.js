@@ -10,12 +10,12 @@
  * @param {Promises} Promises
  * @param {ClassExtractor} ClassExtractor
  * @param {RelationExtractor} RelationExtractor
- * @param {TypeExtractor} TypeExtractor
+ * @param {DataTypeExtractor} DataTypeExtractor
  *
  * @ngInject
  */
 function tBoxExtractor($q, $log, Data, Filters, StopWatch, Promises, ClassExtractor, RelationExtractor,
-                         TypeExtractor) {
+                         DataTypeExtractor) {
 
   const self = this;
 
@@ -72,7 +72,7 @@ function tBoxExtractor($q, $log, Data, Filters, StopWatch, Promises, ClassExtrac
         }
 
         // optionally extract types referring to instances of the classes
-        if (Filters.getIncludeLiterals()) {
+        if (Filters.getIncludeDataTypes()) {
           self.extractDataTypes();
         }
 
@@ -88,7 +88,7 @@ function tBoxExtractor($q, $log, Data, Filters, StopWatch, Promises, ClassExtrac
     $log.debug(`[TBox Extractor] Loading referring data types for ${self.classes.length} classes...`);
 
     self.classes.forEach(function (clazz) {
-      TypeExtractor.requestReferringTypes(clazz);
+      DataTypeExtractor.requestReferringTypes(clazz);
     });
   };
 

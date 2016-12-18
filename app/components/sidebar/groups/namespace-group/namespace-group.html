@@ -11,7 +11,7 @@
       ({{ vm.prefixes.length }}):
     </strong>
   </p>
-  <div class="prop-list" style="max-height: 140px;" ng-if="vm.prefixes.length > 0">
+  <div class="prop-list" ng-if="vm.prefixes.length > 0">
     <table class="table table-condensed">
       <tr ng-repeat="pre in vm.prefixes | limitTo: vm.numberOfPrefixes">
         <td>
