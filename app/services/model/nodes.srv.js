@@ -13,7 +13,7 @@
 function nodesService($log, Properties, Prefixes, RequestConfig, Storage) {
 
   let classUriIdMap = new Map();
-  let nodes = new Map();
+  let nodeMap = new Map();
   let equivalentClasses = new Map();
 
   const classDatatypesMap = new Map();
@@ -33,10 +33,10 @@ function nodesService($log, Properties, Prefixes, RequestConfig, Storage) {
 
     if (sessionNodes !== undefined && sessionNodes !== null) {
       $log.debug('[Nodes] Use nodes from session or local storage!');
-      nodes = new Map(JSON.parse(sessionNodes));
+      nodeMap = new Map(JSON.parse(sessionNodes));
 
       // rebuild the class uri map
-      for (let node of nodes.values()) {
+      for (let node of nodeMap.values()) {
         if (node.type === 'class' || node.type === 'disjointNode') {
           classUriIdMap.set(node.uri, node.id);
         } else if (node.type === 'subClassProperty') {
@@ -56,7 +56,7 @@ function nodesService($log, Properties, Prefixes, RequestConfig, Storage) {
   that.buildPrefixMap = function () {
     Prefixes.clear();
 
-    for (let node of nodes.values()) {
+    for (let node of nodeMap.values()) {
       if (node.uri !== undefined && node.uri.length > 0 &&
           (node.uri !== Properties.SUBCLASS_URI && node.uri !== that.DISJOINT_NODE_URI)) {
         let pre = node.uri.replace(that.suffixRegEx, '');
@@ -71,7 +71,7 @@ function nodesService($log, Properties, Prefixes, RequestConfig, Storage) {
   };
 
   that.updateStorage = function () {
-    Storage.setItem(RequestConfig.getEndpointURL() + '_nodes', JSON.stringify([...nodes]));
+    Storage.setItem(RequestConfig.getEndpointURL() + '_nodes', JSON.stringify([...nodeMap]));
   };
 
   that.addDatatypeForClass = function(dataTypeNode, classId) {
@@ -88,7 +88,7 @@ function nodesService($log, Properties, Prefixes, RequestConfig, Storage) {
     let newId = '';
     const connTypes = classDatatypesMap.get(classId);
     if (connTypes !== undefined && connTypes.length > 0 && connTypes.indexOf(dataTypeNode.uri) !== -1) {
-      $log.warn(`[Nodes] There already is a data type '${dataTypeNode.uri}' connected to class '${classId}'!`);
+      $log.debug(`[Nodes] There already is a data type '${dataTypeNode.uri}' connected to class '${classId}'!`);
     } else {
 
       // doesn't exist yet, so its okay to add it
@@ -98,9 +98,9 @@ function nodesService($log, Properties, Prefixes, RequestConfig, Storage) {
         classDatatypesMap.set(classId, connTypes.concat([dataTypeNode.uri]));
       }
 
-      newId = dataTypeNode.type + nodes.size;
+      newId = dataTypeNode.type + nodeMap.size;
       dataTypeNode.id = newId;
-      nodes.set(newId, dataTypeNode);
+      nodeMap.set(newId, dataTypeNode);
 
       $log.debug(`[Nodes] Add new data type node '${dataTypeNode.uri}'.`);
 
@@ -126,9 +126,9 @@ function nodesService($log, Properties, Prefixes, RequestConfig, Storage) {
         if (idByUri !== undefined) {
           return idByUri;
         } else {
-          newId = newNode.type + nodes.size;
+          newId = newNode.type + nodeMap.size;
           newNode.id = newId;
-          nodes.set(newId, newNode);
+          nodeMap.set(newId, newNode);
           classUriIdMap.set(newNode.uri, newId);
 
           if (newNode.uri !== that.DISJOINT_NODE_URI) {
@@ -152,7 +152,7 @@ function nodesService($log, Properties, Prefixes, RequestConfig, Storage) {
 
             newId = combination;
             newNode.id = newId;
-            nodes.set(newId, newNode);
+            nodeMap.set(newId, newNode);
             $log.debug(`[Nodes] Add new Node '${newNode.uri}' with id '${newId}'.`);
           } else {
             $log.warn(`[Nodes] Sub-class rel between ${newNode.childId} & ${newNode.parentId} does already exist!`);
@@ -161,9 +161,9 @@ function nodesService($log, Properties, Prefixes, RequestConfig, Storage) {
           $log.error(`[Nodes] Missing parent child info for subclass relation!`);
         }
       } else {
-        newId = newNode.type + nodes.size;
+        newId = newNode.type + nodeMap.size;
         newNode.id = newId;
-        nodes.set(newId, newNode);
+        nodeMap.set(newId, newNode);
         $log.debug(`[Nodes] Add new Node '${newNode.uri}'.`);
       }
 
@@ -178,7 +178,7 @@ function nodesService($log, Properties, Prefixes, RequestConfig, Storage) {
    * @returns {Map}
    */
   that.getNodes = function () {
-    return nodes;
+    return nodeMap;
   };
 
   /**
@@ -191,7 +191,7 @@ function nodesService($log, Properties, Prefixes, RequestConfig, Storage) {
     let nodeToReturn = null;
 
     if (idToSearch !== undefined && typeof idToSearch === 'string') {
-      nodeToReturn = nodes.get(idToSearch);
+      nodeToReturn = nodeMap.get(idToSearch);
     }
     return nodeToReturn;
   };
@@ -205,7 +205,7 @@ function nodesService($log, Properties, Prefixes, RequestConfig, Storage) {
   that.getInstanceCountById = function (id) {
     let instanceCount = -1;
 
-    const searchedItem = nodes.get(id);
+    const searchedItem = nodeMap.get(id);
 
     if (searchedItem !== undefined && searchedItem.hasOwnProperty('value')) {
       instanceCount = searchedItem.value;
@@ -223,13 +223,13 @@ function nodesService($log, Properties, Prefixes, RequestConfig, Storage) {
   that.getURIById = function (id) {
     let uri = '';
 
-    let searchedItem = nodes.get(id);
+    let searchedItem = nodeMap.get(id);
 
     if (searchedItem !== undefined && searchedItem.hasOwnProperty('uri')) {
       uri = searchedItem.uri;
     } else {
       $log.debug(`[Nodes] Can not resolve uri of node with id '${id}'! Search for equivalent nodes...`);
-      const eqNode = nodes.getClassNodeOrEquivalent(id);
+      const eqNode = that.getClassNodeOrEquivalent(id);
 
       if (eqNode !== undefined && eqNode.uri !== undefined) {
         uri = eqNode.uri;
@@ -248,7 +248,7 @@ function nodesService($log, Properties, Prefixes, RequestConfig, Storage) {
    * @param {string} label - the label for the node with the given id
    */
   that.insertLabel = function (id, label) {
-    const searchedItem = nodes.get(id);
+    const searchedItem = nodeMap.get(id);
 
     if (searchedItem !== undefined) {
       searchedItem.name = label;
@@ -264,7 +264,7 @@ function nodesService($log, Properties, Prefixes, RequestConfig, Storage) {
    * @param {string} commentToAdd - the comment to add to the node with the given id
    */
   that.insertComment = function (id, commentToAdd) {
-    const searchedItem = nodes.get(id);
+    const searchedItem = nodeMap.get(id);
 
     if (searchedItem !== undefined) {
       searchedItem.comment = commentToAdd;
@@ -281,7 +281,7 @@ function nodesService($log, Properties, Prefixes, RequestConfig, Storage) {
    * @param {string} newUri
    */
   that.setURI = function (id, newUri) {
-    const nodeToChange = nodes.get(id);
+    const nodeToChange = nodeMap.get(id);
 
     if (nodeToChange !== undefined) {
       nodeToChange.uri = newUri;
@@ -299,7 +299,7 @@ function nodesService($log, Properties, Prefixes, RequestConfig, Storage) {
   that.setTypesLoaded = function (classId) {
     if (classId !== undefined && typeof classId === 'string') {
 
-      const clazz = nodes.get(classId);
+      const clazz = nodeMap.get(classId);
 
       if (clazz !== undefined && clazz.type === 'class') {
         clazz.typesLoaded = true;
@@ -315,7 +315,7 @@ function nodesService($log, Properties, Prefixes, RequestConfig, Storage) {
    */
   that.getTypesLoaded = function (classId) {
     if (classId !== undefined && typeof classId === 'string') {
-      const clazz = nodes.get(classId);
+      const clazz = nodeMap.get(classId);
 
       if (clazz !== undefined && clazz.type === 'class' && clazz.typesLoaded) {
         $log.debug(`[Nodes] Types for '${classId}' are already loaded!`);
@@ -368,7 +368,7 @@ function nodesService($log, Properties, Prefixes, RequestConfig, Storage) {
           }
 
           equivalentClasses.set(classId2, cl1.id);
-          nodes.delete(classId2);
+          nodeMap.delete(classId2);
           deletedId = classId2;
           $log.debug(`[Nodes] Merged '${cl1.id}' and '${classId2}'.`);
         }
@@ -381,12 +381,12 @@ function nodesService($log, Properties, Prefixes, RequestConfig, Storage) {
   };
 
   that.getClassNodeOrEquivalent = function (classId) {
-    let nodeToReturn = nodes.get(classId);
+    let nodeToReturn = nodeMap.get(classId);
 
     if (nodeToReturn === undefined) {
       const equivalentId = equivalentClasses.get(classId);
       if (equivalentId !== undefined) {
-        nodeToReturn = nodes.get(equivalentId);
+        nodeToReturn = nodeMap.get(equivalentId);
       }
     }
 
@@ -401,7 +401,7 @@ function nodesService($log, Properties, Prefixes, RequestConfig, Storage) {
   that.removeNodes = function (nodeArr) {
     if (nodeArr !== undefined && nodeArr.length > 0) {
       nodeArr.forEach((node) => {
-        nodes.delete(node);
+        nodeMap.delete(node);
       });
     }
   };
@@ -413,7 +413,7 @@ function nodesService($log, Properties, Prefixes, RequestConfig, Storage) {
    * @return {number} the new value of the node or -1 if node was not found 
    */
   that.incValueOfId = function (id) {
-    const searchedItem = nodes.get(id);
+    const searchedItem = nodeMap.get(id);
 
     if (searchedItem !== undefined && searchedItem.hasOwnProperty('value')) {
       searchedItem.value += 1;
@@ -428,7 +428,7 @@ function nodesService($log, Properties, Prefixes, RequestConfig, Storage) {
    * @returns {boolean}
    */
   that.isEmpty = function () {
-    return (nodes.size === 0);
+    return (nodeMap.size === 0);
   };
 
   that.hasClassNodes = function () {
@@ -440,7 +440,7 @@ function nodesService($log, Properties, Prefixes, RequestConfig, Storage) {
    */
   that.clearAll = function () {
     classUriIdMap.clear();
-    nodes.clear();
+    nodeMap.clear();
     equivalentClasses.clear();
     classDatatypesMap.clear();
     subClassSet.clear();
@@ -460,8 +460,8 @@ function nodesService($log, Properties, Prefixes, RequestConfig, Storage) {
     let exists = false;
 
     if (childId !== undefined && parentId !== undefined) {
-      const childNode = nodes.get(childId);
-      const parentNode = nodes.get(parentId);
+      const childNode = nodeMap.get(childId);
+      const parentNode = nodeMap.get(parentId);
 
       if (childNode !== undefined && parentNode !== undefined) {
         const combination = childId + parentId;
