@@ -1,16 +1,25 @@
-'use strict';
-
 /**
+ * @ngdoc service
  * @Name Geometry
  */
 class Geometry {
 
-  constructor(Utils) {
-    'ngInject';
-    this.utils = Utils;
+  /**
+   * @param {GraphUtils} GraphUtils
+   *
+   * @ngInject
+   */
+  constructor(GraphUtils) {
+    this.graphUtils = GraphUtils;
     this.defaultPropHeight = 20;
+    this.ringWidth = 4;
   }
 
+  /**
+   *
+   * @param {{intermediate, target}} d
+   * @returns {{x: number, y: number}}
+   */
   getCircleOutlinePoint(d) {
     var deltaX = d.target.x - d.intermediate.x;
     var deltaY = d.target.y - d.intermediate.y;
@@ -25,6 +34,11 @@ class Geometry {
     return {x: (d.target.x - offsetX), y: (d.target.y - offsetY)};
   }
 
+  /**
+   * @param {{source, intermediate, target}} d
+   * @param {number} a
+   * @returns {{x: *, y: *}}
+   */
   getAnotherCircleOutlinePoint(d, a) {
     var deltaX = (d.intermediate.x - d.source.x);
     var deltaY = (d.intermediate.y - d.source.y);
@@ -46,16 +60,12 @@ class Geometry {
     return {x: x, y: y};
   }
 
-  calcPropBoxWidth(d) {
-    return (this.utils.getName(d, true, true).length * 8);
-  }
-
   getRectOutlinePoint(d) {
     var source = (d.intermediate !== undefined) ? d.intermediate : d.source;
 
     var m = (d.target.y - source.y) / (d.target.x - source.x);
 
-    var boxWidth = this.calcPropBoxWidth(d.target);
+    var boxWidth = this.graphUtils.calcPropBoxWidth(d.target);
 
     var minX = d.target.x - (boxWidth / 2);
     var maxX = d.target.x + (boxWidth / 2);

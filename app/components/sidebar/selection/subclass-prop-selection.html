@@ -1,5 +1,5 @@
 <!-- for selected subclass properties -->
-<div ng-show="selected !== undefined && selected.type === 'subClassProperty'">
+<div ng-if="vm.selected !== undefined && vm.selected.type === 'subClassProperty'">
 
   <p>
     <strong>Type:</strong>
@@ -8,24 +8,28 @@
 
   <p>
     <strong>Parent Class:</strong>
-    <a href="{{selected.targetURI}}" target="_blank">
-      {{selected.targetName}}
-      <span ng-hide="selected.targetName.length > 0">{{selected.targetURI | uriLabel }}</span>
+    <a href="{{vm.selected.targetURI}}" target="_blank">
+      {{vm.selected.targetName}}
+      <span ng-if="vm.selected.targetName.length === 0">
+        {{vm.selected.targetURI | uriLabel }}
+      </span>
       <span class="glyphicon glyphicon-new-window"></span>
     </a>
   </p>
 
   <p>
     <strong>Child Class:</strong>
-    <a href="{{selected.sourceURI}}" target="_blank">
-      {{selected.sourceName}}
-      <span ng-hide="selected.sourceName.length > 0">{{selected.sourceURI | uriLabel }}</span>
+    <a href="{{vm.selected.sourceURI}}" target="_blank">
+      {{vm.selected.sourceName}}
+      <span ng-if="vm.selected.sourceName.length === 0">
+        {{vm.selected.sourceURI | uriLabel }}
+      </span>
       <span class="glyphicon glyphicon-new-window"></span>
     </a>
   </p>
 
-  <p ng-hide="selected.commonCount === undefined">
+  <p ng-if="vm.selected.commonCount !== undefined">
     <strong>Common Instances:</strong>
-    {{selected.commonCount | number}}
+    {{vm.selected.commonCount | number}}
   </p>
 </div>

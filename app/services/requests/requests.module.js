@@ -8,7 +8,6 @@ import Promises from './promises.srv';
 
 export default angular.module('services.requests', [])
   .service('RequestConfig', RequestConfig)
-  .factory('QueryFactory', QueryFactory)
-  .factory('RequestCounter', RequestCounter)
-  .service('Promises', Promises)
-  .name;
+  .service('QueryFactory', QueryFactory)
+  .service('RequestCounter', RequestCounter)
+  .service('Promises', Promises);

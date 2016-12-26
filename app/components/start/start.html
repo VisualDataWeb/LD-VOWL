@@ -16,9 +16,9 @@
         <label class="control-label col-sm-2" for="endpoint">Endpoint</label>
         <div class="col-sm-7">
           <input name="url" id="endpoint" ng-model="start.endpoint" type="url" class="form-control"
-                 title="SPARQL endpoint URL"
-                 uib-typeahead="url for url in start.endpoints | filter:$viewValue | limitTo:8" required
-                 ng-minlength="7" typeahead-min-length="0" placeholder="Type in an URL or select one from the list"/>
+                 title="SPARQL endpoint URL" required
+                 uib-typeahead="endpoint for endpoint in start.endpoints | filter:$viewValue | limitTo:8"
+                 ng-minlength="7" typeahead-min-length="0" placeholder="Type in an URL or select one from the list" />
         </div>
         <div class="col-sm-3">
           <button type="button" class="btn btn-primary" id="showGraph" ng-click="start.showGraph()"
@@ -34,21 +34,10 @@
             <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
             A list of endpoints can be found
             <a class="alert-link" href="http://sparqles.ai.wu.ac.at/availability" target="_blank">here</a>.<br/>
-            <small>Endpoint requirements: 1) speaks SPARQL, 2) returns JSON, 3) allows CORS.</small>
+            <small>Endpoint requirements: 1) speaks SPARQL, 2) returns JSON.</small>
           </uib-alert>
         </div>
       </div>
-
-      <div class="form-group" ng-if="start.proxyAvailable">
-        <div class="col-sm-offset-2 col-sm-10">
-          <div class="checkbox">
-            <label>
-              <input type="checkbox" ng-model="start.useLocalProxy" ng-change="start.updateUseLocalProxy()">
-              Use local proxy
-            </label>
-          </div>
-        </div>
-      </div><!-- end of .form-group -->
     </form><!-- end of .form-horizontal -->
   </div><!-- end of .well -->
 </div><!-- end of .container -->

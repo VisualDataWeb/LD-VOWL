@@ -1,3 +1,4 @@
+import angular from 'angular';
 import app from '../../../app/app';
 
 describe('Service: RequestConfig', function () {
@@ -54,13 +55,13 @@ describe('Service: RequestConfig', function () {
   });
 
   it('should return the sparql timeout', function () {
-    expect(rconf.getTimout()).toBe(defaultTimeout);
+    expect(rconf.getTimeout()).toBe(defaultTimeout);
   });
 
   it('should be possible to change the sparql timeout', function () {
     let newTimeout = 60000;
-    rconf.setTimout(newTimeout);
-    expect(rconf.getTimout()).toBe(newTimeout);
+    rconf.setTimeout(newTimeout);
+    expect(rconf.getTimeout()).toBe(newTimeout);
   });
 
   it('should return label language', function () {
@@ -84,6 +85,7 @@ describe('Service: RequestConfig', function () {
   it('should be possible to disable ordered property retrieval', function () {
     rconf.setPropertiesOrdered(false);
     expect(rconf.getPropertiesOrdered()).toBeFalsy();
+    rconf.setPropertiesOrdered(true);
   });
 
 });

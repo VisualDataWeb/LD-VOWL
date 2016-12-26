@@ -1,7 +1,7 @@
 import app from '../../../app/app';
+import angular from 'angular';
 
 describe('Service Data', function () {
-  'use strict';
 
   let data;
 

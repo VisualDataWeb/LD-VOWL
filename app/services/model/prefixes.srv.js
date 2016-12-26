@@ -1,22 +1,26 @@
-'use strict';
+/**
+ * @ngdoc service
+ * @name Prefixes
+ *
+ * @param {$rootScope} $rootScope
+ * @param {$log} $log
+ *
+ * @ngInject
+ */
+function prefixes($rootScope, $log) {
 
-function prefixesService($rootScope, $log) {
+  let prefixes = [];
+  let colorNumber = 1;
+  let differentColors = true;
 
-  'ngInject';
-
-  var prefixes = [];
-  var colorNumber = 1;
-  var differentColors = true;
-
-  /* jshint validthis: true */
-  var that = this;
+  const that = this;
 
   /**
    * Add a new prefix.
    *
-   * @param pre - an object with the prefix to add
+   * @param {{prefix: string}} pre - an object with the prefix to add
    */
-  that.addPrefix = function (pre) {
+  that.addPrefix = function(pre) {
     if (typeof pre === 'object' && pre.prefix !== undefined) {
 
       if (pre.prefix.length < 8) {
@@ -24,8 +28,8 @@ function prefixesService($rootScope, $log) {
         return;
       }
 
-      var existingPrefix;
-      for (var i = 0; i < prefixes.length; i++) {
+      let existingPrefix;
+      for (let i = 0; i < prefixes.length; i++) {
         prefixes[i].classification = 'extern';
         if (prefixes[i].prefix === pre.prefix) {
           existingPrefix = prefixes[i];
@@ -66,7 +70,7 @@ function prefixesService($rootScope, $log) {
    * Removes all prefixes.
    */
   that.clear = function () {
-    prefixes = [];
+    prefixes.length = 0;
     colorNumber = 1;
     $rootScope.$broadcast('prefixes-changed', 0);
   };
@@ -83,26 +87,27 @@ function prefixesService($rootScope, $log) {
   /**
    * Update prefixes to the given ones.
    *
-   * @param newPrefixes - array of the new prefixes
+   * @param {Array} newPrefixes - array of the new prefixes
    */
   that.setPrefixes = function (newPrefixes) {
-    prefixes = newPrefixes;
+    if (newPrefixes !== undefined && newPrefixes.length !== undefined) {
+      prefixes = newPrefixes;
 
-    $rootScope.$broadcast('prefixes-changed', prefixes.length);
+      $rootScope.$broadcast('prefixes-changed', prefixes.length);
+    }
   };
 
   /**
    * Returns true if the given URI is an internal one, false otherwise.
    *
-   * @param uri - the URI to be checked
+   * @param {string} uri - the URI to be checked
    * @returns {boolean}
    */
   that.isInternal = function (uri) {
+    let internal = false;
 
-    var internal = false;
-    for (var i = 0; i < prefixes.length; i++) {
-
-      var pre = prefixes[i];
+    for (let i = 0; i < prefixes.length; i++) {
+      let pre = prefixes[i];
 
       if (pre.classification === 'intern' && uri.indexOf(pre.prefix) !== -1) {
         internal = true;
@@ -115,15 +120,15 @@ function prefixesService($rootScope, $log) {
 
   /**
    * Returns the color number for a node with the given URI. If different colors are disabled, this will always return 1
-   * @param uri - the uri of the node to color
+   * @param {string} uri - the uri of the node to color
    * @returns {number} the number of the color to use
    */
   that.getColor = function (uri) {
-    var colorNumber = 1;
+    let colorNumber = 1;
 
     if (differentColors) {
-      for (var i = 0; i < prefixes.length; i++) {
-        var pre = prefixes[i];
+      for (let i = 0; i < prefixes.length; i++) {
+        let pre = prefixes[i];
 
         if (pre.classification !== 'intern' && uri.indexOf(pre.prefix) !== -1) {
           colorNumber = pre.color;
@@ -163,4 +168,4 @@ function prefixesService($rootScope, $log) {
 
 } // end of PrefixesService
 
-export default prefixesService;
+export default prefixes;

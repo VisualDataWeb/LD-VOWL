@@ -1,7 +1,8 @@
+import angular from 'angular';
 import app from '../../app/app';
 
 describe('Filter: uriLabel', function () {
-  "use strict";
+  'use strict';
 
   let $filter;
   let uriLabelFilter;

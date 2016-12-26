@@ -1,14 +1,22 @@
 import app from '../../../app/app';
+import angular from 'angular';
 
 describe('Controller: StartCtrl', function () {
-  'use strict';
 
+  let $scope;
+  let $q;
   let $location;
+  let $log;
 
   let StartCtrl;
-  let Nodes;
-  let Properties;
+  let Data;
+  let View;
   let Requests;
+  let RequestConfig;
+  let Endpoints;
+
+  let deferredNonProxyEndpoints;
+  let deferredProxyEndpoints;
 
   let defaultEndpointURL = '';
   let nonProxyEndpoints = 30;
@@ -16,40 +24,90 @@ describe('Controller: StartCtrl', function () {
 
   beforeEach(angular.mock.module(app.name));
 
-  beforeEach(angular.mock.inject(function ($controller, _$location_, _Nodes_, _Properties_, _Requests_) {
-    StartCtrl = $controller('StartCtrl', {});
+  beforeEach(angular.mock.inject(function ($controller, _$q_, _$rootScope_, _$log_, _$location_, _Data_, _View_,
+                                           _Requests_, _RequestConfig_, _Endpoints_) {
+
+    $scope = _$rootScope_.$new();
+    $log = _$log_;
     $location = _$location_;
-    Nodes = _Nodes_;
-    Properties = _Properties_;
+    Data = _Data_;
+    View = _View_;
     Requests = _Requests_;
+    RequestConfig = _RequestConfig_;
+    Endpoints = _Endpoints_;
+    $q = _$q_;
+
+    spyOn(Endpoints, 'getNonProxyEndpoints').and.callFake(() => {
+      deferredNonProxyEndpoints = $q.defer();
+      return deferredNonProxyEndpoints.promise;
+    });
+
+    spyOn(Endpoints, 'getProxyEndpoints').and.callFake(() => {
+      deferredProxyEndpoints = $q.defer();
+      return deferredProxyEndpoints.promise;
+    });
+
+    StartCtrl = $controller('StartCtrl', {
+      '$log': $log,
+      '$location': $location,
+      'Data': Data,
+      'View': View,
+      'RequestConfig': RequestConfig,
+      'Endpoints': Endpoints
+    });
   }));
 
-  it('should have an array for non-proxy endpoints', function() {
-    expect(StartCtrl.nonProxyEndpoints).toBeDefined();
+  beforeEach(() => {
+    spyOn(StartCtrl, 'loadEndpoints').and.callThrough();
   });
 
-  it('should have more then 30 non-proxy endpoints', function () {
+  it('should be defined', () => {
+    expect(StartCtrl).toBeDefined();
+  });
+
+  it('should be possible to retrieve non-proxy endpoints', () => {
+    expect(StartCtrl.endpoints.length).toEqual(0);
+
+    const fakeEndpoints = {
+      data: [
+        {
+          name: 'dbpedia',
+          url: 'http://dbpedia.org/sparql'
+        }, {
+          name: 'Nobelprize.org',
+          url: 'http://data.nobelprize.org/sparql'
+        }
+      ]
+    };
+
+    deferredNonProxyEndpoints.resolve(fakeEndpoints);
+    deferredProxyEndpoints.resolve(fakeEndpoints);
+
+    $scope.$apply();
+
+    expect(Endpoints.getNonProxyEndpoints).toHaveBeenCalled();
+    expect(Endpoints.getProxyEndpoints).toHaveBeenCalled();
+
+    expect(StartCtrl.endpoints.length).toEqual(4);
+  });
+
+  // TODO move this into a test case for endpoint service
+  xit('should have more then 30 non-proxy endpoints', function () {
     expect(StartCtrl.nonProxyEndpoints.length).toBeGreaterThan(nonProxyEndpoints);
   });
 
-  it('should have an array for proxy only endpoints', function () {
+  // TODO move this into a test case for endpoint service
+  xit('should have an array for proxy only endpoints', function () {
     expect(StartCtrl.proxyOnlyEndpoints).toBeDefined();
   });
 
-  it('should have more then 30 proxy only endpoints', function () {
+  // TODO move this into a test case for endpoint service
+  xit('should have more then 30 proxy only endpoints', function () {
     expect(StartCtrl.proxyOnlyEndpoints.length).toBeGreaterThan(proxyOnlyEndpoints);
   });
 
-  it('should have a flag for proxy availability', function () {
-    expect(StartCtrl.proxyAvailable).toBeTruthy();
-  });
-
-  it('should be have an empty endpoint input', function () {
-    expect(StartCtrl.endpoint).toBe(defaultEndpointURL);
-  });
-
   it('should not use a proxy', function() {
-    expect(StartCtrl.useLocalProxy).toBeFalsy();
+    expect(StartCtrl.useProxy).toBeFalsy();
   });
 
   it('should have an endpoint alert', function () {
@@ -70,25 +128,21 @@ describe('Controller: StartCtrl', function () {
 
     it('should not clear data if endpoint is still the same', function () {
       StartCtrl.endpoint = defaultEndpointURL;
-      spyOn(Nodes, 'clearAll').and.callThrough();
-      spyOn(Properties, 'clearAll').and.callThrough();
+      spyOn(Data, 'clearAll').and.callThrough();
       spyOn(Requests, 'clear').and.callThrough();
       spyOn($location, 'path').and.callThrough();
       StartCtrl.showGraph();
-      expect(Nodes.clearAll).not.toHaveBeenCalled();
-      expect(Properties.clearAll).not.toHaveBeenCalled();
+      expect(Data.clearAll).not.toHaveBeenCalled();
       expect(Requests.clear).not.toHaveBeenCalled();
     });
 
     it('should clear data if endpoint has changed', function () {
       StartCtrl.endpoint = 'http://transparency.270a.info/sparql';
-      spyOn(Nodes, 'clearAll').and.callThrough();
-      spyOn(Properties, 'clearAll').and.callThrough();
+      spyOn(Data, 'clearAll').and.callThrough();
       spyOn(Requests, 'clear').and.callThrough();
       spyOn($location, 'path').and.callThrough();
       StartCtrl.showGraph();
-      expect(Nodes.clearAll).toHaveBeenCalled();
-      expect(Properties.clearAll).toHaveBeenCalled();
+      expect(Data.clearAll).toHaveBeenCalled();
       expect(Requests.clear).toHaveBeenCalled();
       expect($location.path).toHaveBeenCalledWith('graph');
     });

@@ -1,48 +1,50 @@
 <!-- for selected datatype properties -->
-<div ng-show="selected !== undefined && selected.type === 'datatypeProperty'">
+<div ng-if="vm.selected !== undefined && vm.selected.type === 'datatypeProperty'">
   <p>
     <strong>Type:</strong> datatype property
   </p>
 
-  <p ng-if="selected.props.length === 1">
+  <p ng-if="vm.selected.props.length === 1">
     <strong>URI:</strong>
-    <a href="{{selected.props[0].uri}}" target="_blank">
-      {{selected.props[0].uri}}
+    <a href="{{vm.selected.props[0].uri}}" target="_blank">
+      {{vm.selected.props[0].uri}}
       <span class="glyphicon glyphicon-new-window"></span>
     </a>
   </p>
 
   <p>
     <strong>From instances of:</strong>
-    <a href="{{selected.sourceURI}}" target="_blank">
-      {{selected.sourceName}}
-      <span ng-hide="selected.sourceName.length > 0">{{selected.sourceURI | uriLabel}}</span>
+    <a href="{{vm.selected.sourceURI}}" target="_blank">
+      {{vm.selected.sourceName}}
+      <span ng-if="vm.selected.sourceName.length === 0">
+        {{vm.selected.sourceURI | uriLabel}}
+      </span>
       <span class="glyphicon glyphicon-new-window"></span>
     </a>
   </p>
 
   <p>
     <strong>To:</strong>
-    <a href="{{selected.targetURI}}" target="_blank">
-      {{selected.targetURI | uriLabel}}
+    <a href="{{vm.selected.targetURI}}" target="_blank">
+      {{vm.selected.targetURI | uriLabel}}
       <span class="glyphicon glyphicon-new-window"></span>
     </a>
   </p>
 
   <p>
-    <strong ng-if="selected.props.length > 1 && selected.props.length <= vm.numberOfProps">
-      Properties ({{selected.props.length}}):
+    <strong ng-if="vm.selected.props.length > 1 && vm.selected.props.length <= vm.numberOfProps">
+      Properties ({{vm.selected.props.length}}):
     </strong>
-    <strong ng-if="selected.props.length > vm.numberOfProps">
-      Properties ({{vm.numberOfProps}} of {{selected.props.length}}):
+    <strong ng-if="vm.selected.props.length > vm.numberOfProps">
+      Properties ({{vm.numberOfProps}} of {{vm.selected.props.length}}):
     </strong>
   </p>
 
-  <div ng-if="selected.props.length > 1" class="prop-list" style="max-height: 80px;">
+  <div ng-if="vm.selected.props.length > 1" class="prop-list" style="max-height: 80px;">
 
     <!-- if props are NOT ordered -->
-    <ul class="properties" ng-if="!selected.ordered">
-      <li ng-repeat="p in selected.props | limitTo: vm.numberOfProps">
+    <ul class="properties" ng-if="!vm.selected.ordered">
+      <li ng-repeat="p in vm.selected.props | limitTo: vm.numberOfProps">
         <a href="{{p.uri}}" target="_blank">
           {{p.uri | uriLabel}}
           <span class="glyphicon glyphicon-new-window"></span>
@@ -51,8 +53,8 @@
     </ul>
 
     <!-- if props are ordered -->
-    <ol class="properties" ng-if="selected.ordered">
-      <li ng-repeat="p in selected.props | limitTo: vm.numberOfProps">
+    <ol class="properties" ng-if="vm.selected.ordered">
+      <li ng-repeat="p in vm.selected.props | limitTo: vm.numberOfProps">
         <a href="{{p.uri}}" target="_blank">
           {{p.uri | uriLabel}}
           <span class="glyphicon glyphicon-new-window"></span>
@@ -61,7 +63,7 @@
       </li>
     </ol>
 
-    <button ng-hide="selected.props.length <= vm.numberOfProps" type="button" class="btn btn-link"
+    <button ng-if="vm.selected.props.length > vm.numberOfProps" type="button" class="btn btn-link"
             ng-click="vm.incNumberOfProps()">
       show more ...
     </button>

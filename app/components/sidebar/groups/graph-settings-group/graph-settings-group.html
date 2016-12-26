@@ -4,20 +4,31 @@
 
   <div class="checkbox">
     <label for="differentExternalColors">
-      <input id="differentExternalColors" type="checkbox" ng-model="vm.differentColors"
-             ng-change="vm.toggleDifferentColors()">
+      <input id="differentExternalColors" type="checkbox" ng-model="graphSettings.differentColors"
+             ng-change="graphSettings.toggleDifferentColors()">
       use different colors
     </label>
   </div>
 
   <p>
-    <label for="ctEdgeLength">Class - Class Distance: {{ ccEdgeLength }}</label>
-    <div id="ccEdgeLength" slider class="cdbl-slider" model="ccEdgeLength" min="1" max="300"></div>
+    <label for="ccEdgeLength">Class - Class Distance: {{ graphSettings.ccEdgeLength }}</label>
+    <input id="ccEdgeLength" type="range" min="1" max="300" ng-model="graphSettings.ccEdgeLength" ng-change="graphSettings.updateClassToClassLength()" />
   </p>
 
   <p>
-    <label for="ctEdgeLength">Class - Type Distance: {{ ctEdgeLength }}</label>
-    <div id="ctEdgeLength" slider class="cdbl-slider" model="ctEdgeLength" min="1" max="150"></div>
+    <label for="ctEdgeLength">Class - Type Distance: {{ graphSettings.ctEdgeLength }}</label>
+    <input id="ctEdgeLength" type="range" min="1" max="150" ng-model="graphSettings.ctEdgeLength" ng-change="graphSettings.updateClassToDatatypeLength()" />
   </p>
+
+  <p><strong>Layout</strong></p>
+
+  <div class="text-center">
+    <button type="button" class="btn btn-default" ng-click="graphSettings.toggleLayout()">
+    <span class="glyphicon" ng-class="(graphSettings.layoutPaused) ? 'glyphicon-play' : 'glyphicon-pause'" aria-hidden="true">
+    </span>
+      <span ng-if="!graphSettings.layoutPaused">Pause</span>
+      <span ng-if="graphSettings.layoutPaused">Resume</span>
+    </button>
+  </div>
 
 </div>

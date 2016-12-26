@@ -3,15 +3,32 @@
   "parser": "babel-eslint",
   "env": {
     "browser": true,
-    "node": true
+    "node": true,
+    "jasmine": true,
+    "jest": true
   },
   "rules": {
+    "camelcase": 1,
+    "complexity": 1,
+    "curly": 1,
+    "eqeqeq": 2,
+    "indent": [0, 2],
+    "no-bitwise": 1,
     "no-console": 0,
     "new-cap": 0,
     "strict": 0,
     "no-underscore-dangle": 0,
     "no-use-before-define": 0,
     "eol-last": 0,
-    "quotes": [2, "single", "avoid-escape"]
+    "quotes": [2, "single", "avoid-escape"],
+    "max-len": [1, 120],
+    "max-params": [1, 10],
+    "max-statements": [1, 40],
+    "no-var": 0,
+    "valid-jsdoc": [1, {
+      "requireReturn": false,
+      "requireParamDescription": false, 
+      "requireReturnDescription": false
+    }]
   }
 }

@@ -1,11 +1,15 @@
-'use strict';
-
+/**
+ * @ngdoc service
+ * @name Requests
+ *
+ * @param {$rootScope} $rootScope
+ * @param {StopWatch} StopWatch
+ *
+ * @ngInject
+ */
 function requests($rootScope, StopWatch) {
 
-  'ngInject';
-
-  /* jshint validthis: true */
-  var that = this;
+  const that = this;
 
   that.promises = [];
 
@@ -74,6 +78,7 @@ function requests($rootScope, StopWatch) {
 
   /**
    * Increases the number of failed requests by one.
+   * @param {number} status
    */
   that.incFailedRequests = function (status) {
     that.errorStatus.add(status);
@@ -115,6 +120,6 @@ function requests($rootScope, StopWatch) {
     $rootScope.$broadcast('pending-requests-changed', that.pendingRequests);
   };
   
-} // end of export
+}
 
 export default requests;

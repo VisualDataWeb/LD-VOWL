@@ -2,3 +2,6 @@ node_modules/
 coverage/
 dist/
 .idea/
+.vscode/
+production.conf.json
+development.conf.json

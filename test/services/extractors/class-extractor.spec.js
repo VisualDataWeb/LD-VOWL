@@ -1,7 +1,8 @@
 import app from '../../../app/app';
+import angular from 'angular';
 
 describe('Service: ClassExtractor', function () {
-  "use strict";
+  'use strict';
 
   let classExtractor;
   let httpBackend;

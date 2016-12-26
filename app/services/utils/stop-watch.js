@@ -1,11 +1,14 @@
-'use strict';
-
+/**
+ * @ngdoc service
+ * @name StopWatch
+ *
+ * @param {$log} $log
+ *
+ * @ngInject
+ */
 function stopWatch($log) {
 
-  'ngInject';
-
-  /* jshint validthis: true */
-  var that = this;
+  const that = this;
 
   that.round = 1;
   that.lastStart = null;

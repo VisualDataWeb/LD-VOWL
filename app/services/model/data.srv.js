@@ -1,20 +1,18 @@
-'use strict';
-
 /**
- * @Name Data
+ * @ngdoc service
+ * @name Data
  *
  * @param {$log} $log
  * @param {Nodes} Nodes
  * @param {Properties} Properties
  * @param {Requests} Requests
  * @param {Promises} Promises
+ *
+ * @ngInject
  */
 function dataService($log, Nodes, Properties, Requests, Promises) {
 
-  'ngInject';
-
-  /* jshint validthis: true */
-  var that = this;
+  const that = this;
 
   that.clearAll = function () {
     Promises.rejectAll();

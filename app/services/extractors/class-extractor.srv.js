@@ -1,5 +1,3 @@
-'use strict';
-
 import Extractor from './extractor.srv';
 
 /**
@@ -10,20 +8,20 @@ class ClassExtractor extends Extractor {
 
   /**
    * Create a new ClassExtractor.
-   * @param {$cookies} $cookies
+   * @param {Storage} Storage
    * @param {$http} $http
-   * @param $q
+   * @param {$q} $q
    * @param {$log} $log
    * @param {PREFIX} PREFIX
    * @param {CLASS_BLACKLIST} CLASS_BLACKLIST
-   * @param RequestConfig
-   * @param QueryFactory
-   * @param Nodes
-   * @param Promises
+   * @param {RequestConfig} RequestConfig
+   * @param {QueryFactory} QueryFactory
+   * @param {Nodes} Nodes
+   * @param {Promises} Promises
+   *
+   * @ngInject
    */
-  constructor ($cookies, $http, $q, $log, PREFIX, CLASS_BLACKLIST, RequestConfig, QueryFactory, Nodes, Promises) {
-
-    'ngInject';
+  constructor (Storage, $http, $q, $log, PREFIX, CLASS_BLACKLIST, RequestConfig, QueryFactory, Nodes, Promises) {
 
     // call constructor of Extractor
     super();
@@ -36,19 +34,18 @@ class ClassExtractor extends Extractor {
     this.queryFactory = QueryFactory;
     this.nodes = Nodes;
     this.promises = Promises;
-    
-    //TODO move cookie name into a constant
-    let blacklistStr = $cookies.get('ldvowl_class_blacklist');
 
-    if (typeof blacklistStr !== 'undefined') {
+    let blacklistStr = Storage.getItem('class_blacklist');
+
+    if (blacklistStr !== undefined && blacklistStr !== null) {
       // use last blacklist
       let classInput = blacklistStr.replace(/(\r\n|\n|\r|\s)/gm,'');
       this.setBlacklist(classInput.split(','));
     } else {
       // set up new blacklists
-      for (var type in CLASS_BLACKLIST) {
+      for (let type in CLASS_BLACKLIST) {
         if (CLASS_BLACKLIST.hasOwnProperty(type) && type !== 'SKOS') {
-          for (var i = 0; i < CLASS_BLACKLIST[type].length; i++) {
+          for (let i = 0; i < CLASS_BLACKLIST[type].length; i++) {
             this.blacklist.push(PREFIX[type] + CLASS_BLACKLIST[type][i]);
           }
         }
@@ -57,33 +54,31 @@ class ClassExtractor extends Extractor {
   } // end of constructor()
 
   requestClasses() {
-    var self = this;
-
-    var deferred = this.$q.defer();
-    const promiseId = self.promises.addPromise(deferred);
+    const deferred = this.$q.defer();
+    const promiseId = this.promises.addPromise(deferred);
 
     // do not request further classes
     if (this.nodes.hasClassNodes()) {
-      self.$log.debug('[Classes] Skip loading further classes...');
+      this.$log.debug('[Classes] Skip loading further classes...');
       deferred.resolve([]);
       return deferred.promise;
     }
 
-    self.classIds = [];
+    let classIds = [];
 
     let limit = this.reqConfig.getLimit() || 10;
 
-    var requestURL = this.reqConfig.getRequestURL();
+    const self = this;
 
     function doQuery(lastTry = false, offset = 0, limit = 10) {
-
+      let requestURL = self.reqConfig.getRequestURL();
       let query = self.queryFactory.getClassQuery(limit, offset);
 
       self.$log.debug(`[Classes] Send Request with offset ${offset}...`);
       self.$http.get(requestURL, self.reqConfig.forQuery(query, deferred))
         .then(function handleExtractedClasses(response) {
           if (response.data.results !== undefined) {
-            var bindings = response.data.results.bindings;
+            let bindings = response.data.results.bindings;
 
             if (bindings !== undefined) {
 
@@ -92,41 +87,40 @@ class ClassExtractor extends Extractor {
 
               let fetchMore = 0;
 
-              for (let i = 0; i < bindings.length; i++) {
-
-                var currentClassURI = bindings[i].class.value;
+              bindings.forEach((binding) => {
+                let currentClassURI = binding.class.value;
 
                 if (currentClassURI.match(/^http.*/) && !self.inBlacklist(currentClassURI) &&
-                    bindings[i].instanceCount !== undefined) {
-                  var node = {};
+                    binding.instanceCount !== undefined) {
+                  let node = {};
 
                   node.uri = currentClassURI;
-                  node.name = (bindings[i].label !== undefined) ? bindings[i].label.value : '';
-                  node.value = parseInt(bindings[i].instanceCount.value);
+                  node.name = (binding.label !== undefined) ? binding.label.value : '';
+                  node.value = parseInt(binding.instanceCount.value);
                   node.type = 'class';
                   node.active = false;
-                  var newClassId = self.nodes.addNode(node);
+                  const newClassId = self.nodes.addNode(node);
 
-                  self.classIds.push(newClassId);
+                  classIds.push(newClassId);
 
-                  if (bindings[i].class !== undefined && bindings[i].class.value !== undefined) {
+                  if (binding.class !== undefined && binding.class.value !== undefined) {
                     self.requestClassLabel(newClassId, currentClassURI);
                   }
                 } else {
-                  self.$log.debug(`[Classes] Class '${currentClassURI} is either blacklisted or has an invalid URI!`);
+                  self.$log.debug(`[Classes] Class '${currentClassURI}' is either blacklisted or has an invalid URI!`);
                   fetchMore++;
                 }
-              }
+              });
 
               if (fetchMore === 0) {
-                deferred.resolve(self.classIds);
+                deferred.resolve(classIds);
               } else {
                 self.$log.debug(`[Classes] Fetch ${fetchMore} more classes!`);
                 doQuery(false, offset + limit, fetchMore);
               }
             } else {
               self.$log.debug('[Classes] No further classes found!');
-              deferred.resolve(self.classIds);
+              deferred.resolve(classIds);
             }
           } else {
             self.$log.error(response);
@@ -139,38 +133,47 @@ class ClassExtractor extends Extractor {
               // switch back and surrender
               self.reqConfig.switchFormat();
               self.$log.error('[Classes] Okay, I surrender...');
-              deferred.resolve(self.classIds);
+              deferred.resolve(classIds);
             }
           }
-        }, function (err) {
-          self.$log.error(err);
-          deferred.reject(self.classIds);
+        }, function handleErrorExtractingClasses(err) {
+          if (err.config.timeout.$$state.value === 'canceled') {
+            self.$log.warn('[Class Extractor] Class extraction was canceled!');
+            deferred.reject(classIds);
+          } else {
+            if (!self.reqConfig.getUseProxy()) {
+              self.$log.warn('[Class Extractor] Might need a proxy here, try again...');
+              self.reqConfig.setUseProxy(true);
+              doQuery(false, 0, limit);
+            } else {
+              deferred.reject(classIds);
+            }
+          }
         })
         .finally(function () {
           self.promises.removePromise(promiseId);
         });
     } // end of doQuery()
 
-    doQuery(false, 0,limit);
+    doQuery(false, 0, limit);
 
     return deferred.promise;
   }
 
   requestClassLabel (classId, classURI) {
-    var self = this;
+    const self = this;
 
-    var canceller = self.$q.defer();
+    const canceller = self.$q.defer();
     const promiseId = self.promises.addPromise(canceller);
 
-    var labelLang = this.reqConfig.getLabelLanguage();
-    var labelQuery = this.queryFactory.getLabelQuery(classURI, labelLang);
-    var requestURL = this.reqConfig.getRequestURL();
+    const labelLang = this.reqConfig.getLabelLanguage();
+    const labelQuery = this.queryFactory.getLabelQuery(classURI, labelLang);
+    const requestURL = this.reqConfig.getRequestURL();
 
     self.$log.debug(`[Class Label] Send request for '${classURI}'...`);
 
     this.$http.get(requestURL, this.reqConfig.forQuery(labelQuery, canceller))
       .then(function handleExtractedClassLabel(response) {
-
         if (response === undefined || response.data === undefined || response.data.results === undefined) {
           return;
         }
@@ -179,15 +182,24 @@ class ClassExtractor extends Extractor {
 
         if (bindings !== undefined && bindings.length > 0 && bindings[0].label !== undefined &&
             bindings[0].label.value !== '') {
-          var label = bindings[0].label.value;
+          const label = bindings[0].label.value;
           self.nodes.insertLabel(classId, label);
           self.$log.debug(`[Class Label] Found '${label}' for '${classURI}'.`);
         } else {
           self.$log.debug(`[Class Label] Found None for '${classURI}'.`);
           self.requestClassSkosLabel(classId, classURI);
         }
-      },function (err) {
-        self.$log.error(err);
+      }, function handleErrorExtractingClassLabel(err) {
+        if (err.status !== undefined && err.status === 400) {
+          if (typeof err.data === 'string' && err.data.indexOf(`syntax error at 'SAMPLE'`) !== -1) {
+            self.$log.warn(`[Class Extractor] Endpoint does not understand query with 'SAMPLE'!`);
+          } else {
+            self.$log.error('[Class Extractor] Endpoint returned bad request on retrieving class labels');
+            self.$log.error(err);
+          }
+        } else {
+          self.$log.error(err);
+        }
       })
       .finally(function () {
         self.promises.removePromise(promiseId);
@@ -197,17 +209,17 @@ class ClassExtractor extends Extractor {
   /**
    * If rdfs label can not be found, maybe there is an skos:prefLabel.
    *
-   * @param classId - the id of the class which label should be found
-   * @param classURI - the URI of this class
+   * @param {string} classId - the id of the class which label should be found
+   * @param {string} classURI - the URI of this class
    */
   requestClassSkosLabel (classId, classURI) {
-    var self = this;
+    const self = this;
 
-    var canceller = this.$q.defer();
+    const canceller = this.$q.defer();
 
-    var labelLang = this.reqConfig.getLabelLanguage();
-    var skosLabelQuery = this.queryFactory.getPreferredLabelQuery(classURI, labelLang);
-    var requestURL = this.reqConfig.getRequestURL();
+    const labelLang = this.reqConfig.getLabelLanguage();
+    const skosLabelQuery = this.queryFactory.getPreferredLabelQuery(classURI, labelLang);
+    const requestURL = this.reqConfig.getRequestURL();
 
     self.$log.debug(`[Class Label] Send request for '${classURI}' SKOS preferred label...`);
 
@@ -227,9 +239,9 @@ class ClassExtractor extends Extractor {
         } else {
           self.$log.debug(`[Class Label] Found no SKOS preferred label for '${classURI}'.`);
         }
-    }, function (err) {
-      self.$log.error(err);
-    });
+      }, function (err) {
+        self.$log.error(err);
+      });
   } // end of requestClassSkosLabel()
 } // end of class 'ClassExtractor'
 

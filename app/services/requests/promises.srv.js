@@ -1,32 +1,49 @@
-'use strict';
-
+/**
+ * @ngdoc service
+ * @name Promises
+ *
+ * @description A service holding all promises.
+ *
+ * @param {$log} $log
+ *
+ * @ngInject
+ */
 function promises($log) {
 
-  'ngInject';
+  const that = this;
 
-  /* jshint validthis: true */
-  var that = this;
+  let cancelPromises = new Map();
+  let nextPromiseNumber = 0;
 
-  var cancelPromises = new Map();
-  var nextPromiseNumber = 0;
-
+  /**
+   * Adds a new promise and returns the id assigned to it.
+   *
+   * @param {*} newPromise - the promise to be added
+   * @returns {string} the id of the added promise
+   */
   that.addPromise = function (newPromise) {
     const promiseId = 'promise' + nextPromiseNumber;
     cancelPromises.set(promiseId, newPromise);
     nextPromiseNumber++;
-    $log.debug(`[Promises] Added a new promise with id ${promiseId}! Now holding ${cancelPromises.size} promises.`);
     return promiseId;
   };
 
+  /**
+   * Removes the promise with the given id.
+   *
+   * @param {string} promiseId - the id of the promise to be deleted
+   */
   that.removePromise = function (promiseId) {
     cancelPromises.delete(promiseId);
-    $log.debug(`[Promises] Removed promise ${promiseId}, now holding ${cancelPromises.size} promises.`);
   };
 
+  /**
+   * Rejects and removes all promises.
+   */
   that.rejectAll = function () {
 
     // cancel each pending http request by resolving the promises
-    for (var p of cancelPromises.values()) {
+    for (let p of cancelPromises.values()) {
       p.resolve('canceled');
     }
 
@@ -37,7 +54,8 @@ function promises($log) {
 
   /**
    * Returns the amount of promises being hold by this service.
-   * @returns {number}
+   *
+   * @returns {number} the number of promises
    */
   that.getSize = function () {
     return cancelPromises.size;

@@ -3,14 +3,22 @@ import settingsTemplate from './components/settings/settings.html';
 import graphTemplate from './components/graph/graph.html';
 import aboutTemplate from './components/about/about.html';
 
+/**
+ * @param {$httpProvider} $httpProvider
+ * @param {$routeProvider} $routeProvider
+ * @param {$logProvider} $logProvider
+ *
+ * @ngInject
+ */
 function routing($httpProvider, $routeProvider, $logProvider) {
-
-  'ngInject';
 
   // set up http interceptor
   $httpProvider.interceptors.push('RequestCounter');
   $httpProvider.defaults.useXDomain = true;
   delete $httpProvider.defaults.headers.common['X-Requested-With'];
+
+  // apply changes in the next $digest cycle (around 10 milliseconds later, depending on the browser)
+  $httpProvider.useApplyAsync();
 
   // set up routes
   $routeProvider
@@ -42,9 +50,7 @@ function routing($httpProvider, $routeProvider, $logProvider) {
       redirectTo: '/'
     });
 
-  // jshint ignore:start
   $logProvider.debugEnabled(__LOGGING__); // eslint-disable-line no-undef
-  //jshint ignore:end
 
 } // end of routing()
 

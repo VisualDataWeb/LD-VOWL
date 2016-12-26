@@ -1,14 +1,12 @@
-/*global angular*/
-/*jshint browser:true */
-'use strict';
+import angular from 'angular';
 
 require('./vendor.js')(); // run an empty function
 
+//TODO move into specific components
 require('../styles/main.css');
 require('../styles/graph.css');
-require('../../node_modules/jquery-ui/themes/base/jquery-ui.css');
 
-var appModule = require('../app');
+import appModule from '../app';
 
 angular.element(document).ready(function () {
   angular.bootstrap(document, [appModule.name], {

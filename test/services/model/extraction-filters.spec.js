@@ -1,7 +1,8 @@
+import angular from 'angular';
 import app from '../../../app/app';
 
 describe('Service: Filters', function () {
-  "use strict";
+  'use strict';
 
   let filters;
 
@@ -40,23 +41,23 @@ describe('Service: Filters', function () {
   });
 
   it('should have a method returning the datatypes flag', function () {
-    expect(filters.getIncludeLiterals).toBeDefined();
+    expect(filters.getIncludeDataTypes).toBeDefined();
   });
 
   it('should include datatypes', function () {
-    expect(filters.getIncludeLiterals()).toBeTruthy();
+    expect(filters.getIncludeDataTypes()).toBeTruthy();
   });
 
   it('should have a method to toggle datatypes', function () {
-    expect(filters.toggleLiterals()).toBeDefined();
+    expect(filters.toggleDataTypes).toBeDefined();
   });
 
   it('should be possible to toggle datatypes', function () {
-    expect(filters.getIncludeLoops()).toBeTruthy();
-    filters.toggleLiterals();
-    expect(filters.getIncludeLiterals()).toBeFalsy();
-    filters.toggleLiterals();
-    expect(filters.getIncludeLiterals()).toBeTruthy();
+    expect(filters.getIncludeDataTypes()).toBeTruthy();
+    expect(filters.toggleDataTypes()).toBeFalsy();
+    expect(filters.getIncludeDataTypes()).toBeFalsy();
+    expect(filters.toggleDataTypes()).toBeTruthy();
+    expect(filters.getIncludeDataTypes()).toBeTruthy();
   });
 
   it('should have a method returning the disjoint node flag', function () {

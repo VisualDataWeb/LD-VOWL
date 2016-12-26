@@ -1,13 +1,23 @@
-'use strict';
+/**
+ * @ngdoc type
+ * @name SettingsCtrl
+ *
+ * @param {$log} $log
+ * @param {Storage} Storage
+ * @param {PREFIX} PREFIX
+ * @param {PROPERTY_BLACKLIST} PROPERTY_BLACKLIST
+ * @param {CLASS_BLACKLIST} CLASS_BLACKLIST
+ * @param {RequestConfig} RequestConfig
+ * @param {Data} Data
+ * @param {ClassExtractor} ClassExtractor
+ * @param {RelationExtractor} RelationExtractor
+ *
+ * @ngInject
+ */
+function settingsCtrl($log, Storage, PREFIX, PROPERTY_BLACKLIST, CLASS_BLACKLIST, RequestConfig, Data, ClassExtractor,
+                      RelationExtractor) {
 
-function settingsCtrl($log, $cookies, PREFIX, PROPERTY_BLACKLIST, CLASS_BLACKLIST, RequestConfig, Nodes, Properties,
-                      Requests, ClassExtractor, RelationExtractor) {
-  'ngInject';
-
-  /* jshint validthis: true */
-  var vm = this;
-
-  const cookiePrefix = 'ldvowl_';
+  const vm = this;
 
   //TODO move default settings into a constant
   vm.currentLanguage = RequestConfig.getLabelLanguage() || 'en';
@@ -28,21 +38,40 @@ function settingsCtrl($log, $cookies, PREFIX, PROPERTY_BLACKLIST, CLASS_BLACKLIS
   vm.enabled = [];
 
   vm.initialize = function () {
-    var classItems = ClassExtractor.getBlacklist();
-    var propertyItems = RelationExtractor.getBlacklist();
+    const classItems = ClassExtractor.getBlacklist();
+    const propertyItems = RelationExtractor.getBlacklist();
 
     vm.propsOrdered = RequestConfig.getPropertiesOrdered();
 
-    let cookieFlag = [];
-    cookieFlag['RDF'] = $cookies.get(cookiePrefix + 'blacklist_rdf');
-    cookieFlag['RDFS'] = $cookies.get(cookiePrefix + 'blacklist_rdfs');
-    cookieFlag['OWL'] = $cookies.get(cookiePrefix + 'blacklist_owl');
-    cookieFlag['SKOS'] = $cookies.get(cookiePrefix + 'blacklist_skos');
+    let savedFlags = [];
+    savedFlags['RDF'] = Storage.getItem('blacklist_rdf');
+    savedFlags['RDFS'] = Storage.getItem('blacklist_rdfs');
+    savedFlags['OWL'] = Storage.getItem('blacklist_owl');
+    savedFlags['SKOS'] = Storage.getItem('blacklist_skos');
 
-    vm.enabled['RDF'] = (cookieFlag['RDF'] !== undefined) ? (cookieFlag['RDF'] === 'true') : true;
-    vm.enabled['RDFS'] = (cookieFlag['RDFS'] !== undefined) ? (cookieFlag['RDFS'] === 'true') : true;
-    vm.enabled['OWL'] = (cookieFlag['OWL'] !== undefined) ? (cookieFlag['OWL'] === 'true') : true;
-    vm.enabled['SKOS'] = (cookieFlag['SKOS'] !== undefined) ? (cookieFlag['SKOS'] === 'true') : false;
+    if (savedFlags['RDF'] !== undefined && savedFlags['RDF'] !== null) {
+      vm.enabled['RDF'] = savedFlags['RDF'] === 'true';
+    } else {
+      vm.enabled['RDF'] = true;
+    }
+
+    if (savedFlags['RDFS'] !== undefined && savedFlags['RDFS'] !== null) {
+      vm.enabled['RDFS'] = savedFlags['RDFS'] === 'true';
+    } else {
+      vm.enabled['RDFS'] = true;
+    }
+
+    if (savedFlags['OWL'] !== undefined && savedFlags['OWL'] !== null) {
+      vm.enabled['OWL'] = savedFlags['OWL'] === 'true';
+    } else {
+      vm.enabled['OWL'] = true;
+    }
+
+    if (savedFlags['SKOS'] !== undefined && savedFlags['SKOS'] !== null) {
+      vm.enabled['SKOS'] = savedFlags['SKOS'] === 'true';
+    } else {
+      vm.enabled['SKOS'] = false;
+    }
 
     vm.classBlacklistInput = classItems.join(vm.separator);
     vm.propertyBlacklistInput = propertyItems.join(vm.separator);
@@ -72,34 +101,32 @@ function settingsCtrl($log, $cookies, PREFIX, PROPERTY_BLACKLIST, CLASS_BLACKLIS
   };
   
   vm.saveBlacklists = function () {
-    var input = vm.propertyBlacklistInput.replace(/(\r\n|\n|\r|\s)/gm,'');
-    var items = input.split(',');
+    const input = vm.propertyBlacklistInput.replace(/(\r\n|\n|\r|\s)/gm, '');
+    const items = input.split(',');
 
     // update blacklist in extractor
     RelationExtractor.setBlacklist(items);
 
-    var classInput = vm.classBlacklistInput.replace(/(\r\n|\n|\r|\s)/gm,'');
-    var classItems = classInput.split(',');
+    const classInput = vm.classBlacklistInput.replace(/(\r\n|\n|\r|\s)/gm, '');
+    const classItems = classInput.split(',');
     ClassExtractor.setBlacklist(classItems);
 
     // delete all loaded data
-    Nodes.clearAll();
-    Properties.clearAll();
-    Requests.clear();
+    Data.clearAll();
 
     const rdfState = (vm.enabled['RDF']) ? 'true' : 'false';
     const rdfsState = (vm.enabled['RDFS']) ? 'true' : 'false';
     const owlState = (vm.enabled['OWL']) ? 'true' : 'false';
     const skosState = (vm.enabled['SKOS']) ? 'true' : 'false';
 
-    $cookies.put(cookiePrefix + 'blacklist_rdf', rdfState);
-    $cookies.put(cookiePrefix + 'blacklist_rdfs', rdfsState);
-    $cookies.put(cookiePrefix + 'blacklist_owl', owlState);
-    $cookies.put(cookiePrefix + 'blacklist_skos', skosState);
+    Storage.setItem('blacklist_rdf', rdfState);
+    Storage.setItem('blacklist_rdfs', rdfsState);
+    Storage.setItem('blacklist_owl', owlState);
+    Storage.setItem('blacklist_skos', skosState);
 
     // save inputs
-    $cookies.put(cookiePrefix + 'class_blacklist', vm.classBlacklistInput);
-    $cookies.put(cookiePrefix + 'property_blacklist', vm.propertyBlacklistInput);
+    Storage.setItem('class_blacklist', vm.classBlacklistInput);
+    Storage.setItem('property_blacklist', vm.propertyBlacklistInput);
   };
 
   /**
@@ -112,8 +139,8 @@ function settingsCtrl($log, $cookies, PREFIX, PROPERTY_BLACKLIST, CLASS_BLACKLIS
     vm.enabled['SKOS'] = false;
     
     vm.restoreListDefaults();
+    vm.saveBlacklists();
   };
-
 
   /**
    * Restore blacklists to predefined list.

@@ -13,7 +13,7 @@ class Extractor {
   /**
    * Returns the blacklist of this Extractor.
    *
-   * @returns {Array|*}
+   * @returns {Array}
    */
   getBlacklist () {
     return this.blacklist;
@@ -22,7 +22,7 @@ class Extractor {
   /**
    * Replaces the blacklist of this Extractor with the given one.
    *
-   * @param newBlacklist - the new blacklist for this Extractor
+   * @param {Array} newBlacklist - the new blacklist for this Extractor
    */
   setBlacklist(newBlacklist) {
     this.blacklist = newBlacklist;
@@ -31,7 +31,7 @@ class Extractor {
   /**
    * Returns true if the given URI is black listed, false otherwise.
    *
-   * @param uriToCheck - the URI to be checked
+   * @param {string} uriToCheck - the URI to be checked
    * @returns {boolean}
    */
   inBlacklist(uriToCheck) {

@@ -1,7 +1,8 @@
+import angular from 'angular';
 import app from '../../../app/app';
 
 describe('Service: Prefixes', function () {
-  "use strict";
+  'use strict';
 
   let prefixes;
 

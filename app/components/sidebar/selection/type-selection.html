@@ -1,5 +1,5 @@
 <!-- for selected data types -->
-<div ng-show="selected !== undefined && selected.type === 'type'">
+<div ng-if="vm.selected !== undefined && vm.selected.type === 'type'">
   <p>
     <strong>Type:</strong>
     Datatype
@@ -7,11 +7,11 @@
 
   <p>
     <strong>Label:</strong>
-    {{selected.uri | uriLabel}}
+    {{vm.selected.uri | uriLabel}}
   </p>
 
   <p>
     <strong>URI:</strong>
-    <a href="{{selected.uri}}" target="_blank">{{selected.uri}}</a>
+    <a href="{{vm.selected.uri}}" target="_blank">{{vm.selected.uri}}</a>
   </p>
 </div>

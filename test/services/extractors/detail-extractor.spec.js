@@ -1,8 +1,9 @@
 import app from '../../../app/app';
+import angular from 'angular';
 
 describe('Service: DetailExtractor', function () {
   
-  "use strict";
+  'use strict';
 
   let detailExtractor;
 

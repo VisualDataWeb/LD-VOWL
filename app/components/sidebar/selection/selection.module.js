@@ -8,12 +8,19 @@ import PropertySelection from './prop-selection.drv.js';
 import DatatypePropertySelection from './datatype-prop-selection.drv.js';
 import SubclassPropertySelection from './subclass-prop-selection.drv.js';
 
-// register directives and return new module name
-export default angular.module('components.sidebar.selection', [])
+/**
+ * @ngdoc module
+ * @name components.sidebar.selection
+ *
+ * @description
+ * This module includes directives for different selections in the graph.
+ */
+const selectionModule = angular.module('components.sidebar.selection', [])
   .directive('noSelection', NoSelection)
   .directive('classSelection', ClassSelection)
   .directive('typeSelection', TypeSelection)
   .directive('propSelection', PropertySelection)
   .directive('datatypePropSelection', DatatypePropertySelection)
-  .directive('subclassPropSelection', SubclassPropertySelection)
-  .name;
+  .directive('subclassPropSelection', SubclassPropertySelection);
+
+export default selectionModule;

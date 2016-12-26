@@ -1,0 +1,142 @@
+[
+  {
+    "name": "Alpine Ski World Cup - Austria Ski Team",
+    "url": "http://vocabulary.semantic-web.at/PoolParty/sparql/AustrianSkiTeam"
+  },
+  {
+    "name": "BCN Datos",
+    "url": "http://datos.bcn.cl/sparql",
+    "description": ""
+  },
+  {
+    "name": "Database Center for Life Science (DBCLS)",
+    "url": "http://data.allie.dbcls.jp/sparql",
+    "description": ""
+  },
+  {
+    "name": "dbpedia",
+    "url": "http://dbpedia.org/sparql",
+    "description": ""
+  },
+  {
+    "name": "Dutch Ships and Sailors (DSS)",
+    "url": "http://dutchshipsandsailors.nl/data/sparql/",
+    "description": "maritime historical data set"
+  },
+  {
+    "name": "Dutch Ships and Sailors (DSS) Semantic Layer",
+    "url": "http://semanticweb.cs.vu.nl/dss/sparql/",
+    "description": ""
+  },
+  {
+    "name": "EBI BioModels Database",
+    "url": "https://www.ebi.ac.uk/rdf/services/biomodels/sparql",
+    "description": ""
+  },
+  {
+    "name": "EBI Biosamples Database",
+    "url": "https://www.ebi.ac.uk/rdf/services/biosamples/sparql",
+    "description": ""
+  },
+  {
+    "name": "EBI ChEMBL",
+    "url": "https://www.ebi.ac.uk/rdf/services/chembl/sparql",
+    "description": ""
+  },
+  {
+    "name": "Enipedia",
+    "url": "http://enipedia.tudelft.nl/sparql"
+  },
+  {
+    "name": "Environment Agency Bathing Water Quality",
+    "url": "http://environment.data.gov.uk/sparql/bwq/query",
+    "description": ""
+  },
+  {
+    "name": "EUscreen Linked Open Data Pilot",
+    "url": "http://lod.euscreen.eu/sparql",
+    "description": "about television"
+  },
+  {
+    "name": "FOODpedia",
+    "url": "http://foodpedia.tk/sparql",
+    "description": "about food products and ingredients"
+  },
+  {
+    "name": "Geologic Time Scale",
+    "url": "http://resource.geolba.ac.at/PoolParty/sparql/GeologicTimeScale"
+  },
+  {
+    "name": "International Monetary Fund Linked Data",
+    "url": "http://imf.270a.info/sparql"
+  },
+  {
+    "name": "isidore",
+    "url": "http://www.rechercheisidore.fr/sparql"
+  },
+  {
+    "name": "LinkedGeoData",
+    "url": "http://linkedgeodata.org/sparql"
+  },
+  {
+    "name": "LinkedMDB",
+    "url": "http://data.linkedmdb.org/sparql"
+  },
+  {
+    "name": "LOCAH Linked Archives Hub",
+    "url": "http://data.archiveshub.ac.uk/sparql"
+  },
+  {
+    "name": "Lotico",
+    "url": "http://www.lotico.com:3030/lotico/sparql"
+  },
+  {
+    "name": "MONDIS",
+    "url": "http://onto.mondis.cz/openrdf-sesame/repositories/mondis-record-owlim"
+  },
+  {
+    "name": "MORElab",
+    "url": "http://apps.morelab.deusto.es/labman/sparql",
+    "description": ""
+  },
+  {
+    "name": "Nobelprize.org",
+    "url": "http://data.nobelprize.org/sparql"
+  },
+  {
+    "name": "Open Data Thesaurus",
+    "url": "http://vocabulary.semantic-web.at/PoolParty/sparql/OpenData"
+  },
+  {
+    "name": "Scientific Ocean Drilling",
+    "url": "http://data.oceandrilling.org/sparql"
+  },
+  {
+    "name": "Springer LOD Conference Portal",
+    "url": "http://lod.springer.com/sparql",
+    "description": "about scientific publications at springer"
+  },
+  {
+    "name": "Swiss Federal Statistics Office Linked Data",
+    "url": "http://bfs.270a.info/sparql",
+    "description": "swiss statistics"
+  },
+  {
+    "name": "Transparency International Linked Data",
+    "url": "http://transparency.270a.info/sparql",
+    "description": "data set about corruption"
+  },
+  {
+    "name": "WKD - Arbeitsrechtsthesaurus",
+    "url": "http://vocabulary.wolterskluwer.de/PoolParty/sparql/arbeitsrecht"
+  },
+  {
+    "name": "WKD - Gerichtsthesaurus",
+    "url": "http://vocabulary.wolterskluwer.de/PoolParty/sparql/court"
+  },
+  {
+    "name": "ww1lod",
+    "url": "http://ldf.fi/ww1lod/sparql",
+    "description": "about WW1"
+  }
+]

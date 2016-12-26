@@ -1,11 +1,9 @@
-'use strict';
+const webpack = require('webpack');
+const ngAnnotatePlugin = require('ng-annotate-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-var webpack = require('webpack');
-var ngAnnotatePlugin = require('ng-annotate-webpack-plugin');
-var ExtractPlugin = require('extract-text-webpack-plugin');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
-
-var APP = __dirname + '/app';
+const APP = __dirname + '/app';
 
 module.exports = {
   // config goes here
@@ -16,18 +14,15 @@ module.exports = {
       'angular',
       'angular-route',
       'angular-animate',
-      'angular-cookies',
       'd3',
-      'jquery',
-      'jquery-ui',
-      'bootstrap-webpack',
       'angular-ui-bootstrap'
     ]
   },
   module: {
     loaders: [
-      { test: /\.js$/, loader: 'ng-annotate!babel?presets[]=es2015!jshint', exclude: /node_modules/},
-      { test: /\.js$/, loader: 'eslint-loader', exclude: /node_modules/},
+      { test: /\.js$/, loader: 'ng-annotate!babel?presets[]=es2015', exclude: /node_modules/ },
+      { test: /\.js$/, loader: 'eslint-loader', exclude: /node_modules/ },
+      { test: /\.json$/, loader: 'file-loader?name=[name].[ext]', exclude: /node_modules/ },
 
       { test: /\.html$/, loader: 'ng-cache?prefix=[dir]/[dir]', exclude: /index.html/},
 
@@ -36,20 +31,20 @@ module.exports = {
       { test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
         loader: 'url-loader?limit=10000&minetype=application/font-woff&name=fonts/[name].[ext]' },
       { test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'file-loader?name=img/[name].[ext]' },
-      { test: /\.css$/, loader: ExtractPlugin.extract('style', 'css') },
+      { test: /\.css$/, loader: ExtractTextPlugin.extract('style', 'css')},
+      { test: /\.scss$/, loader: ExtractTextPlugin.extract('style', 'css!sass')},
       { test: /\.(jpg|png|gif|ico)$/, loader: 'file-loader?name=img/[name].[ext]'}
     ]
   },
   plugins: [
     new webpack.ProvidePlugin({
-      d3: 'd3',
-      $: 'jquery',
-      jQuery: 'jquery'
+      d3: 'd3'
     }),
 
     new webpack.DefinePlugin({
       __LOGGING__: false,
-      __PROXY__: false,
+      __PROXY__: true,
+      __PROXY_URL__: JSON.stringify(require('./production.conf.json').proxyUrl),
       __SESSION_STORAGE__: false,
       __SHOW_ENDPOINT__: true,
       __VERSION__: JSON.stringify(require('./package.json').version)
@@ -59,14 +54,14 @@ module.exports = {
       add: true
     }),
 
-    new ExtractPlugin('styles.css'),
+    new ExtractTextPlugin('styles.css', { allChunks: true }),
 
     new webpack.optimize.CommonsChunkPlugin('vendors', 'js/vendors.js'),
 
     new HtmlWebpackPlugin({
       title: 'LD-VOWL',
       template: 'index.ejs',
-      favicon: __dirname + '/app/favicon.ico',
+      favicon: __dirname + '/app/favicon.ico'
     })
   ],
   output: {
