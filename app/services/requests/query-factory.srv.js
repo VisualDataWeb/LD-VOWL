@@ -47,6 +47,7 @@ function queryFactory() {
         `?sub a ?class. ` +
       `} ` +
       `GROUP BY ?class ` +
+      `HAVING (count(?sub) > 0) ` +
       `ORDER BY DESC(?instanceCount) ` +
       `LIMIT ${limit} ` +
       `OFFSET ${offset}`;
@@ -58,11 +59,11 @@ function queryFactory() {
     labelLang = labelLang || defaultLang;
 
     return prefixes() +
-    `SELECT (SAMPLE (?lbl) AS ?label) ` +
-    `WHERE { ` +
-      `<${uri}> rdfs:label ?lbl. ` +
-      `FILTER (langMatches(lang(?lbl), '${labelLang}')) ` +
-    `}`;
+      `SELECT (SAMPLE (?lbl) AS ?label) ` +
+      `WHERE { ` +
+        `<${uri}> rdfs:label ?lbl. ` +
+        `FILTER (langMatches(lang(?lbl), '${labelLang}')) ` +
+      `}`;
   };
 
   // alternative without SAMPLE
@@ -99,6 +100,7 @@ function queryFactory() {
         `BIND (datatype(?val) AS ?valType) . ` +
       `} ` +
       `GROUP BY ?valType ` +
+      `HAVING (count(?val) > 0) ` +
       `ORDER BY DESC(?valCount) ` +
       `LIMIT ${limit}`;
   };
@@ -107,16 +109,17 @@ function queryFactory() {
 
   this.getOrderedClassClassRelationQuery = function(originClass, targetClass, limit, offset) {
     return prefixes() +
-        `SELECT (count(?originInstance) as ?count) ?prop ` +
-        `WHERE { ` +
-          `?originInstance a <${originClass}> . ` +
-          `?targetInstance a <${targetClass}> . ` +
-          `?originInstance ?prop ?targetInstance . ` +
-        `} ` +
-        `GROUP BY ?prop ` +
-        `ORDER BY DESC(?count) ` +
-        `LIMIT ${limit} ` +
-        `OFFSET ${offset}`;
+      `SELECT (count(?originInstance) as ?count) ?prop ` +
+      `WHERE { ` +
+        `?originInstance a <${originClass}> . ` +
+        `?targetInstance a <${targetClass}> . ` +
+        `?originInstance ?prop ?targetInstance . ` +
+      `} ` +
+      `GROUP BY ?prop ` +
+      `HAVING (count(?originInstance) > 0) ` +
+      `ORDER BY DESC(?count) ` +
+      `LIMIT ${limit} ` +
+      `OFFSET ${offset}`;
   };
 
   this.getUnorderedClassClassRelationQuery = function(originClass, targetClass, limit, offset) {
@@ -140,6 +143,7 @@ function queryFactory() {
         `FILTER (datatype(?val) = <${typeURI}>) ` +
       `} ` +
       `GROUP BY ?prop ` +
+      `HAVING (count(?instance) > 0) ` +
       `ORDER BY DESC(?count) ` +
       `LIMIT ${limit} ` +
       `OFFSET ${offset}`;
@@ -149,9 +153,9 @@ function queryFactory() {
     return prefixes() +
       `SELECT DISTINCT ?prop ` +
       `WHERE { ` +
-      `?instance a <${classURI}> . ` +
-      `?instance ?prop ?val . ` +
-      `FILTER (datatype(?val) = <${typeURI}>) ` +
+        `?instance a <${classURI}> . ` +
+        `?instance ?prop ?val . ` +
+        `FILTER (datatype(?val) = <${typeURI}>) ` +
       `} ` +
       `LIMIT ${limit} ` +
       `OFFSET ${offset}`;
