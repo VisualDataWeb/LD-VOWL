@@ -3,5 +3,3 @@ coverage/
 dist/
 .idea/
 .vscode/
-production.conf.json
-development.conf.json
