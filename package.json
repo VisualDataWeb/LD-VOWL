@@ -9,7 +9,7 @@
     "test": "jest",
     "e2etest": "protractor protractor.conf.js",
     "lint": "eslint . --ext .js || true",
-    "deploy": "NODE_ENV=production webpack -p --config webpack.production.config.js"
+    "deploy": "NODE_ENV=production webpack -p --config webpack.production.config.js && gh-pages -d dist"
   },
   "main": "app/app.js",
   "repository": {
@@ -60,6 +60,7 @@
     "eslint-plugin-react": "~3.16.1",
     "extract-text-webpack-plugin": "^1.0.1",
     "file-loader": "~0.8.5",
+    "gh-pages": "^2.2.0",
     "html-webpack-plugin": "^2.22.0",
     "isparta-loader": "~2.0.0",
     "istanbul-instrumenter-loader": "~0.2.0",
@@ -115,7 +116,7 @@
   "private": true,
   "homepage": "http://ldvowl.visualdataweb.org/",
   "license": "MIT",
-  "engines" : {
+  "engines": {
     "node": ">=6.0.0, <7.0.0",
     "npm": "^3.0.0"
   }
