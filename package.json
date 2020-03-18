@@ -9,7 +9,8 @@
     "test": "jest",
     "e2etest": "protractor protractor.conf.js",
     "lint": "eslint . --ext .js || true",
-    "deploy": "NODE_ENV=production webpack -p --config webpack.production.config.js && gh-pages -d dist"
+    "build": "NODE_ENV=production webpack -p --config webpack.production.config.js",
+    "deploy": "tar -zcvf dist.tgz dist && mv dist.tgz dist/ && gh-pages -d dist"
   },
   "main": "app/app.js",
   "repository": {

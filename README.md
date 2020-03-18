@@ -11,15 +11,21 @@ LD-VOWL requires [Node.js](https://nodejs.org/) to be built.
 1. Download and install [Node.js](https://nodejs.org/en/download/).
 2. Clone this repository running `git clone https://github.com/VisualDataWeb/LD-VOWL.git`.
 3. Run `npm install` in the root directory of LD-VOWL to install the dependencies.
-4. Run `npm run-script start` to start a local webpack development server on port 8080 or run `npm run-script deploy` for a production build.
+4. Run `npm run start` to start a local webpack development server on port 8080 or run `npm run build` for a production build.
 
 ## Build
 
-To get a production build, run `npm run-script deploy`. After the build is finished, the results will be inside the `dist` directory.
+To get a production build, run `npm run build`. After the build is finished, the results will be inside the `dist` directory.
+
+## Deploy Hosted Version
+
+1. Build: `npm run build`
+2. Deploy: `npm run deploy`
+3. LD-VOWL will be available at: <https://zazuko.github.io/LD-VOWL/>, with the build artifacts at: <https://zazuko.github.io/LD-VOWL/dist.tgz>.
 
 ## Tests
 
-In order to run the unit tests, run `npm run-script test`.
+In order to run the unit tests, run `npm run test`.
 
 ## License
 
